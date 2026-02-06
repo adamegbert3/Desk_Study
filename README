@@ -1,1 +1,49 @@
-This is a website to provide a study help with task management, pomodoro timer to keep you on track, and instrumental tunes for listening and relaxing!
+# 📚 Desk Study
+
+**Focus better. Study smarter.**
+
+[**View Live Demo**](https://adamegbert3.github.io/Desk_Study/)
+
+---
+
+## 📖 About The Project
+
+**Desk Study** is an all-in-one study companion designed to help students and professionals manage their workflow efficiently. By combining task organization with time management tools and calming audio, we provide a digital environment that promotes focus and reduces productivity anxiety.
+
+### 🎯 Purpose
+To help users keep track of tasks efficiently while maintaining a balanced workflow.
+
+### ✅ Key Features & Solutions
+* **Task Organization:** Easily group and manage your daily to-dos to stay organized.
+* **Pomodoro Timer:** A built-in focus timer to manage work intervals and breaks, keeping you on track without burnout.
+* **Ambient Tunes:** Integrated instrumental audio files for listening and relaxing while you work.
+
+---
+
+## 🛠️ Built With
+
+We utilized the following technologies to bring Desk Study to life:
+
+### Front End
+* **HTML5** - Structure and layout
+* **CSS3** - Styling and responsive design
+* **JavaScript** - Client-side logic and interactivity
+
+### Back End & Deployment
+* **Google Firebase** - Backend database services
+* **Git** - Version control
+* **GitHub Pages** - Hosting and deployment
+
+---
+
+## 👥 The Team
+
+* **Luke Robison** - *Product Manager / Timer Functionality*
+* **Adam Egbert** - *Tech Lead / Audio & Tunes*
+* **Savannah Williams** - *Designer / Task Management*
+
+---
+
+<p align="center">
+  <small>Project developed for WDD 330</small>
+</p>
