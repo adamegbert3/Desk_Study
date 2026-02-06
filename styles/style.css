@@ -55,3 +55,100 @@
     color: var(--surface-color);
     font-weight: 600;
 }
+/* ===== Timer Page Layout ===== */
+.timer-layout {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 32px;
+    padding: 40px;
+}
+
+/* ===== Side Controls ===== */
+.controls {
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.controls button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.controls button:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* ===== Timer Card ===== */
+.timer-card {
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== Timer Text ===== */
+.timer-text {
+    position: absolute;
+    text-align: center;
+}
+
+.timer-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.timer-text h1 {
+    margin: 6px 0 0;
+    font-size: 2.6rem;
+    font-weight: 600;
+}
+
+/* ===== Progress Ring ===== */
+.progress-ring {
+    margin-bottom: 20px;
+}
+
+.progress-ring__circle {
+    stroke: var(--accent-color);
+    stroke-width: 12;
+    fill: transparent;
+    stroke-dasharray: 691;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+/* ===== Start Button ===== */
+.start-btn {
+    margin-top: 18px;
+    background-color: var(--accent-color);
+    color: #1e3a2f;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.start-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
