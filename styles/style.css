@@ -1,13 +1,3 @@
-:root {
-    --primary-color: #28556E;      /* Main blue (nav + cards) */
-    --secondary-color: #97CAE2;    /* Darker blue (tabs) */
-    --accent-color: #C6EAF0;       /* Green highlight / active */
-    --accent-soft: #86E891;        /* Soft green background */
-    --background-color: #D7FFCC;   /* App background (dark) */
-    --surface-color: #1E506B;      /* Panels / containers */
-    --text-color: #D8F2FF;         /* Primary text */
-}
-
 .body{
     background-color: var(--primary-color);
 }
