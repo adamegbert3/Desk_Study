@@ -1,10 +1,16 @@
 :root {
-  --primary-color: #1e90ff;
+
   --text-padding: 15px;
   --header-bg: #CBE4E9; /* Light blue from mockup */
   --sidebar-bg: #B0C4D1; /* Muted blue-grey */
   --main-bg: #4A6572;    /* Dark slate */
   --button-bg: #E0E0E0;  /* Light grey */
-  --text-color: #333;
+  --primary-color: #28556E;      /* Main blue (nav + cards) */
+  --secondary-color: #97CAE2;    /* Darker blue (tabs) */
+  --accent-color: #C6EAF0;       /* Green highlight / active */
+  --accent-soft: #86E891;        /* Soft green background */
+  --background-color: #D7FFCC;   /* App background (dark) */
+  --surface-color: #1E506B;      /* Panels / containers */
+  --text-color: #D8F2FF;  
 
 }
