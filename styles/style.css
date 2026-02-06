@@ -1,146 +1,155 @@
-/* Here is the styles in the tunes page */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+    --primary-color: #28556E;      /* Main blue (nav + cards) */
+    --secondary-color: #97CAE2;    /* Darker blue (tabs) */
+    --accent-color: #C6EAF0;       /* Green highlight / active */
+    --accent-soft: #86E891;        /* Soft green background */
+    --background-color: #D7FFCC;   /* App background (dark) */
+    --surface-color: #1E506B;      /* Panels / containers */
+    --text-color: #D8F2FF;         /* Primary text */
 }
 
-body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.body{
     background-color: var(--primary-color);
 }
-
-/* Main App Container using CSS Grid */
-.app-container {
-    width: 800px;
-    height: 500px;
-    display: grid;
-    grid-template-areas: 
-        "header header"
-        "sidebar main";
-    grid-template-columns: 200px 1fr; /* Sidebar width | Main width */
-    grid-template-rows: 60px 1fr;     /* Header height | Main height */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    border-radius: 8px;
-    overflow: hidden;
 }
-
-/* Header Section */
-header {
-    grid-area: header;
-    background-color: var(--header-bg);
+.main-nav {
     display: flex;
     align-items: center;
-    padding: 0 20px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--text-color);
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    justify-content: space-between;
+    background-color: var(--primary-color); /* blue from mockup */
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: system-ui, sans-serif;
 }
 
-/* Sidebar Navigation */
-aside {
-    grid-area: sidebar;
-    background-color: var(--sidebar-bg);
-    padding: 20px;
+/* Logo */
+.main-nav .logo img {
+    height: 32px;
+}
+
+/* Nav links container */
+.nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+/* Base tab style */
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--secondary-color);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover */
+.nav-links a:hover {
+    background-color: -var(--accent-soft);
+    transform: translateY(-1px);
+}
+
+/* Active tab (green highlight like Figma) */
+.nav-links a.active {
+    background-color:var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
+}
+/* ===== Timer Page Layout ===== */
+.timer-layout {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 32px;
+    padding: 40px;
+}
+
+/* ===== Side Controls ===== */
+.controls {
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
-.sound-btn {
-    padding: 12px;
-    background-color: var(--button-bg);
+.controls button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
     border: none;
-    border-radius: 4px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
     cursor: pointer;
-    text-align: left;
-    font-size: 1rem;
-    transition: background 0.2s, transform 0.1s;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.sound-btn:hover {
-    background-color: #fff;
-    transform: translateX(5px);
+.controls button:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-1px);
 }
 
-.sound-btn.active {
-    background-color: #fff;
-    font-weight: bold;
-    border-left: 5px solid var(--main-bg);
-}
-
-/* Main Player Area */
-main {
-    grid-area: main;
-    background-color: var(--main-bg);
+/* ===== Timer Card ===== */
+.timer-card {
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 32px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-/* The Black Player Card */
-.player-card {
-    background-color: white;
-    padding: 40px 60px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.player-controls {
-    background-color: #111;
-    padding: 15px 30px;
-    border-radius: 30px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: white;
-}
-
-/* Custom Audio Control Buttons */
-.control-btn {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 1.2rem;
-    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.play-pause-btn {
-    font-size: 2rem; 
-    width: 40px;
-    height: 40px;
-    background-color: white;
-    color: #111;
-    border-radius: 50%;
-}
-
-.slider {
-    width: 100px;
-    height: 4px;
-    background: #555;
-    border-radius: 2px;
-    position: relative;
-}
-
-.slider::after {
-    content: '';
+/* ===== Timer Text ===== */
+.timer-text {
     position: absolute;
-    left: 50%; /* Fake progress */
-    top: -3px;
-    width: 10px;
-    height: 10px;
-    background: white;
-    border-radius: 50%;
+    text-align: center;
+}
+
+.timer-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.timer-text h1 {
+    margin: 6px 0 0;
+    font-size: 2.6rem;
+    font-weight: 600;
+}
+
+/* ===== Progress Ring ===== */
+.progress-ring {
+    margin-bottom: 20px;
+}
+
+.progress-ring__circle {
+    stroke: var(--accent-color);
+    stroke-width: 12;
+    fill: transparent;
+    stroke-dasharray: 691;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+/* ===== Start Button ===== */
+.start-btn {
+    margin-top: 18px;
+    background-color: var(--accent-color);
+    color: #1e3a2f;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.start-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
