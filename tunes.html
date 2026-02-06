@@ -3,10 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Study App - White Noise</title>
     <link rel="stylesheet" href="styles/style.css">
+    <script src="scripts/tunes.js" defer></script>
 </head>
 <body>
-    
+
+    <div class="app-container">
+        <header>
+            Now Playing: &nbsp;<span id="track-name">Rain</span>
+        </header>
+
+        <aside>
+            <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
+                rain
+            </button>
+            <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
+                forest
+            </button>
+            <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
+                wind
+            </button>
+            <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
+                om
+            </button>
+        </aside>
+
+        <main>
+            <div class="player-card">
+                <div class="player-controls">
+                    <!-- <button class="control-btn">≡</button> 
+                    
+                    <button class="control-btn">⏮</button> -->
+                    
+                    <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
+                        ▶
+                    </button>
+                    
+                    <!-- <button class="control-btn">⏭</button>
+                    
+                    <button class="control-btn">♥</button> -->
+                </div>
+            </div>
+            
+            <audio id="audio-player" loop></audio>
+        </main>
+    </div>
 </body>
 </html>
