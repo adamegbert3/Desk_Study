@@ -1,3 +1,57 @@
+:root {
+    --primary-color: #28556E;      /* Main blue (nav + cards) */
+    --secondary-color: #97CAE2;    /* Darker blue (tabs) */
+    --accent-color: #C6EAF0;       /* Green highlight / active */
+    --accent-soft: #86E891;        /* Soft green background */
+    --background-color: #D7FFCC;   /* App background (dark) */
+    --surface-color: #1E506B;      /* Panels / containers */
+    --text-color: #D8F2FF;         /* Primary text */
+}
+
 .body{
     background-color: var(--primary-color);
+}
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary-color); /* blue from mockup */
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: system-ui, sans-serif;
+}
+
+/* Logo */
+.main-nav .logo img {
+    height: 32px;
+}
+
+/* Nav links container */
+.nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+/* Base tab style */
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--secondary-color);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover */
+.nav-links a:hover {
+    background-color: -var(--accent-soft);
+    transform: translateY(-1px);
+}
+
+/* Active tab (green highlight like Figma) */
+.nav-links a.active {
+    background-color:var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
 }
