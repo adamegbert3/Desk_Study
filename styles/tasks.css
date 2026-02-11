@@ -5,7 +5,8 @@
     grid-template-columns: minmax(200px, 280px) 1fr;
     gap: 24px;
     padding: 24px;
-    align-items: start;
+    align-items: stretch;
+    min-height: 73vh;
 }
 
 /* ----- Left panel: Due Today ----- */
@@ -14,6 +15,7 @@
     border-radius: 14px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-height: 0;
 }
 
 .due-today-title {
@@ -55,8 +57,9 @@
 .tasks-main {
     background-color: var(--surface-color);
     border-radius: 14px;
-    padding: 20px;
+    padding: 24px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-height: 0;
 }
 
 .add-task-wrap {

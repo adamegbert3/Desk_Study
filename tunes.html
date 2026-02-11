@@ -22,44 +22,45 @@
 
     <div class="page-content">
         <div class="app-container">
-        <header class="tunes-header">
-            Now Playing: &nbsp;<span id="track-name">Rain</span>
-        </header>
+            <!-- Left: music content -->
+            <aside>
+                <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
+                    rain
+                </button>
+                <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
+                    forest
+                </button>
+                <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
+                    wind
+                </button>
+                <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
+                    om
+                </button>
+            </aside>
 
-        <aside>
-            <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
-                rain
-            </button>
-            <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
-                forest
-            </button>
-            <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
-                wind
-            </button>
-            <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
-                om
-            </button>
-        </aside>
-
-        <main>
-            <div class="player-card">
-                <div class="player-controls">
-                    <!-- <button class="control-btn">≡</button> 
+            <!-- Right: Now playing + play button -->
+            <section class="tunes-right">
+                <p class="tunes-header">Now Playing: &nbsp;<span id="track-name">Rain</span></p>
+                <main>
+                    <div class="player-card">
+                        <div class="player-controls">
+                            <!-- <button class="control-btn">≡</button> 
+                            
+                            <button class="control-btn">⏮</button> -->
+                            
+                            <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
+                                ▶
+                            </button>
+                            
+                            <!-- <button class="control-btn">⏭</button>
+                            
+                            <button class="control-btn">♥</button> -->
+                        </div>
+                    </div>
                     
-                    <button class="control-btn">⏮</button> -->
-                    
-                    <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
-                        ▶
-                    </button>
-                    
-                    <!-- <button class="control-btn">⏭</button>
-                    
-                    <button class="control-btn">♥</button> -->
-                </div>
-            </div>
-            
-            <audio id="audio-player" loop></audio>
-        </main>
+                    <audio id="audio-player" loop></audio>
+                </main>
+            </section>
         </div>
     </div>
 
