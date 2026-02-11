@@ -1,0 +1,69 @@
+/* ===== Shared: used on 2+ pages. Edit with team coordination. ===== */
+
+/* Base / body - consistent across all pages; flex column so footer stays at bottom */
+body {
+    background-color: var(--primary-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-family: system-ui, sans-serif;
+}
+
+/* Wraps main page content between header and footer; grows to push footer down */
+.page-content {
+    flex: 1;
+}
+
+/* ===== Main navigation ===== */
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: system-ui, sans-serif;
+}
+
+.main-nav .logo img {
+    height: 32px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--secondary-color);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.nav-links a:hover {
+    background-color: var(--accent-soft);
+    transform: translateY(-1px);
+}
+
+.nav-links a.active {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
+}
+
+/* ===== Site footer ===== */
+.site-footer {
+    margin-top: auto;
+    padding: 12px 20px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    font-family: system-ui, sans-serif;
+    font-size: 0.875rem;
+    text-align: center;
+    border-radius: 10px;
+}

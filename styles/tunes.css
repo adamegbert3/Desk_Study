@@ -1,0 +1,82 @@
+/* ===== Tunes page only ===== */
+
+.app-container {
+    min-height: 100vh;
+    background-color: var(--primary-color);
+    font-family: system-ui, sans-serif;
+    color: var(--text-color);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+}
+
+.app-container .tunes-header {
+    grid-column: 1 / -1;
+    padding: 16px 24px;
+    background-color: var(--surface-color);
+    font-size: 1rem;
+}
+
+.app-container aside {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    background-color: var(--sidebar-bg);
+    min-width: 160px;
+}
+
+.app-container main {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sound-btn {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sound-btn:hover,
+.sound-btn.active {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+}
+
+.player-card {
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 32px;
+}
+
+.player-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.control-btn {
+    background-color: var(--accent-color);
+    color: #1e3a2f;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.control-btn:hover {
+    transform: scale(1.05);
+}

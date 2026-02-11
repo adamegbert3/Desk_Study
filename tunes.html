@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study App - White Noise</title>
     <link rel="stylesheet" href="styles/variables.css">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/tunes.css">
     <script src="scripts/tunes.js" defer></script>
 </head>
 <body>
+    <nav class="main-nav">
+        <a href="index.html" class="logo"><img src="styles/images/logoPlaceholder.jpg" alt="Site Logo"></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="timer.html">Timer</a>
+            <a href="tunes.html" class="active">Tunes</a>
+        </div>
+    </nav>
 
-    <div class="app-container">
-        <header>
+    <div class="page-content">
+        <div class="app-container">
+        <header class="tunes-header">
             Now Playing: &nbsp;<span id="track-name">Rain</span>
         </header>
 
@@ -49,6 +60,11 @@
             
             <audio id="audio-player" loop></audio>
         </main>
+        </div>
     </div>
+
+    <footer class="site-footer">
+        Desk Study &copy; 2025
+    </footer>
 </body>
 </html>

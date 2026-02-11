@@ -1,52 +1,5 @@
-.body{
-    background-color: var(--primary-color);
-}
+/* ===== Timer page only ===== */
 
-.main-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--primary-color); /* blue from mockup */
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-family: system-ui, sans-serif;
-}
-
-/* Logo */
-.main-nav .logo img {
-    height: 32px;
-}
-
-/* Nav links container */
-.nav-links {
-    display: flex;
-    gap: 10px;
-}
-
-/* Base tab style */
-.nav-links a {
-    text-decoration: none;
-    color: var(--primary-color);
-    padding: 6px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: var(--secondary-color);
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-/* Hover */
-.nav-links a:hover {
-    background-color: -var(--accent-soft);
-    transform: translateY(-1px);
-}
-
-/* Active tab (green highlight like Figma) */
-.nav-links a.active {
-    background-color:var(--accent-soft);
-    color: var(--surface-color);
-    font-weight: 600;
-}
-/* ===== Timer Page Layout ===== */
 .timer-layout {
     display: grid;
     grid-template-columns: 180px 1fr;
@@ -54,7 +7,6 @@
     padding: 40px;
 }
 
-/* ===== Side Controls ===== */
 .controls {
     background-color: var(--surface-color);
     border-radius: 14px;
@@ -80,7 +32,6 @@
     transform: translateY(-1px);
 }
 
-/* ===== Timer Card ===== */
 .timer-card {
     background-color: var(--surface-color);
     border-radius: 20px;
@@ -91,7 +42,6 @@
     justify-content: center;
 }
 
-/* ===== Timer Text ===== */
 .timer-text {
     position: absolute;
     text-align: center;
@@ -109,7 +59,6 @@
     font-weight: 600;
 }
 
-/* ===== Progress Ring ===== */
 .progress-ring {
     margin-bottom: 20px;
 }
@@ -125,7 +74,6 @@
     transform-origin: 50% 50%;
 }
 
-/* ===== Start Button ===== */
 .start-btn {
     margin-top: 18px;
     background-color: var(--accent-color);
