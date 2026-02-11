@@ -30,6 +30,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
 .due-today-list:empty::after {
@@ -112,12 +113,16 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
 }
 
 /* ----- Task pill (used in Due Today and in groups) ----- */
 .task-pill {
     display: block;
+    box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     padding: 8px 12px;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -126,11 +131,9 @@
     border: 1px solid rgba(0, 0, 0, 0.08);
     text-align: left;
     cursor: default;
+    overflow-wrap: break-word;
 }
 
-.task-pill--due-today {
-    border-left: 3px solid var(--accent-soft);
-}
 
 /* ----- Modal ----- */
 .modal {
