@@ -1,20 +1,43 @@
 let timer;
 let timeLeft;
 let totalTime;
+let currentMode = "focus";
+
+const modeDurations = {
+    focus: 25,
+    short: 5,
+    long: 15
+};
+
+const modeLabels = {
+    focus: "Focus",
+    short: "Break",
+    long: "Long Break"
+};
 
 const timeDisplay = document.getElementById("time");
 const circle = document.querySelector(".progress-ring__circle");
 const circumference = 2 * Math.PI * 110;
+const modeInputs = {
+    focus: document.getElementById("focusMinutes"),
+    short: document.getElementById("shortMinutes"),
+    long: document.getElementById("longMinutes")
+};
+const modeButtons = {
+    focus: document.getElementById("focusBtn"),
+    short: document.getElementById("shortBtn"),
+    long: document.getElementById("longBtn")
+};
 
 circle.style.strokeDasharray = circumference;
 
 function setMode(mode) {
-    if (mode === "focus") timeLeft = totalTime = 25 * 60;
-    if (mode === "short") timeLeft = totalTime = 5 * 60;
-    if (mode === "long") timeLeft = totalTime = 15 * 60;
+    currentMode = mode;
+    timeLeft = totalTime = modeDurations[mode] * 60;
 
     updateDisplay();
     resetRing();
+    updateActiveModeUI();
 }
 
 function startTimer() {
@@ -39,6 +62,41 @@ function pauseTimer() {
     timer = null;
 }
 
+function updateModeUI() {
+    Object.keys(modeDurations).forEach((mode) => {
+        modeButtons[mode].textContent = modeLabels[mode];
+    });
+}
+
+function updateActiveModeUI() {
+    Object.keys(modeButtons).forEach((mode) => {
+        modeButtons[mode].classList.toggle("active-mode", mode === currentMode);
+    });
+}
+
+function handleDurationChange(mode) {
+    const rawValue = Number.parseInt(modeInputs[mode].value, 10);
+    if (Number.isNaN(rawValue) || rawValue < 1) {
+        modeInputs[mode].value = modeDurations[mode];
+        return;
+    }
+
+    const clampedValue = Math.min(rawValue, 180);
+    modeDurations[mode] = clampedValue;
+    modeInputs[mode].value = clampedValue;
+    updateModeUI();
+
+    if (mode === currentMode) {
+        timeLeft = totalTime = clampedValue * 60;
+        updateDisplay();
+        resetRing();
+    }
+}
+
+Object.keys(modeInputs).forEach((mode) => {
+    modeInputs[mode].addEventListener("change", () => handleDurationChange(mode));
+});
+
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
@@ -57,3 +115,4 @@ function resetRing() {
 
 // Initialize
 setMode("focus");
+updateModeUI();
