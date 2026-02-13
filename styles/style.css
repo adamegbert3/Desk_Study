@@ -11,7 +11,7 @@
 .body{
     background-color: var(--primary-color);
 }
-}
+
 .main-nav {
     display: flex;
     align-items: center;
@@ -46,7 +46,7 @@
 
 /* Hover */
 .nav-links a:hover {
-    background-color: -var(--accent-soft);
+    background-color: var(--accent-soft);
     transform: translateY(-1px);
 }
 
@@ -74,6 +74,33 @@
     gap: 12px;
 }
 
+.mode-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mode-control label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+}
+
+.mode-control input {
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+.mode-value {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
 .controls button {
     background-color: var(--secondary-color);
     color: var(--text-color);
@@ -88,6 +115,12 @@
 .controls button:hover {
     background-color: var(--primary-color);
     transform: translateY(-1px);
+}
+
+.controls button.active-mode {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
 }
 
 /* ===== Timer Card ===== */
