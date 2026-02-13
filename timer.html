@@ -26,17 +26,14 @@
     <aside class="controls">
         <div class="mode-control">
             <button id="focusBtn" onclick="setMode('focus')">Focus</button>
-            <label for="focusMinutes">Focus Minutes</label>
             <input id="focusMinutes" type="number" min="1" max="180" value="25">
         </div>
         <div class="mode-control">
             <button id="shortBtn" onclick="setMode('short')">Break</button>
-            <label for="shortMinutes">Break Minutes</label>
             <input id="shortMinutes" type="number" min="1" max="180" value="5">
         </div>
         <div class="mode-control">
             <button id="longBtn" onclick="setMode('long')">Long Break</button>
-            <label for="longMinutes">Long Break Minutes</label>
             <input id="longMinutes" type="number" min="1" max="180" value="15">
         </div>
         <button onclick="pauseTimer()">Pause</button>
