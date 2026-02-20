@@ -5,50 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study App - White Noise</title>
     <link rel="stylesheet" href="styles/variables.css">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/tunes.css">
     <script src="scripts/tunes.js" defer></script>
 </head>
 <body>
+    <nav class="main-nav">
+        <a href="index.html" class="logo"><img src="styles/images/logoPlaceholder.jpg" alt="Site Logo"></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="timer.html">Timer</a>
+            <a href="tunes.html" class="active">Tunes</a>
+        </div>
+    </nav>
 
-    <div class="app-container">
-        <header>
-            Now Playing: &nbsp;<span id="track-name">Rain</span>
-        </header>
+    <div class="page-content">
+        <div class="app-container">
+            <!-- Left: music content -->
+            <aside>
+                <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
+                    rain
+                </button>
+                <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
+                    forest
+                </button>
+                <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
+                    wind
+                </button>
+                <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
+                    om
+                </button>
+            </aside>
 
-        <aside>
-            <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
-                rain
-            </button>
-            <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
-                forest
-            </button>
-            <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
-                wind
-            </button>
-            <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
-                om
-            </button>
-        </aside>
-
-        <main>
-            <div class="player-card">
-                <div class="player-controls">
-                    <!-- <button class="control-btn">≡</button> 
+            <!-- Right: Now playing + play button -->
+            <section class="tunes-right">
+                <p class="tunes-header">Now Playing: &nbsp;<span id="track-name">Rain</span></p>
+                <main>
+                    <div class="player-card">
+                        <div class="player-controls">
+                            <!-- <button class="control-btn">≡</button> 
+                            
+                            <button class="control-btn">⏮</button> -->
+                            
+                            <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
+                                ▶
+                            </button>
+                            
+                            <!-- <button class="control-btn">⏭</button>
+                            
+                            <button class="control-btn">♥</button> -->
+                        </div>
+                    </div>
                     
-                    <button class="control-btn">⏮</button> -->
-                    
-                    <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
-                        ▶
-                    </button>
-                    
-                    <!-- <button class="control-btn">⏭</button>
-                    
-                    <button class="control-btn">♥</button> -->
-                </div>
-            </div>
-            
-            <audio id="audio-player" loop></audio>
-        </main>
+                    <audio id="audio-player" loop></audio>
+                </main>
+            </section>
+        </div>
     </div>
+
+    <footer class="site-footer">
+        Desk Study &copy; 2025
+    </footer>
 </body>
 </html>

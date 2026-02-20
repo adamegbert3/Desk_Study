@@ -3,13 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tasks - Desk Study</title>
     <link rel="stylesheet" href="styles/variables.css">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/tasks.css">
+    <script src="scripts/tasks.js" defer></script>
 </head>
+
 <body>
-    <div>
-        <button>Add Task +</button>
+    <nav class="main-nav">
+        <a href="index.html" class="logo"><img src="styles/images/logoPlaceholder.jpg" alt="Site Logo"></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tasks.html" class="active">Tasks</a>
+            <a href="timer.html">Timer</a>
+            <a href="tunes.html">Tunes</a>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="tasks-page">
+            <!-- Left panel: Due Today -->
+            <aside class="tasks-due-today">
+                <h2 class="due-today-title">Due Today</h2>
+                <ul class="due-today-list" aria-label="Tasks due today">
+                    <!-- Populated by JS -->
+                </ul>
+                <p class="due-today-more" hidden></p>
+            </aside>
+
+            <!-- Right panel: Add task + groups -->
+            <main class="tasks-main">
+                <div class="add-task-wrap">
+                    <button type="button" class="add-task-btn" id="addTaskBtn" aria-haspopup="dialog" aria-expanded="false">Add Task +</button>
+                </div>
+                <div class="task-groups" id="taskGroups">
+                    <!-- Group cards populated by JS -->
+                </div>
+            </main>
+        </div>
     </div>
+
+    <!-- Add Task modal -->
+    <div class="modal" id="addTaskModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" hidden>
+        <div class="modal-backdrop" id="modalBackdrop"></div>
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Add Task</h2>
+            <p class="modal-desc" id="modalDesc">Enter the task details below.</p>
+            <form class="add-task-form" id="addTaskForm" novalidate>
+                <label for="taskGroup">Group</label>
+                <input type="text" id="taskGroup" name="group" required placeholder="e.g. Chores" autocomplete="off" maxlength="100">
+                <label for="taskTitle">Title</label>
+                <input type="text" id="taskTitle" name="title" required placeholder="Task title" autocomplete="off" maxlength="200">
+                <label for="taskDueDate">Due date</label>
+                <input type="date" id="taskDueDate" name="dueDate" required>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
+                    <button type="submit" class="btn-add-task">Add task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        Desk Study &copy; 2025
+    </footer>
 </body>
+
 </html>

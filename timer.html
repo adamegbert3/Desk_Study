@@ -3,21 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/timer.css">
 </head>
 <body>
-    <header>
-            <nav>
-                <a href="index.html" class="nav-logo">
-                    <img src="styles/images/sdlogo.svg" alt="Site Logo">
-                </a>
-                <a href="index.html">Home</a> |
-                <a href="tasks.html">Tasks</a> |
-                <a href="timer.html">Timer</a> |
-                <a href="Tunes.html">Tunes</a>
-            </nav>
-    </header>
-    
+
+<nav class="main-nav">
+    <a href="index.html" class="logo"><img src="styles/images/logoPlaceholder.jpg" alt="Site Logo"></a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="timer.html" class="active">Timer</a>
+        <a href="tunes.html">Tunes</a>
+    </div>
+</nav>
+
+<main class="page-content timer-layout">
+
+    <!-- Left Controls -->
+    <aside class="controls">
+        <div class="mode-control">
+            <button id="focusBtn" onclick="setMode('focus')">Focus</button>
+            <input id="focusMinutes" type="number" min="1" max="180" value="25">
+        </div>
+        <div class="mode-control">
+            <button id="shortBtn" onclick="setMode('short')">Break</button>
+            <input id="shortMinutes" type="number" min="1" max="180" value="5">
+        </div>
+        <div class="mode-control">
+            <button id="longBtn" onclick="setMode('long')">Long Break</button>
+            <input id="longMinutes" type="number" min="1" max="180" value="15">
+        </div>
+        <button id="timerHelpBtn" type="button">Help</button>
+    </aside>
+
+    <!-- Timer Display -->
+    <section class="timer-card">
+        <svg class="progress-ring" width="260" height="260">
+            <circle
+                class="progress-ring__circle"
+                stroke-width="12"
+                fill="transparent"
+                r="110"
+                cx="130"
+                cy="130"
+            />
+        </svg>
+
+        <div class="timer-text">
+            <p>Time Remaining</p>
+            <h1 id="time">25:00</h1>
+        </div>
+
+        <button id="timerToggleBtn" class="start-btn" onclick="toggleTimer()">Start</button>
+    </section>
+
+</main>
+
+<div class="timer-modal" id="timerIntroModal" role="dialog" aria-modal="true" aria-labelledby="timerIntroTitle">
+    <div class="timer-modal-backdrop" id="timerIntroBackdrop"></div>
+    <section class="timer-modal-content">
+        <h2 id="timerIntroTitle">How the Pomodoro Timer Works</h2>
+        <p>
+            Work in focused blocks, then take short breaks. Use the left controls to set minutes for Focus, Break,
+            and Long Break, then press Start to begin.
+        </p>
+        <h3>Suggested Setups</h3>
+        <ul>
+            <li>Classic: Focus 25 min, Break 5 min, Long Break 15 min</li>
+            <li>Deep Work: Focus 50 min, Break 10 min, Long Break 20 min</li>
+            <li>Light Start: Focus 15 min, Break 3 min, Long Break 10 min</li>
+        </ul>
+        <button id="closeTimerIntroBtn" class="timer-modal-close-btn" type="button">Got it</button>
+    </section>
+</div>
+
+<footer class="site-footer">
+    Desk Study &copy; 2025
+</footer>
+
+<script src="scripts/timer.js"></script>
 </body>
 </html>

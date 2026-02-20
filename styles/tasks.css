@@ -1,0 +1,255 @@
+/* ===== Tasks page only ===== */
+
+.tasks-page {
+    display: grid;
+    grid-template-columns: minmax(200px, 280px) 1fr;
+    gap: 24px;
+    padding: 24px;
+    align-items: stretch;
+    min-height: 73vh;
+}
+
+/* ----- Left panel: Due Today ----- */
+.tasks-due-today {
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-height: 0;
+}
+
+.due-today-title {
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.due-today-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.due-today-list:empty::after {
+    content: "No tasks due today";
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.due-today-more {
+    margin: 12px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+.due-today-more[hidden] {
+    display: none;
+}
+
+/* ----- Right panel: Add task + groups ----- */
+.tasks-main {
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-height: 0;
+}
+
+.add-task-wrap {
+    margin-bottom: 20px;
+}
+
+.add-task-btn {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-task-btn:hover {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    transform: translateY(-1px);
+}
+
+.add-task-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.task-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.task-group {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 80px;
+}
+
+.task-group-title {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.task-group-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+/* ----- Task pill (used in Due Today and in groups) ----- */
+.task-pill {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    background-color: var(--accent-color);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    text-align: left;
+    cursor: default;
+    overflow-wrap: break-word;
+}
+
+
+/* ----- Modal ----- */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    border-radius: 14px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modal-title {
+    margin: 0 0 4px;
+    font-size: 1.25rem;
+}
+
+.modal-desc {
+    margin: 0 0 20px;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.add-task-form label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.add-task-form input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    box-sizing: border-box;
+}
+
+.add-task-form input::placeholder {
+    color: var(--primary-color);
+    opacity: 0.6;
+}
+
+.add-task-form input:focus {
+    outline: 2px solid var(--accent-soft);
+    outline-offset: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btn-cancel,
+.btn-add-task {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease, transform 0.05s ease;
+}
+
+.btn-cancel {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.btn-cancel:hover {
+    background-color: var(--accent-color);
+}
+
+.btn-add-task {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
+}
+
+.btn-add-task:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.btn-add-task:focus-visible,
+.btn-cancel:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
