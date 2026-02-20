@@ -36,7 +36,7 @@
             <button id="longBtn" onclick="setMode('long')">Long Break</button>
             <input id="longMinutes" type="number" min="1" max="180" value="15">
         </div>
-        <button onclick="pauseTimer()">Pause</button>
+        <button id="timerHelpBtn" type="button">Help</button>
     </aside>
 
     <!-- Timer Display -->
@@ -57,10 +57,28 @@
             <h1 id="time">25:00</h1>
         </div>
 
-        <button class="start-btn" onclick="startTimer()">Start</button>
+        <button id="timerToggleBtn" class="start-btn" onclick="toggleTimer()">Start</button>
     </section>
 
 </main>
+
+<div class="timer-modal" id="timerIntroModal" role="dialog" aria-modal="true" aria-labelledby="timerIntroTitle">
+    <div class="timer-modal-backdrop" id="timerIntroBackdrop"></div>
+    <section class="timer-modal-content">
+        <h2 id="timerIntroTitle">How the Pomodoro Timer Works</h2>
+        <p>
+            Work in focused blocks, then take short breaks. Use the left controls to set minutes for Focus, Break,
+            and Long Break, then press Start to begin.
+        </p>
+        <h3>Suggested Setups</h3>
+        <ul>
+            <li>Classic: Focus 25 min, Break 5 min, Long Break 15 min</li>
+            <li>Deep Work: Focus 50 min, Break 10 min, Long Break 20 min</li>
+            <li>Light Start: Focus 15 min, Break 3 min, Long Break 10 min</li>
+        </ul>
+        <button id="closeTimerIntroBtn" class="timer-modal-close-btn" type="button">Got it</button>
+    </section>
+</div>
 
 <footer class="site-footer">
     Desk Study &copy; 2025

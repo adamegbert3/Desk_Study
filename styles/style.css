@@ -1,0 +1,381 @@
+:root {
+    --primary-color: #28556e;
+    --secondary-color: #97cae2;
+    --accent-color: #c6eaf0;
+    --accent-soft: #86e891;
+    --background-color: #d7ffcc;
+    --surface-color: #1e506b;
+    --text-color: #d8f2ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body,
+.body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #d7ffcc 0%, #c8f5da 100%);
+    color: var(--text-color);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+main {
+    padding: 40px;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 0 0 10px 10px;
+}
+
+.main-nav .logo img {
+    height: 32px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--secondary-color);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.nav-links a:hover {
+    background-color: var(--accent-soft);
+    transform: translateY(-1px);
+}
+
+.nav-links a.active {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
+}
+
+.timer-layout {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 32px;
+}
+
+.controls {
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mode-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mode-control label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+}
+
+.mode-control input {
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+.controls button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.controls button:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.controls button.active-mode {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    font-weight: 600;
+}
+
+.timer-card,
+.player-card,
+.task-panel {
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 32px;
+}
+
+.timer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 480px;
+}
+
+.timer-text {
+    position: absolute;
+    text-align: center;
+}
+
+.timer-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.timer-text h1 {
+    margin: 6px 0 0;
+    font-size: 2.6rem;
+    font-weight: 600;
+}
+
+.progress-ring {
+    margin-bottom: 20px;
+}
+
+.progress-ring__circle {
+    stroke: var(--accent-color);
+    stroke-width: 12;
+    fill: transparent;
+    stroke-dasharray: 691;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.start-btn,
+.control-btn,
+.primary-btn {
+    margin-top: 18px;
+    background-color: var(--accent-color);
+    color: #1e3a2f;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.start-btn:hover,
+.control-btn:hover,
+.primary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.start-btn.is-running {
+    background-color: #f4b183;
+    color: #532a00;
+}
+
+.start-btn.is-running:hover {
+    box-shadow: 0 6px 16px rgba(83, 42, 0, 0.35);
+}
+
+.tunes-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+}
+
+.sound-panel {
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sound-panel h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.sound-btn {
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: left;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.sound-btn.active {
+    background-color: var(--accent-soft);
+    font-weight: 700;
+}
+
+.player-card {
+    min-height: 320px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+}
+
+.now-playing {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.track-name {
+    margin: 6px 0 2px;
+    font-size: 2rem;
+}
+
+.tasks-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 760px);
+    justify-content: center;
+}
+
+.task-panel h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.task-input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.task-input-row input {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    color: var(--surface-color);
+    background-color: var(--accent-color);
+}
+
+.primary-btn {
+    margin-top: 0;
+    white-space: nowrap;
+}
+
+.task-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-item {
+    background-color: rgba(216, 242, 255, 0.12);
+    border: 1px solid rgba(216, 242, 255, 0.2);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.home-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 900px);
+    justify-content: center;
+}
+
+.home-panel {
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.home-kicker {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.home-panel h1 {
+    margin: 0 0 12px;
+    font-size: 2.4rem;
+    line-height: 1.1;
+}
+
+.home-copy {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--accent-color);
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.home-link-btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+    main {
+        padding: 20px;
+    }
+
+    .timer-layout,
+    .tunes-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .timer-card {
+        min-height: 420px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .task-input-row {
+        flex-direction: column;
+    }
+
+    .home-panel {
+        padding: 26px;
+    }
+
+    .home-panel h1 {
+        font-size: 1.9rem;
+    }
+}
