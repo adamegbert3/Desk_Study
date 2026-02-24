@@ -1,37 +1,33 @@
-const audioPlayer = document.getElementById('audio-player');
-const trackNameDisplay = document.getElementById('track-name');
-const playBtn = document.getElementById('playBtn');
-const buttons = document.querySelectorAll('.sound-btn');
+const audioPlayer = document.getElementById("audio-player");
+const trackNameDisplay = document.getElementById("track-name");
+const playBtn = document.getElementById("playBtn");
+const buttons = document.querySelectorAll(".sound-btn");
 
-    let isPlaying = false;
+let isPlaying = false;
+audioPlayer.src = "tunes_files/rain.mp3";
 
-    function loadTrack(name, file, btnElement) {
-        // Update Text
-        trackNameDisplay.innerText = name;
-        
-        // Visual Active State for Sidebar
-        buttons.forEach(b => b.classList.remove('active'));
-        btnElement.classList.add('active');
+function loadTrack(name, file, btnElement) {
+    trackNameDisplay.innerText = name;
 
-        // Set Audio Source (Note: You need actual .mp3 files for this to work!)
-        // For now, this just simulates the switch.
-        audioPlayer.src = file; 
-        
-        // Reset to Pause state visually when switching
-        isPlaying = false;
-        playBtn.innerText = "▶"; 
-        
-        // If you want it to auto-play on switch, uncomment below:
-        // togglePlay();
+    buttons.forEach((button) => button.classList.remove("active"));
+    btnElement.classList.add("active");
+
+    audioPlayer.src = file;
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
+
+    isPlaying = false;
+    playBtn.innerText = "Play";
+}
+
+function togglePlay() {
+    if (isPlaying) {
+        audioPlayer.pause();
+        playBtn.innerText = "Play";
+    } else {
+        audioPlayer.play();
+        playBtn.innerText = "Pause";
     }
 
-    function togglePlay() {
-        if (isPlaying) {
-            audioPlayer.pause();
-            playBtn.innerText = "▶"; 
-        } else {
-            audioPlayer.play(); // <--- I removed the "//" so this runs now
-            playBtn.innerText = "||"; 
-        }
-        isPlaying = !isPlaying;
-    }
+    isPlaying = !isPlaying;
+}

@@ -2,7 +2,7 @@
 
 /* Base / body - consistent across all pages; flex column so footer stays at bottom */
 body {
-    background-color: var(--primary-color);
+    background: linear-gradient(180deg, #d7ffcc 0%, #c8f5da 100%);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
