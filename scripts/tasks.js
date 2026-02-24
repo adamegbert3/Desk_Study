@@ -1,12 +1,11 @@
 /**
  * Tasks page: state, modal, add task, render Due Today and groups.
- * Designed for easy extension (e.g. persistence, edit/delete, filters).
  */
 
 (function () {
     'use strict';
 
-    const MAX_TASKS_PER_GROUP = 100;
+    const maxTasksPerGroup = 100;
 
     /** @typedef {{ id: string, group: string, title: string, dueDate: string }} Task */
 
@@ -14,7 +13,7 @@
     let tasks = [];
 
     const dom = {
-        addTaskBtn: null,
+        addGroupBtn: null,
         addTaskModal: null,
         modalBackdrop: null,
         addTaskForm: null,
@@ -41,7 +40,7 @@
     }
 
     function cacheDOMElements() {
-        dom.addTaskBtn = document.getElementById('addTaskBtn');
+        dom.addGroupBtn = document.getElementById('addGroupBtn');
         dom.addTaskModal = document.getElementById('addTaskModal');
         dom.modalBackdrop = document.getElementById('modalBackdrop');
         dom.addTaskForm = document.getElementById('addTaskForm');
@@ -57,7 +56,7 @@
     function openModal() {
         if (!dom.addTaskModal) return;
         dom.addTaskModal.hidden = false;
-        dom.addTaskBtn.setAttribute('aria-expanded', 'true');
+        dom.addGroupBtn.setAttribute('aria-expanded', 'true');
         if (dom.taskDueDateInput) dom.taskDueDateInput.value = getTodayDateString();
         if (dom.taskTitleInput) dom.taskTitleInput.focus();
         document.body.style.overflow = 'hidden';
@@ -66,7 +65,7 @@
     function closeModal() {
         if (!dom.addTaskModal) return;
         dom.addTaskModal.hidden = true;
-        dom.addTaskBtn.setAttribute('aria-expanded', 'false');
+        dom.addGroupBtn.setAttribute('aria-expanded', 'false');
         if (dom.addTaskForm) dom.addTaskForm.reset();
         document.body.style.overflow = '';
     }
@@ -78,7 +77,7 @@
     function addTask(group, title, dueDate) {
         var groupTrimmed = group.trim();
         if (!groupTrimmed || !title.trim()) return null;
-        if (countTasksInGroup(groupTrimmed) >= MAX_TASKS_PER_GROUP) return null;
+        if (countTasksInGroup(groupTrimmed) >= maxTasksPerGroup) return null;
 
         var task = {
             id: generateId(),
@@ -169,8 +168,8 @@
         var dueDate = dom.taskDueDateInput && dom.taskDueDateInput.value;
         if (!group || !title || !dueDate) return;
 
-        if (countTasksInGroup(group) >= MAX_TASKS_PER_GROUP) {
-            alert('This group already has the maximum of ' + MAX_TASKS_PER_GROUP + ' tasks.');
+        if (countTasksInGroup(group) >= maxTasksPerGroup) {
+            alert('This group already has the maximum of ' + maxTasksPerGroup + ' tasks.');
             return;
         }
 
@@ -182,7 +181,7 @@
     }
 
     function setupEventListeners() {
-        if (dom.addTaskBtn) dom.addTaskBtn.addEventListener('click', openModal);
+        if (dom.addGroupBtn) dom.addGroupBtn.addEventListener('click', openModal);
         if (dom.modalBackdrop) dom.modalBackdrop.addEventListener('click', closeModal);
         if (dom.modalCancel) dom.modalCancel.addEventListener('click', closeModal);
         if (dom.addTaskForm) dom.addTaskForm.addEventListener('submit', handleAddTaskSubmit);

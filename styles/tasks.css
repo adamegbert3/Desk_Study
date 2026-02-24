@@ -62,11 +62,11 @@
     min-height: 0;
 }
 
-.add-task-wrap {
+.add-group-wrap {
     margin-bottom: 20px;
 }
 
-.add-task-btn {
+.add-group-btn {
     background-color: var(--secondary-color);
     color: var(--primary-color);
     border: none;
@@ -78,13 +78,13 @@
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.add-task-btn:hover {
+.add-group-btn:hover {
     background-color: var(--accent-soft);
     color: var(--surface-color);
     transform: translateY(-1px);
 }
 
-.add-task-btn:focus-visible {
+.add-group-btn:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: 2px;
 }
@@ -119,7 +119,7 @@
     min-width: 0;
 }
 
-/* ----- Task pill (used in Due Today and in groups) ----- */
+/* ----- Task pill ----- */
 .task-pill {
     display: block;
     box-sizing: border-box;
