@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles/variables.css">
     <link rel="stylesheet" href="styles/shared.css">
     <link rel="stylesheet" href="styles/tasks.css">
-    <script src="scripts/tasks.js" defer></script>
+    <script type="module" src="scripts/tasks.js"></script>
 </head>
 
 <body>
@@ -44,22 +44,19 @@
         </div>
     </div>
 
-    <!-- Add Task modal -->
-    <div class="modal" id="addTaskModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" hidden>
+    <!-- Entity modal: add group, subgroup, or task -->
+    <div class="modal" id="entityModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" hidden>
         <div class="modal-backdrop" id="modalBackdrop"></div>
         <div class="modal-content">
-            <h2 class="modal-title" id="modalTitle">Add Task</h2>
-            <p class="modal-desc" id="modalDesc">Enter the task details below.</p>
-            <form class="add-task-form" id="addTaskForm" novalidate>
-                <label for="taskGroup">Group</label>
-                <input type="text" id="taskGroup" name="group" required placeholder="e.g. Chores" autocomplete="off" maxlength="100">
-                <label for="taskTitle">Title</label>
-                <input type="text" id="taskTitle" name="title" required placeholder="Task title" autocomplete="off" maxlength="200">
-                <label for="taskDueDate">Due date</label>
-                <input type="date" id="taskDueDate" name="dueDate" required>
+            <h2 class="modal-title" id="modalTitle">Add</h2>
+            <p class="modal-desc" id="modalDesc">Fill in the details below.</p>
+            <form class="add-task-form" id="entityForm" novalidate>
+                <div id="modalFields">
+                    <!-- Fields populated by JS based on context (group, subgroup, task) -->
+                </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
-                    <button type="submit" class="btn-add-task">Add task</button>
+                    <button type="submit" class="btn-add-task" id="modalSubmit">Add</button>
                 </div>
             </form>
         </div>

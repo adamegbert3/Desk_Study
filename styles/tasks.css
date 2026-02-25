@@ -91,7 +91,7 @@
 
 .task-groups {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 16px;
 }
 
@@ -103,10 +103,41 @@
 }
 
 .task-group-title {
-    margin: 0 0 12px;
+    margin: 0;
     font-size: 1rem;
     font-weight: 700;
     color: var(--primary-color);
+}
+
+.task-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.add-subgroup-btn {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: none;
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, transform 0.05s ease;
+}
+
+.add-subgroup-btn:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.add-subgroup-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
 }
 
 .task-group-list {
@@ -115,11 +146,11 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
     min-width: 0;
 }
 
-/* ----- Task pill ----- */
+/* ----- Task pill (Due Today panel) ----- */
 .task-pill {
     display: block;
     box-sizing: border-box;
@@ -135,6 +166,121 @@
     text-align: left;
     cursor: default;
     overflow-wrap: break-word;
+}
+
+/* ----- Subgroup pill + tasks ----- */
+.subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.subgroup-pill {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    background-color: var(--accent-color);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    text-align: left;
+    cursor: pointer;
+    overflow-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.subgroup-pill-main {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.subgroup-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.subgroup-pill-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.subgroup-add-task-btn {
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--primary-color);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.subgroup-add-task-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.subgroup-add-task-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.subgroup-chevron {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.subgroup-tasks {
+    padding: 4px 8px 0 8px;
+}
+
+.subgroup-tasks[hidden] {
+    display: none;
+}
+
+.subgroup-tasks-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.subgroup-task-item {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.subgroup-task-item:last-child {
+    border-bottom: none;
+}
+
+.subgroup-task-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.subgroup-task-date {
+    flex-shrink: 0;
+    opacity: 0.9;
+    font-variant-numeric: tabular-nums;
 }
 
 
