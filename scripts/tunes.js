@@ -3,8 +3,14 @@ const trackNameDisplay = document.getElementById("track-name");
 const playBtn = document.getElementById("playBtn");
 const buttons = document.querySelectorAll(".sound-btn");
 
-let isPlaying = false;
+// Modal elements
+const tunesIntroModal = document.getElementById("tunesIntroModal");
+const tunesIntroBackdrop = document.getElementById("tunesIntroBackdrop");
+const closeTunesIntroBtn = document.getElementById("closeTunesIntroBtn");
+const tunesHelpBtn = document.getElementById("tunesHelpBtn");
+
 audioPlayer.src = "tunes_files/rain.mp3";
+playBtn.textContent = "▶";
 
 function loadTrack(name, file, btnElement) {
     trackNameDisplay.innerText = name;
@@ -16,18 +22,52 @@ function loadTrack(name, file, btnElement) {
     audioPlayer.pause();
     audioPlayer.currentTime = 0;
 
-    isPlaying = false;
-    playBtn.innerText = "Play";
+    playBtn.textContent = "▶";
 }
 
 function togglePlay() {
-    if (isPlaying) {
-        audioPlayer.pause();
-        playBtn.innerText = "Play";
-    } else {
+    if (audioPlayer.paused) {
         audioPlayer.play();
-        playBtn.innerText = "Pause";
+        playBtn.textContent = "⏸";
+    } else {
+        audioPlayer.pause();
+        playBtn.textContent = "▶";
+    }
+}
+
+function openTunesIntro() {
+    if (!tunesIntroModal) {
+        return;
     }
 
-    isPlaying = !isPlaying;
+    tunesIntroModal.hidden = false;
 }
+
+function closeTunesIntro() {
+    if (!tunesIntroModal) {
+        return;
+    }
+
+    tunesIntroModal.hidden = true;
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && tunesIntroModal && !tunesIntroModal.hidden) {
+        closeTunesIntro();
+    }
+});
+
+if (closeTunesIntroBtn) {
+    closeTunesIntroBtn.addEventListener("click", closeTunesIntro);
+}
+
+if (tunesIntroBackdrop) {
+    tunesIntroBackdrop.addEventListener("click", closeTunesIntro);
+}
+
+if (tunesHelpBtn) {
+    tunesHelpBtn.addEventListener("click", openTunesIntro);
+}
+
+// Show on page load
+openTunesIntro();
