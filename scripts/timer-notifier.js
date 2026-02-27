@@ -83,11 +83,15 @@
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedState));
 
-        handleCompletion({
+        const completionHandled = handleCompletion({
             mode: state.currentMode,
             endsAt: completedEndsAt,
-            fallbackToAlert: false
+            fallbackToAlert: true
         });
+
+        if (completionHandled && window.deskStudyTimerAudio && typeof window.deskStudyTimerAudio.playCompletionSound === "function") {
+            window.deskStudyTimerAudio.playCompletionSound();
+        }
     }
 
     function checkTimer() {

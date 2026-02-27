@@ -1,4 +1,6 @@
 const STORAGE_KEY = "deskStudyTimerStateV1";
+const SOUND_PREF_KEY = "deskStudyTimerSoundEnabledV1";
+const QUICK_TEST_DURATION_MS = 10 * 1000;
 
 let timer = null;
 let currentMode = "focus";
@@ -6,6 +8,8 @@ let durationMs = 25 * 60 * 1000;
 let remainingMs = durationMs;
 let endsAt = null;
 let isRunning = false;
+let soundEnabled = true;
+let soundPrimed = false;
 
 const modeDurations = {
     focus: 25,
@@ -37,13 +41,17 @@ const timerIntroModal = document.getElementById("timerIntroModal");
 const timerIntroBackdrop = document.getElementById("timerIntroBackdrop");
 const closeTimerIntroBtn = document.getElementById("closeTimerIntroBtn");
 const timerHelpBtn = document.getElementById("timerHelpBtn");
+const timerSoundToggleBtn = document.getElementById("timerSoundToggleBtn");
 const presets = {
     classic: { focus: 25, short: 5, long: 15 },
     deepWork: { focus: 50, short: 10, long: 20 },
     lightStart: { focus: 15, short: 3, long: 10 }
 };
+const completionSound = new Audio("tunes_files/om.mp3");
 
 circle.style.strokeDasharray = circumference;
+completionSound.preload = "auto";
+completionSound.volume = 0.85;
 
 function getModeDurationMs(mode) {
     return modeDurations[mode] * 60 * 1000;
@@ -179,6 +187,76 @@ function applyPreset(presetName) {
     saveState();
 }
 
+function setQuickTestDuration() {
+    durationMs = QUICK_TEST_DURATION_MS;
+    remainingMs = QUICK_TEST_DURATION_MS;
+    endsAt = null;
+    isRunning = false;
+    stopTicking();
+    render();
+    saveState();
+}
+
+function loadSoundPreference() {
+    const stored = localStorage.getItem(SOUND_PREF_KEY);
+    if (stored === null) {
+        return true;
+    }
+
+    return stored === "true";
+}
+
+function saveSoundPreference() {
+    localStorage.setItem(SOUND_PREF_KEY, `${soundEnabled}`);
+}
+
+function updateSoundToggleUI() {
+    if (!timerSoundToggleBtn) {
+        return;
+    }
+
+    timerSoundToggleBtn.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    updateSoundToggleUI();
+    saveSoundPreference();
+}
+
+function primeCompletionSound() {
+    if (soundPrimed) {
+        return;
+    }
+
+    const playAttempt = completionSound.play();
+    if (playAttempt && typeof playAttempt.then === "function") {
+        playAttempt
+            .then(() => {
+                completionSound.pause();
+                completionSound.currentTime = 0;
+                soundPrimed = true;
+            })
+            .catch(() => {
+                // Ignore autoplay restrictions; we'll try again on completion.
+            });
+    }
+}
+
+function playCompletionSound() {
+    if (!soundEnabled) {
+        return;
+    }
+
+    completionSound.currentTime = 0;
+    const playAttempt = completionSound.play();
+    if (playAttempt && typeof playAttempt.catch === "function") {
+        playAttempt.catch(() => {
+            // Best effort only; notifications/alerts still communicate completion.
+        });
+    }
+}
+
 function startTimer() {
     if (isRunning) {
         return;
@@ -188,6 +266,7 @@ function startTimer() {
         remainingMs = durationMs;
     }
 
+    primeCompletionSound();
     endsAt = Date.now() + remainingMs;
     isRunning = true;
     startTicking();
@@ -288,14 +367,20 @@ function tick() {
         stopTicking();
         render();
         saveState();
+        let completionHandled = false;
         if (window.deskStudyTimerNotifier && typeof window.deskStudyTimerNotifier.handleCompletion === "function") {
-            window.deskStudyTimerNotifier.handleCompletion({
+            completionHandled = window.deskStudyTimerNotifier.handleCompletion({
                 mode: currentMode,
                 endsAt: completedEndsAt,
                 fallbackToAlert: true
             });
         } else {
             alert("Session complete!");
+            completionHandled = true;
+        }
+
+        if (completionHandled) {
+            playCompletionSound();
         }
         return;
     }
@@ -314,6 +399,8 @@ function initialize() {
 
     updateModeUI();
     syncInputsFromDurations();
+    soundEnabled = loadSoundPreference();
+    updateSoundToggleUI();
     render();
 
     if (isRunning) {
@@ -367,5 +454,13 @@ if (timerIntroBackdrop) {
 if (timerHelpBtn) {
     timerHelpBtn.addEventListener("click", openTimerIntro);
 }
+
+if (timerSoundToggleBtn) {
+    timerSoundToggleBtn.addEventListener("click", toggleSound);
+}
+
+window.deskStudyTimerAudio = {
+    playCompletionSound
+};
 
 initialize();
