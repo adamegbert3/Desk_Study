@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles/variables.css">
     <link rel="stylesheet" href="styles/shared.css">
     <link rel="stylesheet" href="styles/timer.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
 
@@ -41,20 +42,22 @@
 
     <!-- Timer Display -->
     <section class="timer-card">
-        <svg class="progress-ring" width="260" height="260">
-            <circle
-                class="progress-ring__circle"
-                stroke-width="12"
-                fill="transparent"
-                r="110"
-                cx="130"
-                cy="130"
-            />
-        </svg>
+        <div class="timer-ring">
+            <svg class="progress-ring" width="260" height="260">
+                <circle
+                    class="progress-ring__circle"
+                    stroke-width="12"
+                    fill="transparent"
+                    r="110"
+                    cx="130"
+                    cy="130"
+                />
+            </svg>
 
-        <div class="timer-text">
-            <p>Time Remaining</p>
-            <h1 id="time">25:00</h1>
+            <div class="timer-text">
+                <p>Time Remaining</p>
+                <h1 id="time">25:00</h1>
+            </div>
         </div>
 
         <button id="timerToggleBtn" class="start-btn" onclick="toggleTimer()">Start</button>

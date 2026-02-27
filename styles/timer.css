@@ -47,9 +47,23 @@
     min-height: 0;
 }
 
+.timer-ring {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin-bottom: 20px;
+}
+
 .timer-text {
     position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    color: var(--accent-soft);
+    pointer-events: none;
 }
 
 .timer-text p {
@@ -65,7 +79,9 @@
 }
 
 .progress-ring {
-    margin-bottom: 20px;
+    width: 260px;
+    height: 260px;
+    display: block;
 }
 
 .progress-ring__circle {
