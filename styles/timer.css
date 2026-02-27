@@ -16,7 +16,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 18px;
 } 
 
 .controls button {
@@ -33,6 +33,11 @@
 .controls button:hover {
     background-color: var(--accent-soft);
     color: var(--surface-color);
+}
+
+.preset-btn {
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
 }
 
 .timer-card {

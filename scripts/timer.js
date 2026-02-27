@@ -37,6 +37,11 @@ const timerIntroModal = document.getElementById("timerIntroModal");
 const timerIntroBackdrop = document.getElementById("timerIntroBackdrop");
 const closeTimerIntroBtn = document.getElementById("closeTimerIntroBtn");
 const timerHelpBtn = document.getElementById("timerHelpBtn");
+const presets = {
+    classic: { focus: 25, short: 5, long: 15 },
+    deepWork: { focus: 50, short: 10, long: 20 },
+    lightStart: { focus: 15, short: 3, long: 10 }
+};
 
 circle.style.strokeDasharray = circumference;
 
@@ -151,6 +156,29 @@ function setMode(mode) {
     saveState();
 }
 
+function applyPreset(presetName) {
+    const preset = presets[presetName];
+    if (!preset) {
+        return;
+    }
+
+    Object.keys(modeDurations).forEach((mode) => {
+        modeDurations[mode] = preset[mode];
+    });
+
+    syncInputsFromDurations();
+    updateModeUI();
+
+    durationMs = getModeDurationMs(currentMode);
+    remainingMs = durationMs;
+    endsAt = null;
+    isRunning = false;
+    stopTicking();
+
+    render();
+    saveState();
+}
+
 function startTimer() {
     if (isRunning) {
         return;
@@ -253,13 +281,22 @@ function tick() {
     remainingMs = getRemainingMs();
 
     if (remainingMs <= 0) {
+        const completedEndsAt = endsAt || Date.now();
         remainingMs = 0;
         endsAt = null;
         isRunning = false;
         stopTicking();
         render();
         saveState();
-        alert("Session complete!");
+        if (window.deskStudyTimerNotifier && typeof window.deskStudyTimerNotifier.handleCompletion === "function") {
+            window.deskStudyTimerNotifier.handleCompletion({
+                mode: currentMode,
+                endsAt: completedEndsAt,
+                fallbackToAlert: true
+            });
+        } else {
+            alert("Session complete!");
+        }
         return;
     }
 
