@@ -11,7 +11,7 @@
 </head>
 <body>
     <nav class="main-nav">
-        <a href="index.html" class="logo"><img src="styles/images/logoPlaceholder.jpg" alt="Site Logo"></a>
+        <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="tasks.html">Tasks</a>
@@ -63,9 +63,25 @@
             </section>
         </div>
     </div>
+    <div class="tunes-modal" id="tunesIntroModal" role="dialog" aria-modal="true" aria-labelledby="tunesIntroTitle">
+    <div class="tunes-modal-backdrop" id="tunesIntroBackdrop"></div>
+    <section class="tunes-modal-content">
+        <h2 id="tunesIntroTitle">How the Tunes page works!</h2>
+        <p>
+            While studying, you can use calming music provided by our website to help you study.
+        </p>
+        <h3>How to use:</h3>
+        <ul>
+            <li>Using the left menu, select a tune you would like to play.</li>
+            <li>Click the play and pause buttons located in the middle of the Right screen.</li>
+            <li>Music will play!</li>
+        </ul>
+        <button id="closeTunesIntroBtn" class="tunes-modal-close-btn" type="button">Got it</button>
+    </section>
+</div>
 
     <footer class="site-footer">
-        Desk Study &copy; 2025
+        Study Desk &copy; 2026
     </footer>
     <script src="scripts/timer-notifier.js" defer></script>
 </body>
