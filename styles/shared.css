@@ -18,11 +18,15 @@ body {
 .main-nav {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    position: relative;
     background-color: var(--primary-color);
     padding: 10px 20px;
     border-radius: 10px;
     font-family: system-ui, sans-serif;
+}
+
+.main-nav .logo {
+    margin-right: auto;
 }
 
 .main-nav .logo img {
@@ -32,6 +36,9 @@ body {
 .nav-links {
     display: flex;
     gap: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nav-links a {
