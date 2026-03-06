@@ -42,6 +42,11 @@ const timerIntroBackdrop = document.getElementById("timerIntroBackdrop");
 const closeTimerIntroBtn = document.getElementById("closeTimerIntroBtn");
 const timerHelpBtn = document.getElementById("timerHelpBtn");
 const timerSoundToggleBtn = document.getElementById("timerSoundToggleBtn");
+const timerLayout = document.getElementById("timerLayout");
+const timerControls = document.getElementById("timerControls");
+const settingsToggleBtn = document.getElementById("settingsToggleBtn");
+const controlsBackdrop = document.getElementById("controlsBackdrop");
+const mobileSidebarMediaQuery = window.matchMedia("(max-width: 768px)");
 const presets = {
     classic: { focus: 25, short: 5, long: 15 },
     deepWork: { focus: 50, short: 10, long: 20 },
@@ -426,6 +431,63 @@ function closeTimerIntro() {
     timerIntroModal.hidden = true;
 }
 
+function isMobileSidebarLayout() {
+    return mobileSidebarMediaQuery.matches;
+}
+
+function updateSidebarButtonUI(isOpen) {
+    if (!settingsToggleBtn) {
+        return;
+    }
+
+    settingsToggleBtn.setAttribute("aria-expanded", `${isOpen}`);
+}
+
+function syncSidebarBackdrop(isOpen) {
+    if (!controlsBackdrop) {
+        return;
+    }
+
+    controlsBackdrop.hidden = !(isOpen && isMobileSidebarLayout());
+}
+
+function isSidebarOpen() {
+    if (!timerLayout) {
+        return false;
+    }
+
+    if (isMobileSidebarLayout()) {
+        return timerLayout.classList.contains("sidebar-open");
+    }
+
+    return !timerLayout.classList.contains("sidebar-collapsed");
+}
+
+function setSidebarOpenState(isOpen) {
+    if (!timerLayout) {
+        return;
+    }
+
+    if (isMobileSidebarLayout()) {
+        timerLayout.classList.toggle("sidebar-open", isOpen);
+        timerLayout.classList.remove("sidebar-collapsed");
+    } else {
+        timerLayout.classList.toggle("sidebar-collapsed", !isOpen);
+        timerLayout.classList.remove("sidebar-open");
+    }
+
+    updateSidebarButtonUI(isOpen);
+    syncSidebarBackdrop(isOpen);
+}
+
+function toggleSidebar() {
+    setSidebarOpenState(!isSidebarOpen());
+}
+
+function handleViewportSidebarState() {
+    setSidebarOpenState(!isMobileSidebarLayout());
+}
+
 window.addEventListener("beforeunload", saveState);
 document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
@@ -440,7 +502,24 @@ document.addEventListener("visibilitychange", () => {
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && timerIntroModal && !timerIntroModal.hidden) {
         closeTimerIntro();
+        return;
     }
+
+    if (event.key === "Escape" && isSidebarOpen()) {
+        setSidebarOpenState(false);
+    }
+});
+
+document.addEventListener("click", (event) => {
+    if (!isMobileSidebarLayout() || !timerLayout || !timerControls || !settingsToggleBtn || !isSidebarOpen()) {
+        return;
+    }
+
+    if (timerControls.contains(event.target) || settingsToggleBtn.contains(event.target)) {
+        return;
+    }
+
+    setSidebarOpenState(false);
 });
 
 if (closeTimerIntroBtn) {
@@ -459,8 +538,23 @@ if (timerSoundToggleBtn) {
     timerSoundToggleBtn.addEventListener("click", toggleSound);
 }
 
+if (settingsToggleBtn) {
+    settingsToggleBtn.addEventListener("click", toggleSidebar);
+}
+
+if (controlsBackdrop) {
+    controlsBackdrop.addEventListener("click", () => setSidebarOpenState(false));
+}
+
+if (mobileSidebarMediaQuery && typeof mobileSidebarMediaQuery.addEventListener === "function") {
+    mobileSidebarMediaQuery.addEventListener("change", handleViewportSidebarState);
+} else if (mobileSidebarMediaQuery && typeof mobileSidebarMediaQuery.addListener === "function") {
+    mobileSidebarMediaQuery.addListener(handleViewportSidebarState);
+}
+
 window.deskStudyTimerAudio = {
     playCompletionSound
 };
 
 initialize();
+handleViewportSidebarState();
