@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    transition: opacity 0.25s ease;
 } 
 
 .settings-toggle-btn {
@@ -48,17 +48,15 @@
 }
 
 .timer-layout.sidebar-collapsed {
-    grid-template-columns: 1fr;
+    grid-template-columns: 0 1fr;
 }
 
 .timer-layout.sidebar-collapsed .controls {
-    position: absolute;
-    top: 84px;
-    left: 24px;
-    width: min(280px, calc(100% - 48px));
-    max-height: calc(100% - 108px);
-    overflow-y: auto;
-    transform: translateX(calc(-100% - 32px));
+    padding: 0;
+    gap: 0;
+    border: 0;
+    box-shadow: none;
+    overflow: hidden;
     opacity: 0;
     pointer-events: none;
 }
