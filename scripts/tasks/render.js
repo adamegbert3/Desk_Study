@@ -7,6 +7,12 @@ import {
 
 export const taskPageElements = {
     addGroupButton: null,
+    toggleDueTodayButton: null,
+    toggleGroupsButton: null,
+    dueTodayPanel: null,
+    groupsPanel: null,
+    dueTodayToggleIcon: null,
+    groupsToggleIcon: null,
     entityModal: null,
     modalBackdrop: null,
     entityForm: null,
@@ -28,6 +34,12 @@ export const tasksModalContext = {
 
 export function cachetaskPageElements() {
     taskPageElements.addGroupButton = document.getElementById('addGroupBtn');
+    taskPageElements.toggleDueTodayButton = document.getElementById('toggleDueTodayBtn');
+    taskPageElements.toggleGroupsButton = document.getElementById('toggleGroupsBtn');
+    taskPageElements.dueTodayPanel = document.querySelector('.tasks-due-today');
+    taskPageElements.groupsPanel = document.querySelector('.tasks-main');
+    taskPageElements.dueTodayToggleIcon = document.getElementById('dueTodayToggleIcon');
+    taskPageElements.groupsToggleIcon = document.getElementById('groupsToggleIcon');
     taskPageElements.entityModal = document.getElementById('entityModal');
     taskPageElements.modalBackdrop = document.getElementById('modalBackdrop');
     taskPageElements.entityForm = document.getElementById('entityForm');
@@ -214,8 +226,29 @@ export function renderTaskGroups() {
         addSubgroupButtonElement.setAttribute('data-action', 'add-subgroup');
         addSubgroupButtonElement.setAttribute('data-group-id', group.id);
 
+        const groupControlsElement = document.createElement('div');
+        groupControlsElement.className = 'task-group-controls';
+
+        const groupToggleButtonElement = document.createElement('button');
+        groupToggleButtonElement.type = 'button';
+        groupToggleButtonElement.className = 'group-toggle-btn panel-toggle-btn';
+        groupToggleButtonElement.setAttribute('data-action', 'toggle-group-collapse');
+        groupToggleButtonElement.setAttribute('data-group-id', group.id);
+        groupToggleButtonElement.setAttribute('aria-label', 'Collapse group');
+
+        const groupToggleIconElement = document.createElement('img');
+        groupToggleIconElement.className = 'group-toggle-icon';
+        groupToggleIconElement.setAttribute('data-group-toggle-icon-for', group.id);
+        groupToggleIconElement.src = 'icons/collapse content.svg';
+        groupToggleIconElement.alt = '';
+
+        groupToggleButtonElement.appendChild(groupToggleIconElement);
+
+        groupControlsElement.appendChild(addSubgroupButtonElement);
+        groupControlsElement.appendChild(groupToggleButtonElement);
+
         groupHeaderElement.appendChild(groupTitleElement);
-        groupHeaderElement.appendChild(addSubgroupButtonElement);
+        groupHeaderElement.appendChild(groupControlsElement);
 
         const subgroupListElement = document.createElement('ul');
         subgroupListElement.className = 'task-group-list';

@@ -33,20 +33,37 @@
         <div class="tasks-page">
             <!-- Left panel: Due Today -->
             <aside class="tasks-due-today">
-                <h2 class="due-today-title">Due Today</h2>
-                <ul class="due-today-list" aria-label="Tasks due today">
-                    <!-- Populated by JS -->
-                </ul>
-                <p class="due-today-more" hidden></p>
+                <div class="tasks-panel-header">
+                    <h2 class="due-today-title">Due Today</h2>
+                    <button type="button" class="panel-toggle-btn" id="toggleDueTodayBtn" aria-label="Collapse due today">
+                        <img id="dueTodayToggleIcon" src="icons/collapse content.svg" alt="">
+                    </button>
+                </div>
+                <div class="tasks-panel-body" id="dueTodayPanelBody">
+                    <ul class="due-today-list" aria-label="Tasks due today">
+                        <!-- Populated by JS -->
+                    </ul>
+                    <p class="due-today-more" hidden></p>
+                </div>
             </aside>
 
             <!-- Right panel: Add task + groups -->
             <main class="tasks-main">
-                <div class="add-group-wrap">
-                    <button type="button" class="add-group-btn" id="addGroupBtn" aria-haspopup="dialog" aria-expanded="false">Add Group +</button>
+                <div class="tasks-panel-header">
+                    <h2 class="tasks-main-title">Groups</h2>
+                    <div class="panel-controls">
+                        <button type="button" class="panel-toggle-btn" id="toggleGroupsBtn" aria-label="Collapse all groups">
+                            <img id="groupsToggleIcon" src="icons/collapse content.svg" alt="">
+                        </button>
+                    </div>
                 </div>
-                <div class="task-groups" id="taskGroups">
-                    <!-- Group cards populated by JS -->
+                <div class="tasks-panel-body" id="groupsPanelBody">
+                    <div class="add-group-wrap">
+                        <button type="button" class="add-group-btn" id="addGroupBtn" aria-haspopup="dialog" aria-expanded="false">Add Group +</button>
+                    </div>
+                    <div class="task-groups" id="taskGroups">
+                        <!-- Group cards populated by JS -->
+                    </div>
                 </div>
             </main>
         </div>

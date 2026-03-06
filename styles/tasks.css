@@ -1,12 +1,18 @@
 /* ===== Tasks page only ===== */
 
+:root {
+    --tasks-panel-max-h: clamp(420px, 74vh, 780px);
+    --task-group-max-h: clamp(260px, 42vh, 520px);
+    --subgroup-tasks-max-h: clamp(120px, 24vh, 240px);
+}
+
 .tasks-page {
     display: grid;
     grid-template-columns: minmax(200px, 280px) 1fr;
     gap: 24px;
     padding: 24px;
     align-items: stretch;
-    min-height: 73vh;
+    min-height: calc(100dvh - 120px);
 }
 
 /* ----- Left panel: Due Today ----- */
@@ -16,10 +22,14 @@
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     min-height: 0;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
 }
 
 .due-today-title {
-    margin: 0 0 16px;
+    margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-color);
@@ -33,6 +43,9 @@
     flex-direction: column;
     gap: 8px;
     min-width: 0;
+    overflow-y: auto;
+    max-height: 100%;
+    flex: 1 1 auto;
 }
 
 .due-today-list:empty::after {
@@ -60,6 +73,84 @@
     padding: 24px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     min-height: 0;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+}
+
+.tasks-main-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.tasks-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.tasks-panel-body {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.tasks-due-today.is-collapsed .tasks-panel-body {
+    display: none;
+}
+
+.tasks-due-today.is-collapsed {
+    max-height: none;
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    align-self: start;
+}
+
+.tasks-due-today:not(.is-collapsed),
+.tasks-main:not(.is-collapsed) {
+    height: 100%;
+}
+
+.tasks-due-today.is-collapsed .tasks-panel-header {
+    margin-bottom: 0;
+}
+
+.tasks-due-today.is-collapsed .due-today-title {
+    font-size: 1.05rem;
+}
+
+.panel-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-toggle-btn,
+.panel-icon-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--secondary-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.panel-toggle-btn img,
+.panel-icon-btn img {
+    width: 18px;
+    height: 18px;
+    display: block;
 }
 
 .add-group-wrap {
@@ -93,6 +184,11 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 16px;
+    overflow-y: auto;
+    max-height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-content: start;
 }
 
 .task-group {
@@ -100,6 +196,9 @@
     border-radius: 12px;
     padding: 16px;
     min-height: 80px;
+    max-height: var(--task-group-max-h);
+    display: flex;
+    flex-direction: column;
 }
 
 .task-group-title {
@@ -115,6 +214,22 @@
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 12px;
+}
+
+.task-group-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group-toggle-btn {
+    width: 30px;
+    height: 30px;
+}
+
+.group-toggle-btn img {
+    width: 16px;
+    height: 16px;
 }
 
 .add-subgroup-btn {
@@ -148,6 +263,24 @@
     flex-direction: column;
     gap: 10px;
     min-width: 0;
+    overflow-y: auto;
+    max-height: 100%;
+    flex: 1 1 auto;
+}
+
+.task-group.is-collapsed .task-group-list {
+    display: none;
+}
+
+.task-group.is-collapsed .task-group-header {
+    margin-bottom: 0;
+}
+
+.task-group.is-collapsed {
+    min-height: 0;
+    max-height: none;
+    padding: 10px 12px;
+    border-radius: 10px;
 }
 
 /* ----- Task pill (Due Today panel) ----- */
@@ -244,6 +377,8 @@
 
 .subgroup-tasks {
     padding: 4px 8px 0 8px;
+    max-height: var(--subgroup-tasks-max-h);
+    overflow-y: auto;
 }
 
 .subgroup-tasks[hidden] {

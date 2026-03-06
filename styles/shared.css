@@ -121,6 +121,6 @@ body {
     }
 
     .site-footer {
-        margin-bottom: calc(88px + env(safe-area-inset-bottom));
+        display: none;
     }
 }

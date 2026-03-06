@@ -1,5 +1,6 @@
 const STORAGE_KEY = "deskStudyTimerStateV1";
 const SOUND_PREF_KEY = "deskStudyTimerSoundEnabledV1";
+const TIMER_INTRO_SEEN_KEY = "deskStudyTimerIntroSeenV1";
 const QUICK_TEST_DURATION_MS = 10 * 1000;
 
 let timer = null;
@@ -45,6 +46,7 @@ const timerSoundToggleBtn = document.getElementById("timerSoundToggleBtn");
 const timerLayout = document.getElementById("timerLayout");
 const timerControls = document.getElementById("timerControls");
 const settingsToggleBtn = document.getElementById("settingsToggleBtn");
+const settingsCloseBtn = document.getElementById("settingsCloseBtn");
 const controlsBackdrop = document.getElementById("controlsBackdrop");
 const mobileSidebarMediaQuery = window.matchMedia("(max-width: 768px)");
 const presets = {
@@ -412,7 +414,10 @@ function initialize() {
         startTicking();
     }
 
-    openTimerIntro();
+    if (localStorage.getItem(TIMER_INTRO_SEEN_KEY) !== "true") {
+        openTimerIntro();
+        localStorage.setItem(TIMER_INTRO_SEEN_KEY, "true");
+    }
 }
 
 function openTimerIntro() {
@@ -540,6 +545,10 @@ if (timerSoundToggleBtn) {
 
 if (settingsToggleBtn) {
     settingsToggleBtn.addEventListener("click", toggleSidebar);
+}
+
+if (settingsCloseBtn) {
+    settingsCloseBtn.addEventListener("click", () => setSidebarOpenState(false));
 }
 
 if (controlsBackdrop) {

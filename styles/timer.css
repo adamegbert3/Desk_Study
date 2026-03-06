@@ -11,6 +11,7 @@
 }
 
 .controls {
+    position: relative;
     background-color: var(--surface-color);
     border-radius: 14px;
     padding: 20px;
@@ -21,10 +22,31 @@
     transition: opacity 0.25s ease;
 } 
 
+.settings-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.settings-close-btn img {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
 .settings-toggle-btn {
     position: absolute;
-    top: 24px;
-    left: 24px;
+    top: 14px;
+    left: 14px;
     width: 44px;
     height: 44px;
     display: inline-flex;
@@ -34,7 +56,7 @@
     border-radius: 10px;
     background-color: var(--secondary-color);
     cursor: pointer;
-    z-index: 25;
+    z-index: 2;
 }
 
 .settings-toggle-btn img {
@@ -83,6 +105,7 @@
 }
 
 .timer-card {
+    position: relative;
     background-color: var(--surface-color);
     border-radius: 14px;
     padding: 24px;
@@ -229,11 +252,6 @@
         padding: 76px 14px 14px;
     }
 
-    .settings-toggle-btn {
-        top: 14px;
-        left: 14px;
-    }
-
     .timer-card {
         min-height: calc(100vh - 220px);
     }
@@ -249,6 +267,10 @@
         transform: translateY(calc(-100% - 18px));
         opacity: 0;
         pointer-events: none;
+    }
+
+    .settings-close-btn {
+        display: inline-flex;
     }
 
     .controls-backdrop {
