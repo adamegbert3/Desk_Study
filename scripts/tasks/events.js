@@ -5,7 +5,8 @@ import {
     getGroupLimitForCurrentTier,
     getSubgroupPerGroupLimitForCurrentTier,
     findGroupByIdInState,
-    findSubgroupByIdInGroup
+    findSubgroupByIdInGroup,
+    loadTasksState
 } from './data.js';
 
 import {
@@ -164,6 +165,9 @@ function setupTaskPageEventListeners() {
 }
 
 function initializeTasksPage() {
+    void loadTasksState().then(function () {
+        renderTasksPage();
+    });
     cachetaskPageElements();
     setupTaskPageEventListeners();
     renderTasksPage();

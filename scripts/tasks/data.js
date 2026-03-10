@@ -8,6 +8,32 @@ const isPremiumTierEnabled = false;
 
 export const taskGroupsState = [];
 
+function saveTasksState() {
+    if (window.dataStore && typeof window.dataStore.saveTasks === 'function') {
+        void window.dataStore.saveTasks(taskGroupsState);
+        return;
+    }
+    try {
+        window.localStorage.setItem('deskStudyTasksStateV1', JSON.stringify(taskGroupsState));
+    } catch {}
+}
+
+export async function loadTasksState() {
+    let loaded = [];
+    if (window.dataStore && typeof window.dataStore.loadTasks === 'function') {
+        loaded = (await window.dataStore.loadTasks()) || [];
+    } else {
+        try {
+            loaded = JSON.parse(window.localStorage.getItem('deskStudyTasksStateV1') || '[]');
+        } catch {
+            loaded = [];
+        }
+    }
+
+    if (!Array.isArray(loaded)) loaded = [];
+    taskGroupsState.splice(0, taskGroupsState.length, ...loaded);
+}
+
 export function getTodayDateString() {
     const d = new Date();
     return (
@@ -56,6 +82,7 @@ export function addGroup(groupName) {
     };
 
     taskGroupsState.push(group);
+    saveTasksState();
     return group;
 }
 
@@ -75,6 +102,7 @@ export function addSubgroupToGroup(groupId, subgroupName) {
     };
 
     parentGroup.subgroups.push(subgroup);
+    saveTasksState();
     return subgroup;
 }
 
@@ -95,6 +123,7 @@ export function addTaskToSubgroupInGroup(groupId, subgroupId, taskTitle, taskDue
     };
 
     parentSubgroup.tasks.push(task);
+    saveTasksState();
     return task;
 }
 

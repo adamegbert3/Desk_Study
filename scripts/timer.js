@@ -87,59 +87,69 @@ function saveState() {
         endsAt,
         isRunning
     };
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    if (window.dataStore && typeof window.dataStore.saveTimerState === "function") {
+        void window.dataStore.saveTimerState(snapshot);
+    } else {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    }
 }
 
-function loadState() {
-    const rawState = localStorage.getItem(STORAGE_KEY);
-    if (!rawState) {
+async function loadState() {
+    let state = null;
+    if (window.dataStore && typeof window.dataStore.loadTimerState === "function") {
+        state = await window.dataStore.loadTimerState();
+    } else {
+        const rawState = localStorage.getItem(STORAGE_KEY);
+        if (rawState) {
+            try {
+                state = JSON.parse(rawState);
+            } catch {
+                state = null;
+            }
+        }
+    }
+
+    if (!state) {
         return false;
     }
 
-    try {
-        const state = JSON.parse(rawState);
-
-        if (state.modeDurations && typeof state.modeDurations === "object") {
-            Object.keys(modeDurations).forEach((mode) => {
-                const parsed = Number.parseInt(state.modeDurations[mode], 10);
-                if (!Number.isNaN(parsed) && parsed >= 1 && parsed <= 180) {
-                    modeDurations[mode] = parsed;
-                }
-            });
-        }
-
-        if (Object.prototype.hasOwnProperty.call(modeDurations, state.currentMode)) {
-            currentMode = state.currentMode;
-        }
-
-        durationMs = Number.isFinite(state.durationMs) && state.durationMs > 0
-            ? state.durationMs
-            : getModeDurationMs(currentMode);
-
-        remainingMs = Number.isFinite(state.remainingMs) && state.remainingMs >= 0
-            ? state.remainingMs
-            : durationMs;
-
-        endsAt = Number.isFinite(state.endsAt) ? state.endsAt : null;
-        isRunning = Boolean(state.isRunning);
-
-        if (isRunning && endsAt) {
-            remainingMs = Math.max(0, endsAt - Date.now());
-            if (remainingMs === 0) {
-                isRunning = false;
-                endsAt = null;
+    if (state.modeDurations && typeof state.modeDurations === "object") {
+        Object.keys(modeDurations).forEach((mode) => {
+            const parsed = Number.parseInt(state.modeDurations[mode], 10);
+            if (!Number.isNaN(parsed) && parsed >= 1 && parsed <= 180) {
+                modeDurations[mode] = parsed;
             }
-        } else {
+        });
+    }
+
+    if (Object.prototype.hasOwnProperty.call(modeDurations, state.currentMode)) {
+        currentMode = state.currentMode;
+    }
+
+    durationMs = Number.isFinite(state.durationMs) && state.durationMs > 0
+        ? state.durationMs
+        : getModeDurationMs(currentMode);
+
+    remainingMs = Number.isFinite(state.remainingMs) && state.remainingMs >= 0
+        ? state.remainingMs
+        : durationMs;
+
+    endsAt = Number.isFinite(state.endsAt) ? state.endsAt : null;
+    isRunning = Boolean(state.isRunning);
+
+    if (isRunning && endsAt) {
+        remainingMs = Math.max(0, endsAt - Date.now());
+        if (remainingMs === 0) {
             isRunning = false;
             endsAt = null;
         }
-
-        remainingMs = Math.min(remainingMs, durationMs);
-        return true;
-    } catch (error) {
-        return false;
+    } else {
+        isRunning = false;
+        endsAt = null;
     }
+
+    remainingMs = Math.min(remainingMs, durationMs);
+    return true;
 }
 
 function syncInputsFromDurations() {
@@ -198,16 +208,29 @@ function setQuickTestDuration() {
 }
 
 function loadSoundPreference() {
+    // Async version is used during initialize().
+    return true;
+}
+
+async function loadSoundPreferenceAsync() {
+    if (window.dataStore && typeof window.dataStore.loadTimerSoundPref === "function") {
+        const value = await window.dataStore.loadTimerSoundPref();
+        if (value === null) return true;
+        return Boolean(value);
+    }
     const stored = localStorage.getItem(SOUND_PREF_KEY);
     if (stored === null) {
         return true;
     }
-
     return stored === "true";
 }
 
 function saveSoundPreference() {
-    localStorage.setItem(SOUND_PREF_KEY, `${soundEnabled}`);
+    if (window.dataStore && typeof window.dataStore.saveTimerSoundPref === "function") {
+        void window.dataStore.saveTimerSoundPref(soundEnabled);
+    } else {
+        localStorage.setItem(SOUND_PREF_KEY, `${soundEnabled}`);
+    }
 }
 
 function updateSoundToggleUI() {
@@ -389,8 +412,8 @@ function tick() {
     saveState();
 }
 
-function initialize() {
-    const loaded = loadState();
+async function initialize() {
+    const loaded = await loadState();
     if (!loaded) {
         currentMode = "focus";
         durationMs = getModeDurationMs(currentMode);
@@ -399,7 +422,7 @@ function initialize() {
 
     updateModeUI();
     syncInputsFromDurations();
-    soundEnabled = loadSoundPreference();
+    soundEnabled = await loadSoundPreferenceAsync();
     updateSoundToggleUI();
     render();
 
@@ -463,4 +486,4 @@ window.deskStudyTimerAudio = {
     playCompletionSound
 };
 
-initialize();
+void initialize();
