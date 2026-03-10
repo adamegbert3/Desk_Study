@@ -14,17 +14,35 @@
 <nav class="main-nav">
     <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
     <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="tasks.html">Tasks</a>
-        <a href="timer.html" class="active">Timer</a>
-        <a href="tunes.html">Tunes</a>
+        <a href="index.html" aria-label="Home">
+            <img src="icons/home.svg" alt="" aria-hidden="true"><span class="nav-label">Home</span>
+        </a>
+        <a href="tasks.html" aria-label="Tasks">
+            <img src="icons/checkMark.svg" alt="" aria-hidden="true"><span class="nav-label">Tasks</span>
+        </a>
+        <a href="timer.html" class="active" aria-label="Timer">
+            <img src="icons/timer.svg" alt="" aria-hidden="true"><span class="nav-label">Timer</span>
+        </a>
+        <a href="tunes.html" aria-label="Tunes">
+            <img src="icons/musicNote.svg" alt="" aria-hidden="true"><span class="nav-label">Tunes</span>
+        </a>
     </div>
+    <div class="nav-auth" id="navAuth"></div>
 </nav>
 
-<main class="page-content timer-layout">
+<main class="page-content timer-layout" id="timerLayout">
+    <div class="controls-backdrop" id="controlsBackdrop" hidden></div>
 
     <!-- Left Controls -->
-    <aside class="controls">
+    <aside class="controls" id="timerControls">
+        <button
+            id="settingsCloseBtn"
+            class="settings-close-btn"
+            type="button"
+            aria-label="Close timer settings"
+        >
+            <img src="icons/close.svg" alt="">
+        </button>
         <div class="mode-control">
             <button id="focusBtn" onclick="setMode('focus')">Focus</button>
             <input id="focusMinutes" type="number" min="1" max="180" value="25">
@@ -37,11 +55,26 @@
             <button id="longBtn" onclick="setMode('long')">Long Break</button>
             <input id="longMinutes" type="number" min="1" max="180" value="15">
         </div>
+        <button id="presetClassicBtn" class="preset-btn" onclick="applyPreset('classic')" type="button">Classic</button>
+        <button id="presetDeepWorkBtn" class="preset-btn" onclick="applyPreset('deepWork')" type="button">Deep Work</button>
+        <button id="presetLightStartBtn" class="preset-btn" onclick="applyPreset('lightStart')" type="button">Light Start</button>
+        <button id="quickTest10sBtn" class="preset-btn" onclick="setQuickTestDuration()" type="button">10s Test</button>
+        <button id="timerSoundToggleBtn" type="button">Sound: On</button>
         <button id="timerHelpBtn" type="button">Help</button>
     </aside>
 
     <!-- Timer Display -->
     <section class="timer-card">
+        <button
+            id="settingsToggleBtn"
+            class="settings-toggle-btn"
+            type="button"
+            aria-label="Toggle timer settings"
+            aria-expanded="true"
+            aria-controls="timerControls"
+        >
+            <img src="icons/menu.svg" alt="Menu">
+        </button>
         <div class="timer-ring">
             <svg class="progress-ring" width="260" height="260">
                 <circle
@@ -65,7 +98,7 @@
 
 </main>
 
-<div class="timer-modal" id="timerIntroModal" role="dialog" aria-modal="true" aria-labelledby="timerIntroTitle">
+<div class="timer-modal" id="timerIntroModal" role="dialog" aria-modal="true" aria-labelledby="timerIntroTitle" hidden>
     <div class="timer-modal-backdrop" id="timerIntroBackdrop"></div>
     <section class="timer-modal-content">
         <h2 id="timerIntroTitle">How the Pomodoro Timer Works</h2>
@@ -87,6 +120,11 @@
     Study Desk &copy; 2026
 </footer>
 
+<script src="scripts/data-store.js"></script>
+<script type="module" src="scripts/login.js"></script>
+<script src="scripts/timer-notifier.js"></script>
 <script src="scripts/timer.js"></script>
 </body>
 </html>
+
+

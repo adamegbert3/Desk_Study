@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up - Study Desk</title>
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="timer.html">Timer</a>
+            <a href="tunes.html">Tunes</a>
+        </div>
+        <div class="nav-auth" id="navAuth"></div>
+    </nav>
+
+    <main class="page-content auth-page">
+        <section class="auth-card">
+            <h1 class="auth-title">Sign up</h1>
+            <form class="auth-form" id="signupForm" novalidate>
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" name="email" required autocomplete="email" placeholder="you@example.com">
+
+                <label for="signupName">Name</label>
+                <input type="text" id="signupName" name="name" required autocomplete="name" placeholder="Your name" maxlength="80">
+
+                <label for="signupPassword">Password</label>
+                <div class="auth-password-wrap">
+                    <input type="password" id="signupPassword" name="password" required autocomplete="new-password" placeholder="••••••••">
+                    <button type="button" class="auth-toggle-password" id="signupShowPassword" aria-label="Show password">Show</button>
+                </div>
+
+                <p class="auth-error" id="signupError" aria-live="polite"></p>
+
+                <button type="submit" class="auth-submit-btn">Sign up</button>
+            </form>
+            <p class="auth-switch">
+                Already have an account? <a href="login.html">Log in</a>
+            </p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        Study Desk &copy; 2026
+    </footer>
+    <script src="scripts/data-store.js"></script>
+    <script type="module" src="scripts/login.js"></script>
+    <script type="module" src="scripts/auth-forms.js"></script>
+    <script src="scripts/timer-notifier.js" defer></script>
+</body>
+</html>

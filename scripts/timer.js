@@ -1,4 +1,7 @@
 const STORAGE_KEY = "deskStudyTimerStateV1";
+const SOUND_PREF_KEY = "deskStudyTimerSoundEnabledV1";
+const TIMER_INTRO_SEEN_KEY = "deskStudyTimerIntroSeenV1";
+const QUICK_TEST_DURATION_MS = 10 * 1000;
 
 let timer = null;
 let currentMode = "focus";
@@ -6,6 +9,8 @@ let durationMs = 25 * 60 * 1000;
 let remainingMs = durationMs;
 let endsAt = null;
 let isRunning = false;
+let soundEnabled = true;
+let soundPrimed = false;
 
 const modeDurations = {
     focus: 25,
@@ -37,8 +42,23 @@ const timerIntroModal = document.getElementById("timerIntroModal");
 const timerIntroBackdrop = document.getElementById("timerIntroBackdrop");
 const closeTimerIntroBtn = document.getElementById("closeTimerIntroBtn");
 const timerHelpBtn = document.getElementById("timerHelpBtn");
+const timerSoundToggleBtn = document.getElementById("timerSoundToggleBtn");
+const timerLayout = document.getElementById("timerLayout");
+const timerControls = document.getElementById("timerControls");
+const settingsToggleBtn = document.getElementById("settingsToggleBtn");
+const settingsCloseBtn = document.getElementById("settingsCloseBtn");
+const controlsBackdrop = document.getElementById("controlsBackdrop");
+const mobileSidebarMediaQuery = window.matchMedia("(max-width: 768px)");
+const presets = {
+    classic: { focus: 25, short: 5, long: 15 },
+    deepWork: { focus: 50, short: 10, long: 20 },
+    lightStart: { focus: 15, short: 3, long: 10 }
+};
+const completionSound = new Audio("tunes_files/om.mp3");
 
 circle.style.strokeDasharray = circumference;
+completionSound.preload = "auto";
+completionSound.volume = 0.85;
 
 function getModeDurationMs(mode) {
     return modeDurations[mode] * 60 * 1000;
@@ -74,59 +94,69 @@ function saveState() {
         endsAt,
         isRunning
     };
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    if (window.dataStore && typeof window.dataStore.saveTimerState === "function") {
+        void window.dataStore.saveTimerState(snapshot);
+    } else {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    }
 }
 
-function loadState() {
-    const rawState = localStorage.getItem(STORAGE_KEY);
-    if (!rawState) {
+async function loadState() {
+    let state = null;
+    if (window.dataStore && typeof window.dataStore.loadTimerState === "function") {
+        state = await window.dataStore.loadTimerState();
+    } else {
+        const rawState = localStorage.getItem(STORAGE_KEY);
+        if (rawState) {
+            try {
+                state = JSON.parse(rawState);
+            } catch {
+                state = null;
+            }
+        }
+    }
+
+    if (!state) {
         return false;
     }
 
-    try {
-        const state = JSON.parse(rawState);
-
-        if (state.modeDurations && typeof state.modeDurations === "object") {
-            Object.keys(modeDurations).forEach((mode) => {
-                const parsed = Number.parseInt(state.modeDurations[mode], 10);
-                if (!Number.isNaN(parsed) && parsed >= 1 && parsed <= 180) {
-                    modeDurations[mode] = parsed;
-                }
-            });
-        }
-
-        if (Object.prototype.hasOwnProperty.call(modeDurations, state.currentMode)) {
-            currentMode = state.currentMode;
-        }
-
-        durationMs = Number.isFinite(state.durationMs) && state.durationMs > 0
-            ? state.durationMs
-            : getModeDurationMs(currentMode);
-
-        remainingMs = Number.isFinite(state.remainingMs) && state.remainingMs >= 0
-            ? state.remainingMs
-            : durationMs;
-
-        endsAt = Number.isFinite(state.endsAt) ? state.endsAt : null;
-        isRunning = Boolean(state.isRunning);
-
-        if (isRunning && endsAt) {
-            remainingMs = Math.max(0, endsAt - Date.now());
-            if (remainingMs === 0) {
-                isRunning = false;
-                endsAt = null;
+    if (state.modeDurations && typeof state.modeDurations === "object") {
+        Object.keys(modeDurations).forEach((mode) => {
+            const parsed = Number.parseInt(state.modeDurations[mode], 10);
+            if (!Number.isNaN(parsed) && parsed >= 1 && parsed <= 180) {
+                modeDurations[mode] = parsed;
             }
-        } else {
+        });
+    }
+
+    if (Object.prototype.hasOwnProperty.call(modeDurations, state.currentMode)) {
+        currentMode = state.currentMode;
+    }
+
+    durationMs = Number.isFinite(state.durationMs) && state.durationMs > 0
+        ? state.durationMs
+        : getModeDurationMs(currentMode);
+
+    remainingMs = Number.isFinite(state.remainingMs) && state.remainingMs >= 0
+        ? state.remainingMs
+        : durationMs;
+
+    endsAt = Number.isFinite(state.endsAt) ? state.endsAt : null;
+    isRunning = Boolean(state.isRunning);
+
+    if (isRunning && endsAt) {
+        remainingMs = Math.max(0, endsAt - Date.now());
+        if (remainingMs === 0) {
             isRunning = false;
             endsAt = null;
         }
-
-        remainingMs = Math.min(remainingMs, durationMs);
-        return true;
-    } catch (error) {
-        return false;
+    } else {
+        isRunning = false;
+        endsAt = null;
     }
+
+    remainingMs = Math.min(remainingMs, durationMs);
+    return true;
 }
 
 function syncInputsFromDurations() {
@@ -151,6 +181,112 @@ function setMode(mode) {
     saveState();
 }
 
+function applyPreset(presetName) {
+    const preset = presets[presetName];
+    if (!preset) {
+        return;
+    }
+
+    Object.keys(modeDurations).forEach((mode) => {
+        modeDurations[mode] = preset[mode];
+    });
+
+    syncInputsFromDurations();
+    updateModeUI();
+
+    durationMs = getModeDurationMs(currentMode);
+    remainingMs = durationMs;
+    endsAt = null;
+    isRunning = false;
+    stopTicking();
+
+    render();
+    saveState();
+}
+
+function setQuickTestDuration() {
+    durationMs = QUICK_TEST_DURATION_MS;
+    remainingMs = QUICK_TEST_DURATION_MS;
+    endsAt = null;
+    isRunning = false;
+    stopTicking();
+    render();
+    saveState();
+}
+
+function loadSoundPreference() {
+    // Async version is used during initialize().
+    return true;
+}
+
+async function loadSoundPreferenceAsync() {
+    if (window.dataStore && typeof window.dataStore.loadTimerSoundPref === "function") {
+        const value = await window.dataStore.loadTimerSoundPref();
+        if (value === null) return true;
+        return Boolean(value);
+    }
+    const stored = localStorage.getItem(SOUND_PREF_KEY);
+    if (stored === null) {
+        return true;
+    }
+    return stored === "true";
+}
+
+function saveSoundPreference() {
+    if (window.dataStore && typeof window.dataStore.saveTimerSoundPref === "function") {
+        void window.dataStore.saveTimerSoundPref(soundEnabled);
+    } else {
+        localStorage.setItem(SOUND_PREF_KEY, `${soundEnabled}`);
+    }
+}
+
+function updateSoundToggleUI() {
+    if (!timerSoundToggleBtn) {
+        return;
+    }
+
+    timerSoundToggleBtn.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    updateSoundToggleUI();
+    saveSoundPreference();
+}
+
+function primeCompletionSound() {
+    if (soundPrimed) {
+        return;
+    }
+
+    const playAttempt = completionSound.play();
+    if (playAttempt && typeof playAttempt.then === "function") {
+        playAttempt
+            .then(() => {
+                completionSound.pause();
+                completionSound.currentTime = 0;
+                soundPrimed = true;
+            })
+            .catch(() => {
+                // Ignore autoplay restrictions; we'll try again on completion.
+            });
+    }
+}
+
+function playCompletionSound() {
+    if (!soundEnabled) {
+        return;
+    }
+
+    completionSound.currentTime = 0;
+    const playAttempt = completionSound.play();
+    if (playAttempt && typeof playAttempt.catch === "function") {
+        playAttempt.catch(() => {
+            // Best effort only; notifications/alerts still communicate completion.
+        });
+    }
+}
+
 function startTimer() {
     if (isRunning) {
         return;
@@ -160,6 +296,7 @@ function startTimer() {
         remainingMs = durationMs;
     }
 
+    primeCompletionSound();
     endsAt = Date.now() + remainingMs;
     isRunning = true;
     startTicking();
@@ -253,13 +390,28 @@ function tick() {
     remainingMs = getRemainingMs();
 
     if (remainingMs <= 0) {
+        const completedEndsAt = endsAt || Date.now();
         remainingMs = 0;
         endsAt = null;
         isRunning = false;
         stopTicking();
         render();
         saveState();
-        alert("Session complete!");
+        let completionHandled = false;
+        if (window.deskStudyTimerNotifier && typeof window.deskStudyTimerNotifier.handleCompletion === "function") {
+            completionHandled = window.deskStudyTimerNotifier.handleCompletion({
+                mode: currentMode,
+                endsAt: completedEndsAt,
+                fallbackToAlert: true
+            });
+        } else {
+            alert("Session complete!");
+            completionHandled = true;
+        }
+
+        if (completionHandled) {
+            playCompletionSound();
+        }
         return;
     }
 
@@ -267,8 +419,8 @@ function tick() {
     saveState();
 }
 
-function initialize() {
-    const loaded = loadState();
+async function initialize() {
+    const loaded = await loadState();
     if (!loaded) {
         currentMode = "focus";
         durationMs = getModeDurationMs(currentMode);
@@ -277,13 +429,18 @@ function initialize() {
 
     updateModeUI();
     syncInputsFromDurations();
+    soundEnabled = await loadSoundPreferenceAsync();
+    updateSoundToggleUI();
     render();
 
     if (isRunning) {
         startTicking();
     }
 
-    openTimerIntro();
+    if (localStorage.getItem(TIMER_INTRO_SEEN_KEY) !== "true") {
+        openTimerIntro();
+        localStorage.setItem(TIMER_INTRO_SEEN_KEY, "true");
+    }
 }
 
 function openTimerIntro() {
@@ -302,6 +459,63 @@ function closeTimerIntro() {
     timerIntroModal.hidden = true;
 }
 
+function isMobileSidebarLayout() {
+    return mobileSidebarMediaQuery.matches;
+}
+
+function updateSidebarButtonUI(isOpen) {
+    if (!settingsToggleBtn) {
+        return;
+    }
+
+    settingsToggleBtn.setAttribute("aria-expanded", `${isOpen}`);
+}
+
+function syncSidebarBackdrop(isOpen) {
+    if (!controlsBackdrop) {
+        return;
+    }
+
+    controlsBackdrop.hidden = !(isOpen && isMobileSidebarLayout());
+}
+
+function isSidebarOpen() {
+    if (!timerLayout) {
+        return false;
+    }
+
+    if (isMobileSidebarLayout()) {
+        return timerLayout.classList.contains("sidebar-open");
+    }
+
+    return !timerLayout.classList.contains("sidebar-collapsed");
+}
+
+function setSidebarOpenState(isOpen) {
+    if (!timerLayout) {
+        return;
+    }
+
+    if (isMobileSidebarLayout()) {
+        timerLayout.classList.toggle("sidebar-open", isOpen);
+        timerLayout.classList.remove("sidebar-collapsed");
+    } else {
+        timerLayout.classList.toggle("sidebar-collapsed", !isOpen);
+        timerLayout.classList.remove("sidebar-open");
+    }
+
+    updateSidebarButtonUI(isOpen);
+    syncSidebarBackdrop(isOpen);
+}
+
+function toggleSidebar() {
+    setSidebarOpenState(!isSidebarOpen());
+}
+
+function handleViewportSidebarState() {
+    setSidebarOpenState(!isMobileSidebarLayout());
+}
+
 window.addEventListener("beforeunload", saveState);
 document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
@@ -316,7 +530,24 @@ document.addEventListener("visibilitychange", () => {
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && timerIntroModal && !timerIntroModal.hidden) {
         closeTimerIntro();
+        return;
     }
+
+    if (event.key === "Escape" && isSidebarOpen()) {
+        setSidebarOpenState(false);
+    }
+});
+
+document.addEventListener("click", (event) => {
+    if (!isMobileSidebarLayout() || !timerLayout || !timerControls || !settingsToggleBtn || !isSidebarOpen()) {
+        return;
+    }
+
+    if (timerControls.contains(event.target) || settingsToggleBtn.contains(event.target)) {
+        return;
+    }
+
+    setSidebarOpenState(false);
 });
 
 if (closeTimerIntroBtn) {
@@ -331,4 +562,30 @@ if (timerHelpBtn) {
     timerHelpBtn.addEventListener("click", openTimerIntro);
 }
 
+if (timerSoundToggleBtn) {
+    timerSoundToggleBtn.addEventListener("click", toggleSound);
+}
+
+if (settingsToggleBtn) {
+    settingsToggleBtn.addEventListener("click", toggleSidebar);
+}
+
+if (settingsCloseBtn) {
+    settingsCloseBtn.addEventListener("click", () => setSidebarOpenState(false));
+}
+
+if (controlsBackdrop) {
+    controlsBackdrop.addEventListener("click", () => setSidebarOpenState(false));
+}
+
+if (mobileSidebarMediaQuery && typeof mobileSidebarMediaQuery.addEventListener === "function") {
+    mobileSidebarMediaQuery.addEventListener("change", handleViewportSidebarState);
+} else if (mobileSidebarMediaQuery && typeof mobileSidebarMediaQuery.addListener === "function") {
+    mobileSidebarMediaQuery.addListener(handleViewportSidebarState);
+}
+
+window.deskStudyTimerAudio = {
+    playCompletionSound
+};
 initialize();
+handleViewportSidebarState();
