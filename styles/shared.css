@@ -242,8 +242,8 @@ body {
 
     .nav-links {
         width: 100%;
-        justify-content: space-between;
-        gap: 0;
+        justify-content: space-around;
+        gap: 18px;
     }
 
     .nav-links a {
