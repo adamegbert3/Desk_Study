@@ -24,19 +24,33 @@
         <div class="app-container">
             <!-- Left: music content -->
             <aside>
-                <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
-                    rain
-                </button>
-                <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
-                    forest
-                </button>
-                <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
-                    wind
-                </button>
-                <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
-                    om
-                </button>
-            </aside>
+    <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
+        rain
+    </button>
+    <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
+        forest
+    </button>
+    <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
+        wind
+    </button>
+    <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
+        om
+    </button>
+
+    <select class="sound-btn dropdown-select" onchange="if(this.value) loadTrack(this.options[this.selectedIndex].text, this.value, this)">
+        <option value="" disabled selected>LDS Hymns...</option>
+        <option value="tunes_files/lds_piano/old/1 - The Morning Breaks.mp3">1 - The Morning Breaks</option>
+        <option value="tunes_files/lds_piano/old/2 - The Spirit of God.mp3">2 - The Spirit of God</option>
+        <option value="tunes_files/lds_piano/old/3 - Now Let Us Rejoice.mp3">3 - Now Let Us Rejoice</option>
+        </select>
+
+    <button class="sound-btn" onclick="toggleSpotify()">
+        Spotify Player
+    </button>
+    <div id="spotify-container" style="display: none; margin-top: 15px;">
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/1GRl6sRyLg9ToOohIE2wW5?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+</aside>
 
             <!-- Right: Now playing + play button -->
             <section class="tunes-right">
@@ -44,6 +58,7 @@
                 <main>
                     <div class="player-card">
                         <div class="player-controls">
+                            
                             <!-- <button class="control-btn">≡</button> 
                             
                             <button class="control-btn">⏮</button> -->
@@ -56,12 +71,16 @@
                             
                             <button class="control-btn">♥</button> -->
                         </div>
+                        
                     </div>
+                    
                     
                     <audio id="audio-player" loop></audio>
                 </main>
+                
             </section>
         </div>
+        
     </div>
     <div class="tunes-modal" id="tunesIntroModal" role="dialog" aria-modal="true" aria-labelledby="tunesIntroTitle">
     <div class="tunes-modal-backdrop" id="tunesIntroBackdrop"></div>

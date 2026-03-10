@@ -68,6 +68,16 @@ if (tunesIntroBackdrop) {
 if (tunesHelpBtn) {
     tunesHelpBtn.addEventListener("click", openTunesIntro);
 }
+function toggleSpotify() {
+    const spotifyContainer = document.getElementById('spotify-container');
+    
+    // Check if the container is hidden, and toggle it
+    if (spotifyContainer.style.display === 'none') {
+        spotifyContainer.style.display = 'block';
+    } else {
+        spotifyContainer.style.display = 'none';
+    }
+}
 
 // Show on page load
 openTunesIntro();
