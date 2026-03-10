@@ -18,15 +18,11 @@ body {
 .main-nav {
     display: flex;
     align-items: center;
-    position: relative;
+    justify-content: space-between;
     background-color: var(--primary-color);
     padding: 10px 20px;
     border-radius: 10px;
     font-family: system-ui, sans-serif;
-}
-
-.main-nav .logo {
-    margin-right: auto;
 }
 
 .main-nav .logo img {
@@ -36,19 +32,29 @@ body {
 .nav-links {
     display: flex;
     gap: 10px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none;
     color: var(--primary-color);
     padding: 6px 16px;
     border-radius: 8px;
-    font-size: 14px;
     background-color: var(--secondary-color);
     transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.nav-links a img {
+    display: none;
+    width: 22px;
+    height: 22px;
+}
+
+.nav-links .nav-label {
+    display: inline;
+    font-size: 14px;
 }
 
 .nav-links a:hover {
@@ -58,8 +64,8 @@ body {
 
 .nav-links a.active {
     background-color: var(--accent-soft);
-    color: var(--surface-color);
-    font-weight: 600;
+    outline: 2px solid var(--surface-color);
+    outline-offset: 0;
 }
 
 /* ===== Nav auth (Log in / Sign up / Log out) ===== */
@@ -212,4 +218,49 @@ body {
     font-size: 0.875rem;
     text-align: center;
     border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: calc(88px + env(safe-area-inset-bottom));
+    }
+
+    .main-nav {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        z-index: 1000;
+        border-radius: 14px;
+        padding: 10px 14px;
+        justify-content: center;
+    }
+
+    .main-nav .logo {
+        display: none;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    .nav-links a {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+    }
+
+    .nav-links a img {
+        display: block;
+    }
+
+    .nav-links .nav-label {
+        display: none;
+    }
+
+    .site-footer {
+        display: none;
+    }
 }

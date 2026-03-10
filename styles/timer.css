@@ -4,12 +4,14 @@
     display: grid;
     grid-template-columns: minmax(200px, 280px) 1fr;
     gap: 24px;
-    padding: 24px;
+    padding: 84px 24px 24px;
     align-items: stretch;
     min-height: 73vh;
+    position: relative;
 }
 
 .controls {
+    position: relative;
     background-color: var(--surface-color);
     border-radius: 14px;
     padding: 20px;
@@ -17,7 +19,69 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
+    transition: opacity 0.25s ease;
 } 
+
+.settings-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.settings-close-btn img {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.settings-toggle-btn {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--secondary-color);
+    cursor: pointer;
+    z-index: 2;
+}
+
+.settings-toggle-btn img {
+    width: 22px;
+    height: 22px;
+    display: block;
+}
+
+.controls-backdrop {
+    display: none;
+}
+
+.timer-layout.sidebar-collapsed {
+    grid-template-columns: 0 1fr;
+}
+
+.timer-layout.sidebar-collapsed .controls {
+    padding: 0;
+    gap: 0;
+    border: 0;
+    box-shadow: none;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
 
 .controls button {
     background-color: var(--secondary-color);
@@ -41,6 +105,7 @@
 }
 
 .timer-card {
+    position: relative;
     background-color: var(--surface-color);
     border-radius: 14px;
     padding: 24px;
@@ -178,4 +243,50 @@
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .timer-layout {
+        display: block;
+        min-height: 0;
+        padding: 76px 14px 14px;
+    }
+
+    .timer-card {
+        min-height: calc(100vh - 220px);
+    }
+
+    .controls {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: calc(96px + env(safe-area-inset-bottom));
+        z-index: 40;
+        overflow-y: auto;
+        transform: translateY(calc(-100% - 18px));
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .settings-close-btn {
+        display: inline-flex;
+    }
+
+    .controls-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 35;
+    }
+
+    .timer-layout.sidebar-open .controls {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .timer-layout.sidebar-open .controls-backdrop {
+        display: block;
+    }
 }

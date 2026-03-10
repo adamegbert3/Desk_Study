@@ -14,10 +14,18 @@
     <nav class="main-nav">
         <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="tasks.html" class="active">Tasks</a>
-            <a href="timer.html">Timer</a>
-            <a href="tunes.html">Tunes</a>
+            <a href="index.html" aria-label="Home">
+                <img src="icons/home.svg" alt="" aria-hidden="true"><span class="nav-label">Home</span>
+            </a>
+            <a href="tasks.html" class="active" aria-label="Tasks">
+                <img src="icons/checkMark.svg" alt="" aria-hidden="true"><span class="nav-label">Tasks</span>
+            </a>
+            <a href="timer.html" aria-label="Timer">
+                <img src="icons/timer.svg" alt="" aria-hidden="true"><span class="nav-label">Timer</span>
+            </a>
+            <a href="tunes.html" aria-label="Tunes">
+                <img src="icons/musicNote.svg" alt="" aria-hidden="true"><span class="nav-label">Tunes</span>
+            </a>
         </div>
         <div class="nav-auth" id="navAuth"></div>
     </nav>
@@ -26,20 +34,37 @@
         <div class="tasks-page">
             <!-- Left panel: Due Today -->
             <aside class="tasks-due-today">
-                <h2 class="due-today-title">Due Today</h2>
-                <ul class="due-today-list" aria-label="Tasks due today">
-                    <!-- Populated by JS -->
-                </ul>
-                <p class="due-today-more" hidden></p>
+                <div class="tasks-panel-header">
+                    <h2 class="due-today-title">Due Today</h2>
+                    <button type="button" class="panel-toggle-btn" id="toggleDueTodayBtn" aria-label="Collapse due today">
+                        <img id="dueTodayToggleIcon" src="icons/collapse content.svg" alt="">
+                    </button>
+                </div>
+                <div class="tasks-panel-body" id="dueTodayPanelBody">
+                    <ul class="due-today-list" aria-label="Tasks due today">
+                        <!-- Populated by JS -->
+                    </ul>
+                    <p class="due-today-more" hidden></p>
+                </div>
             </aside>
 
             <!-- Right panel: Add task + groups -->
             <main class="tasks-main">
-                <div class="add-group-wrap">
-                    <button type="button" class="add-group-btn" id="addGroupBtn" aria-haspopup="dialog" aria-expanded="false">Add Group +</button>
+                <div class="tasks-panel-header">
+                    <h2 class="tasks-main-title">Groups</h2>
+                    <div class="panel-controls">
+                        <button type="button" class="panel-toggle-btn" id="toggleGroupsBtn" aria-label="Collapse all groups">
+                            <img id="groupsToggleIcon" src="icons/collapse content.svg" alt="">
+                        </button>
+                    </div>
                 </div>
-                <div class="task-groups" id="taskGroups">
-                    <!-- Group cards populated by JS -->
+                <div class="tasks-panel-body" id="groupsPanelBody">
+                    <div class="add-group-wrap">
+                        <button type="button" class="add-group-btn" id="addGroupBtn" aria-haspopup="dialog" aria-expanded="false">Add Group +</button>
+                    </div>
+                    <div class="task-groups" id="taskGroups">
+                        <!-- Group cards populated by JS -->
+                    </div>
                 </div>
             </main>
         </div>
@@ -72,3 +97,5 @@
 </body>
 
 </html>
+
+

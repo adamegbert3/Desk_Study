@@ -20,6 +20,107 @@ import {
     renderTasksPage
 } from './render.js';
 
+const COLLAPSE_ICON_SRC = 'icons/collapse content.svg';
+const EXPAND_ICON_SRC = 'icons/expand_content.svg';
+const collapsedGroupIds = new Set();
+
+function setDueTodayCollapsed(isCollapsed) {
+    if (!taskPageElements.dueTodayPanel) return;
+
+    taskPageElements.dueTodayPanel.classList.toggle('is-collapsed', isCollapsed);
+    if (taskPageElements.toggleDueTodayButton) {
+        taskPageElements.toggleDueTodayButton.setAttribute(
+            'aria-label',
+            isCollapsed ? 'Expand due today' : 'Collapse due today'
+        );
+    }
+    if (taskPageElements.dueTodayToggleIcon) {
+        taskPageElements.dueTodayToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
+    }
+}
+
+function setGroupsCollapsed(isCollapsed) {
+    if (!taskPageElements.groupsPanel || !taskPageElements.groupCardsContainer) return;
+
+    taskPageElements.groupsPanel.classList.toggle('is-collapsed', isCollapsed);
+
+    const allGroupCards = taskPageElements.groupCardsContainer.querySelectorAll('.task-group');
+    allGroupCards.forEach(function (groupCardElement) {
+        setSingleGroupCollapsed(groupCardElement, isCollapsed);
+    });
+
+    if (taskPageElements.toggleGroupsButton) {
+        taskPageElements.toggleGroupsButton.setAttribute(
+            'aria-label',
+            isCollapsed ? 'Expand all groups' : 'Collapse all groups'
+        );
+    }
+    if (taskPageElements.groupsToggleIcon) {
+        taskPageElements.groupsToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
+    }
+}
+
+function setSingleGroupCollapsed(groupCardElement, isCollapsed) {
+    if (!groupCardElement) return;
+
+    const groupId = groupCardElement.getAttribute('data-group-id');
+    if (!groupId) return;
+
+    groupCardElement.classList.toggle('is-collapsed', isCollapsed);
+    if (isCollapsed) {
+        collapsedGroupIds.add(groupId);
+    } else {
+        collapsedGroupIds.delete(groupId);
+    }
+
+    const groupToggleButton = groupCardElement.querySelector('[data-action="toggle-group-collapse"]');
+    if (groupToggleButton) {
+        groupToggleButton.setAttribute('aria-label', isCollapsed ? 'Expand group' : 'Collapse group');
+    }
+
+    const groupToggleIcon = groupCardElement.querySelector('[data-group-toggle-icon-for="' + groupId + '"]');
+    if (groupToggleIcon) {
+        groupToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
+    }
+}
+
+function updateAllGroupsToggleUI() {
+    const allGroupCards = taskPageElements.groupCardsContainer
+        ? taskPageElements.groupCardsContainer.querySelectorAll('.task-group')
+        : [];
+
+    const hasGroups = allGroupCards.length > 0;
+    const allCollapsed = hasGroups && Array.from(allGroupCards).every(function (groupCardElement) {
+        return groupCardElement.classList.contains('is-collapsed');
+    });
+
+    if (taskPageElements.groupsPanel) {
+        taskPageElements.groupsPanel.classList.toggle('is-collapsed', allCollapsed);
+    }
+
+    if (taskPageElements.toggleGroupsButton) {
+        taskPageElements.toggleGroupsButton.setAttribute(
+            'aria-label',
+            allCollapsed ? 'Expand all groups' : 'Collapse all groups'
+        );
+    }
+    if (taskPageElements.groupsToggleIcon) {
+        taskPageElements.groupsToggleIcon.src = allCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
+    }
+}
+
+function syncGroupCollapseStateAfterRender() {
+    if (!taskPageElements.groupCardsContainer) return;
+
+    const allGroupCards = taskPageElements.groupCardsContainer.querySelectorAll('.task-group');
+    allGroupCards.forEach(function (groupCardElement) {
+        const groupId = groupCardElement.getAttribute('data-group-id');
+        setSingleGroupCollapsed(groupCardElement, Boolean(groupId && collapsedGroupIds.has(groupId)));
+    });
+
+    updateAllGroupsToggleUI();
+}
+
 function handleEntityFormSubmit(event) {
     event.preventDefault();
     if (!tasksModalContext.activeEntityType) return;
@@ -37,6 +138,7 @@ function handleEntityFormSubmit(event) {
 
         closeTasksModal();
         renderTasksPage();
+        syncGroupCollapseStateAfterRender();
         return;
     }
 
@@ -57,6 +159,7 @@ function handleEntityFormSubmit(event) {
 
         closeTasksModal();
         renderTasksPage();
+        syncGroupCollapseStateAfterRender();
         return;
     }
 
@@ -80,6 +183,7 @@ function handleEntityFormSubmit(event) {
 
         closeTasksModal();
         renderTasksPage();
+        syncGroupCollapseStateAfterRender();
     }
 }
 
@@ -98,6 +202,20 @@ function setupTaskPageEventListeners() {
 
     if (taskPageElements.entityForm) {
         taskPageElements.entityForm.addEventListener('submit', handleEntityFormSubmit);
+    }
+
+    if (taskPageElements.toggleDueTodayButton) {
+        taskPageElements.toggleDueTodayButton.addEventListener('click', function () {
+            if (!taskPageElements.dueTodayPanel) return;
+            setDueTodayCollapsed(!taskPageElements.dueTodayPanel.classList.contains('is-collapsed'));
+        });
+    }
+
+    if (taskPageElements.toggleGroupsButton) {
+        taskPageElements.toggleGroupsButton.addEventListener('click', function () {
+            if (!taskPageElements.groupsPanel) return;
+            setGroupsCollapsed(!taskPageElements.groupsPanel.classList.contains('is-collapsed'));
+        });
     }
 
     if (taskPageElements.groupCardsContainer) {
@@ -153,6 +271,21 @@ function setupTaskPageEventListeners() {
                 if (!subgroupTasksContainerElement) return;
 
                 subgroupTasksContainerElement.hidden = !subgroupTasksContainerElement.hidden;
+                return;
+            }
+
+            if (actionType === 'toggle-group-collapse') {
+                const groupId = actionElement.getAttribute('data-group-id');
+                if (!groupId) return;
+
+                const groupCardElement = taskPageElements.groupCardsContainer.querySelector(
+                    '[data-group-id="' + groupId + '"]'
+                );
+                if (!groupCardElement) return;
+
+                const isCurrentlyCollapsed = groupCardElement.classList.contains('is-collapsed');
+                setSingleGroupCollapsed(groupCardElement, !isCurrentlyCollapsed);
+                updateAllGroupsToggleUI();
             }
         });
     }
@@ -171,6 +304,9 @@ function initializeTasksPage() {
     cachetaskPageElements();
     setupTaskPageEventListeners();
     renderTasksPage();
+    syncGroupCollapseStateAfterRender();
+    setDueTodayCollapsed(false);
+    setGroupsCollapsed(false);
 }
 
 if (document.readyState === 'loading') {

@@ -12,10 +12,18 @@
     <nav class="main-nav">
         <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
         <div class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="tasks.html">Tasks</a>
-            <a href="timer.html">Timer</a>
-            <a href="tunes.html">Tunes</a>
+            <a href="index.html" class="active" aria-label="Home">
+                <img src="icons/home.svg" alt="" aria-hidden="true"><span class="nav-label">Home</span>
+            </a>
+            <a href="tasks.html" aria-label="Tasks">
+                <img src="icons/checkMark.svg" alt="" aria-hidden="true"><span class="nav-label">Tasks</span>
+            </a>
+            <a href="timer.html" aria-label="Timer">
+                <img src="icons/timer.svg" alt="" aria-hidden="true"><span class="nav-label">Timer</span>
+            </a>
+            <a href="tunes.html" aria-label="Tunes">
+                <img src="icons/musicNote.svg" alt="" aria-hidden="true"><span class="nav-label">Tunes</span>
+            </a>
         </div>
         <div class="nav-auth" id="navAuth"></div>
     </nav>
@@ -43,3 +51,5 @@
     <script src="scripts/timer-notifier.js" defer></script>
 </body>
 </html>
+
+
