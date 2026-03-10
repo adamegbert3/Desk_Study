@@ -1,10 +1,6 @@
 /* ===== Tasks page only ===== */
 
-:root {
-    --tasks-panel-max-h: clamp(420px, 74vh, 780px);
-    --task-group-max-h: clamp(260px, 42vh, 520px);
-    --subgroup-tasks-max-h: clamp(120px, 24vh, 240px);
-}
+
 
 .tasks-page {
     display: grid;
@@ -12,7 +8,8 @@
     gap: 24px;
     padding: 24px;
     align-items: stretch;
-    min-height: calc(100dvh - 120px);
+    min-height: 73vh;
+    margin-bottom: 24px;
 }
 
 /* ----- Left panel: Due Today ----- */
@@ -70,7 +67,7 @@
 .tasks-main {
     background-color: var(--surface-color);
     border-radius: 14px;
-    padding: 24px;
+    padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     min-height: 0;
     max-height: 100%;

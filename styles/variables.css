@@ -12,5 +12,7 @@
   --background-color: #D7FFCC;   /* App background (dark) */
   --surface-color: #1E506B;      /* Panels / containers */
   --text-color: #D8F2FF;  
-
+  --tasks-panel-max-h: clamp(420px, 74vh, 780px);
+  --task-group-max-h: clamp(260px, 42vh, 520px);
+  --subgroup-tasks-max-h: clamp(120px, 24vh, 240px);
 }
