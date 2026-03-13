@@ -14,6 +14,9 @@ let soundPrimed = false;
 let intervalActive = false;
 let intervalTotalCycles = 4;
 let intervalRemainingCycles = 0;
+let awaitingStop = false;
+let pendingTransition = null;
+let alarmPlaying = false;
 
 const modeDurations = {
     focus: 25,
@@ -101,7 +104,9 @@ function saveState() {
         isRunning,
         intervalActive,
         intervalTotalCycles,
-        intervalRemainingCycles
+        intervalRemainingCycles,
+        awaitingStop,
+        pendingTransition
     };
     if (window.dataStore && typeof window.dataStore.saveTimerState === "function") {
         void window.dataStore.saveTimerState(snapshot);
@@ -152,12 +157,15 @@ async function loadState() {
 
     endsAt = Number.isFinite(state.endsAt) ? state.endsAt : null;
     isRunning = Boolean(state.isRunning);
+    awaitingStop = Boolean(state.awaitingStop);
+    pendingTransition = state && typeof state.pendingTransition === "object" ? state.pendingTransition : null;
 
     if (isRunning && endsAt) {
         remainingMs = Math.max(0, endsAt - Date.now());
         if (remainingMs === 0) {
             isRunning = false;
             endsAt = null;
+            awaitingStop = true;
         }
     } else {
         isRunning = false;
@@ -355,10 +363,27 @@ function playCompletionSound() {
     }
 }
 
+function startAlarm() {
+    if (alarmPlaying) return;
+    alarmPlaying = true;
+    completionSound.loop = true;
+    playCompletionSound();
+}
+
+function stopAlarm() {
+    alarmPlaying = false;
+    completionSound.loop = false;
+    completionSound.pause();
+    completionSound.currentTime = 0;
+}
+
 function startTimer() {
     if (isRunning) {
         return;
     }
+
+    awaitingStop = false;
+    pendingTransition = null;
 
     if (remainingMs <= 0) {
         remainingMs = durationMs;
@@ -381,7 +406,37 @@ function pauseTimer() {
     saveState();
 }
 
+function stopAfterCompletion() {
+    stopAlarm();
+
+    awaitingStop = false;
+    const transition = pendingTransition;
+    pendingTransition = null;
+
+    if (transition && transition.nextMode) {
+        if (transition.stopIntervalOnStart) {
+            stopInterval();
+        }
+
+        setMode(transition.nextMode);
+        startTimer();
+        return;
+    }
+
+    remainingMs = durationMs;
+    endsAt = null;
+    isRunning = false;
+    stopTicking();
+    render();
+    saveState();
+}
+
 function toggleTimer() {
+    if (awaitingStop) {
+        stopAfterCompletion();
+        return;
+    }
+
     if (isRunning) {
         pauseTimer();
     } else {
@@ -443,8 +498,16 @@ function updateRingFromMs() {
 }
 
 function updateToggleButton() {
+    if (awaitingStop) {
+        timerToggleBtn.textContent = "Stop";
+        timerToggleBtn.classList.remove("is-running");
+        timerToggleBtn.classList.add("is-expired");
+        return;
+    }
+
     timerToggleBtn.textContent = isRunning ? "Pause" : "Start";
     timerToggleBtn.classList.toggle("is-running", isRunning);
+    timerToggleBtn.classList.remove("is-expired");
 }
 
 function updateIntervalStatusUI() {
@@ -479,8 +542,8 @@ function tick() {
         endsAt = null;
         isRunning = false;
         stopTicking();
-        render();
-        saveState();
+        awaitingStop = true;
+
         let completionHandled = false;
         if (window.deskStudyTimerNotifier && typeof window.deskStudyTimerNotifier.handleCompletion === "function") {
             completionHandled = window.deskStudyTimerNotifier.handleCompletion({
@@ -494,37 +557,27 @@ function tick() {
         }
 
         if (completionHandled) {
-            playCompletionSound();
+            startAlarm();
         }
 
         if (intervalActive) {
             if (currentMode === "focus") {
-                setMode("short");
-                startTimer();
-                return;
-            }
-
-            if (currentMode === "short") {
+                pendingTransition = { nextMode: "short", stopIntervalOnStart: false };
+            } else if (currentMode === "short") {
                 intervalRemainingCycles = Math.max(0, intervalRemainingCycles - 1);
 
                 if (intervalRemainingCycles > 0) {
-                    setMode("focus");
-                    startTimer();
-                    return;
+                    pendingTransition = { nextMode: "focus", stopIntervalOnStart: false };
+                } else {
+                    pendingTransition = { nextMode: "long", stopIntervalOnStart: true };
                 }
-
-                setMode("long");
-                startTimer();
+            } else if (currentMode === "long") {
                 stopInterval();
-                return;
-            }
-
-            if (currentMode === "long") {
-                stopInterval();
-                return;
             }
         }
 
+        render();
+        saveState();
         return;
     }
 
