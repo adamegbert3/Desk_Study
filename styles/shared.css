@@ -260,6 +260,11 @@ body {
         display: none;
     }
 
+    /* Mobile navbar: hide Sign up action to keep the nav compact */
+    .nav-auth a[href*="sign-up.html"] {
+        display: none;
+    }
+
     .site-footer {
         display: none;
     }
