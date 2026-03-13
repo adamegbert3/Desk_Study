@@ -33,25 +33,11 @@
         <div class="app-container">
             <!-- Left: music content -->
             <aside>
-    <button class="sound-btn active" onclick="loadTrack('Rain', 'tunes_files/rain.mp3', this)">
-        rain
-    </button>
-    <button class="sound-btn" onclick="loadTrack('Forest', 'tunes_files/forest.mp3', this)">
-        forest
-    </button>
-    <button class="sound-btn" onclick="loadTrack('Wind', 'tunes_files/wind.mp3', this)">
-        wind
-    </button>
-    <button class="sound-btn" onclick="loadTrack('Om', 'tunes_files/om.mp3', this)">
-        om
-    </button>
+    <div id="quickTracks"></div>
 
-    <select class="sound-btn dropdown-select" onchange="if(this.value) loadTrack(this.options[this.selectedIndex].text, this.value, this)">
-        <option value="" disabled selected>LDS Hymns...</option>
-        <option value="tunes_files/lds_piano/old/1 - The Morning Breaks.mp3">1 - The Morning Breaks</option>
-        <option value="tunes_files/lds_piano/old/2 - The Spirit of God.mp3">2 - The Spirit of God</option>
-        <option value="tunes_files/lds_piano/old/3 - Now Let Us Rejoice.mp3">3 - Now Let Us Rejoice</option>
-        </select>
+<select id="hymnSelect" class="sound-btn dropdown-select">
+  <option value="" selected>LDS Hymns...</option>
+</select>
 
     <button class="sound-btn" onclick="toggleSpotify()">
         Spotify Player
@@ -75,6 +61,8 @@
                             <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
                                 ▶
                             </button>
+
+                            <p class="tunes-header"> <span class="now-playing-wave" id="nowPlayingWave" aria-hidden="true"> <span></span><span></span><span></span> </span> </p>
                             
                             <!-- <button class="control-btn">⏭</button>
                             
@@ -91,7 +79,7 @@
         </div>
         
     </div>
-    <div class="tunes-modal" id="tunesIntroModal" role="dialog" aria-modal="true" aria-labelledby="tunesIntroTitle">
+    <!-- <div class="tunes-modal" id="tunesIntroModal" role="dialog" aria-modal="true" aria-labelledby="tunesIntroTitle">
     <div class="tunes-modal-backdrop" id="tunesIntroBackdrop"></div>
     <section class="tunes-modal-content">
         <h2 id="tunesIntroTitle">How the Tunes page works!</h2>
@@ -106,7 +94,7 @@
         </ul>
         <button id="closeTunesIntroBtn" class="tunes-modal-close-btn" type="button">Got it</button>
     </section>
-</div>
+</div> -->
 
     <footer class="site-footer">
         Study Desk &copy; 2026
