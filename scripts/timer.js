@@ -11,6 +11,9 @@ let endsAt = null;
 let isRunning = false;
 let soundEnabled = true;
 let soundPrimed = false;
+let intervalActive = false;
+let intervalTotalCycles = 4;
+let intervalRemainingCycles = 0;
 
 const modeDurations = {
     focus: 25,
@@ -43,6 +46,9 @@ const timerIntroBackdrop = document.getElementById("timerIntroBackdrop");
 const closeTimerIntroBtn = document.getElementById("closeTimerIntroBtn");
 const timerHelpBtn = document.getElementById("timerHelpBtn");
 const timerSoundToggleBtn = document.getElementById("timerSoundToggleBtn");
+const intervalBtn = document.getElementById("intervalBtn");
+const intervalCyclesInput = document.getElementById("intervalCycles");
+const intervalStatus = document.getElementById("intervalStatus");
 const timerLayout = document.getElementById("timerLayout");
 const timerControls = document.getElementById("timerControls");
 const settingsToggleBtn = document.getElementById("settingsToggleBtn");
@@ -92,7 +98,10 @@ function saveState() {
         durationMs,
         remainingMs: getRemainingMs(),
         endsAt,
-        isRunning
+        isRunning,
+        intervalActive,
+        intervalTotalCycles,
+        intervalRemainingCycles
     };
     if (window.dataStore && typeof window.dataStore.saveTimerState === "function") {
         void window.dataStore.saveTimerState(snapshot);
@@ -156,6 +165,25 @@ async function loadState() {
     }
 
     remainingMs = Math.min(remainingMs, durationMs);
+
+    if (typeof state.intervalActive === "boolean") {
+        intervalActive = state.intervalActive;
+    }
+
+    if (Number.isFinite(state.intervalTotalCycles) && state.intervalTotalCycles >= 1) {
+        intervalTotalCycles = Math.min(Math.max(Number.parseInt(state.intervalTotalCycles, 10), 1), 12);
+    }
+
+    if (Number.isFinite(state.intervalRemainingCycles) && state.intervalRemainingCycles >= 0) {
+        intervalRemainingCycles = Math.min(Math.max(Number.parseInt(state.intervalRemainingCycles, 10), 0), intervalTotalCycles);
+    }
+
+    if (intervalActive && intervalBtn) {
+        intervalBtn.textContent = "Stop Interval";
+    } else if (intervalBtn) {
+        intervalBtn.textContent = "Start Interval";
+    }
+
     return true;
 }
 
@@ -163,6 +191,12 @@ function syncInputsFromDurations() {
     Object.keys(modeInputs).forEach((mode) => {
         modeInputs[mode].value = modeDurations[mode];
     });
+}
+
+function syncIntervalInputs() {
+    if (intervalCyclesInput) {
+        intervalCyclesInput.value = String(intervalTotalCycles);
+    }
 }
 
 function setMode(mode) {
@@ -179,6 +213,40 @@ function setMode(mode) {
     stopTicking();
     render();
     saveState();
+}
+
+function stopInterval() {
+    intervalActive = false;
+    intervalRemainingCycles = 0;
+    if (intervalBtn) {
+        intervalBtn.textContent = "Start Interval";
+    }
+}
+
+function startInterval() {
+    let raw = Number.parseInt(intervalCyclesInput?.value, 10);
+    if (Number.isNaN(raw) || raw < 1) {
+        raw = 4;
+    }
+    intervalTotalCycles = Math.min(Math.max(raw, 1), 12);
+    intervalRemainingCycles = intervalTotalCycles;
+    intervalActive = true;
+
+    if (intervalBtn) {
+        intervalBtn.textContent = "Stop Interval";
+    }
+
+    setMode("focus");
+    startTimer();
+}
+
+function toggleInterval() {
+    if (!intervalActive) {
+        startInterval();
+    } else {
+        stopInterval();
+        pauseTimer();
+    }
 }
 
 function applyPreset(presetName) {
@@ -379,11 +447,27 @@ function updateToggleButton() {
     timerToggleBtn.classList.toggle("is-running", isRunning);
 }
 
+function updateIntervalStatusUI() {
+    if (!intervalStatus) {
+        return;
+    }
+
+    if (!intervalActive) {
+        intervalStatus.textContent = "";
+        return;
+    }
+
+    const currentCycle = intervalTotalCycles - intervalRemainingCycles + 1;
+    const cycleLabel = Math.max(1, Math.min(currentCycle, intervalTotalCycles));
+    intervalStatus.textContent = `Interval ${cycleLabel}/${intervalTotalCycles} • ${modeLabels[currentMode]}`;
+}
+
 function render() {
     updateDisplayFromMs();
     updateRingFromMs();
     updateToggleButton();
     updateActiveModeUI();
+    updateIntervalStatusUI();
 }
 
 function tick() {
@@ -412,6 +496,35 @@ function tick() {
         if (completionHandled) {
             playCompletionSound();
         }
+
+        if (intervalActive) {
+            if (currentMode === "focus") {
+                setMode("short");
+                startTimer();
+                return;
+            }
+
+            if (currentMode === "short") {
+                intervalRemainingCycles = Math.max(0, intervalRemainingCycles - 1);
+
+                if (intervalRemainingCycles > 0) {
+                    setMode("focus");
+                    startTimer();
+                    return;
+                }
+
+                setMode("long");
+                startTimer();
+                stopInterval();
+                return;
+            }
+
+            if (currentMode === "long") {
+                stopInterval();
+                return;
+            }
+        }
+
         return;
     }
 
@@ -429,6 +542,7 @@ async function initialize() {
 
     updateModeUI();
     syncInputsFromDurations();
+    syncIntervalInputs();
     soundEnabled = await loadSoundPreferenceAsync();
     updateSoundToggleUI();
     render();
@@ -564,6 +678,10 @@ if (timerHelpBtn) {
 
 if (timerSoundToggleBtn) {
     timerSoundToggleBtn.addEventListener("click", toggleSound);
+}
+
+if (intervalBtn) {
+    intervalBtn.addEventListener("click", toggleInterval);
 }
 
 if (settingsToggleBtn) {

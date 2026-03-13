@@ -55,6 +55,12 @@
             <button id="longBtn" onclick="setMode('long')">Long Break</button>
             <input id="longMinutes" type="number" min="1" max="180" value="15">
         </div>
+
+        <div class="mode-control">
+            <button id="intervalBtn" type="button">Start Interval</button>
+            <input id="intervalCycles" type="number" min="1" max="12" value="4" aria-label="Interval cycles">
+        </div>
+
         <button id="presetClassicBtn" class="preset-btn" onclick="applyPreset('classic')" type="button">Classic</button>
         <button id="presetDeepWorkBtn" class="preset-btn" onclick="applyPreset('deepWork')" type="button">Deep Work</button>
         <button id="presetLightStartBtn" class="preset-btn" onclick="applyPreset('lightStart')" type="button">Light Start</button>
@@ -90,6 +96,7 @@
             <div class="timer-text">
                 <p>Time Remaining</p>
                 <h1 id="time">25:00</h1>
+                <p id="intervalStatus" class="timer-interval-status" aria-live="polite"></p>
             </div>
         </div>
 

@@ -90,11 +90,9 @@ function renderNavAuth(authState) {
     loginLink.textContent = 'Log in';
     container.appendChild(loginLink);
 
-    const signupLink = document.createElement('a');
-    signupLink.href = 'sign-up.html';
-    signupLink.className = 'nav-auth-btn';
-    signupLink.textContent = 'Sign up';
-    container.appendChild(signupLink);
+    // Sign-up link is intentionally removed to hide it from the nav.
+    // If needed later, add it back as a separate button.
+
 }
 
 /* ===== Init ===== */
