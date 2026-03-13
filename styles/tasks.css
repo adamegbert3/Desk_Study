@@ -114,7 +114,19 @@
     display: none;
 }
 
+.tasks-main.is-collapsed .tasks-panel-body {
+    display: none;
+}
+
 .tasks-due-today.is-collapsed {
+    max-height: none;
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    align-self: start;
+}
+
+.tasks-main.is-collapsed {
     max-height: none;
     min-height: 0;
     padding: 10px 12px;
@@ -131,7 +143,15 @@
     margin-bottom: 0;
 }
 
+.tasks-main.is-collapsed .tasks-panel-header {
+    margin-bottom: 0;
+}
+
 .tasks-due-today.is-collapsed .due-today-title {
+    font-size: 1.05rem;
+}
+
+.tasks-main.is-collapsed .tasks-main-title {
     font-size: 1.05rem;
 }
 
