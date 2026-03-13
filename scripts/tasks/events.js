@@ -2,6 +2,7 @@ import {
     addGroup,
     addSubgroupToGroup,
     addTaskToSubgroupInGroup,
+    deleteTaskById,
     getGroupLimitForCurrentTier,
     getSubgroupPerGroupLimitForCurrentTier,
     findGroupByIdInState,
@@ -218,6 +219,26 @@ function setupTaskPageEventListeners() {
         });
     }
 
+    if (taskPageElements.dueTodayList) {
+        taskPageElements.dueTodayList.addEventListener('click', function (event) {
+            const target = event.target;
+            if (!target || !(target instanceof HTMLElement)) return;
+
+            const actionElement = target.closest('[data-action]');
+            if (!actionElement) return;
+
+            const actionType = actionElement.getAttribute('data-action');
+            if (actionType !== 'delete-task') return;
+
+            const taskId = actionElement.getAttribute('data-task-id');
+            if (!taskId) return;
+
+            deleteTaskById(taskId);
+            renderTasksPage();
+            syncGroupCollapseStateAfterRender();
+        });
+    }
+
     if (taskPageElements.groupCardsContainer) {
         taskPageElements.groupCardsContainer.addEventListener('click', function (event) {
             const target = event.target;
@@ -228,6 +249,16 @@ function setupTaskPageEventListeners() {
 
             const actionType = actionElement.getAttribute('data-action');
             if (!actionType) return;
+
+            if (actionType === 'delete-task') {
+                const taskId = actionElement.getAttribute('data-task-id');
+                if (!taskId) return;
+
+                deleteTaskById(taskId);
+                renderTasksPage();
+                syncGroupCollapseStateAfterRender();
+                return;
+            }
 
             if (actionType === 'add-subgroup') {
                 const parentGroupId = actionElement.getAttribute('data-group-id');

@@ -182,13 +182,33 @@ export function renderTasksDueTodayPanel() {
 
     tasksDueToday.forEach(function (task) {
         const listItemElement = document.createElement('li');
+        const rowElement = document.createElement('div');
+        rowElement.className = 'due-today-item';
+
         const taskPillElement = document.createElement('span');
 
         taskPillElement.className = 'task-pill task-pill--due-today';
         taskPillElement.textContent = task.title;
         taskPillElement.setAttribute('data-task-id', task.id);
 
-        listItemElement.appendChild(taskPillElement);
+        const deleteButtonElement = document.createElement('button');
+        deleteButtonElement.type = 'button';
+        deleteButtonElement.className = 'task-delete-btn';
+        deleteButtonElement.setAttribute('data-action', 'delete-task');
+        deleteButtonElement.setAttribute('data-task-id', task.id);
+        deleteButtonElement.setAttribute('aria-label', 'Delete task');
+
+        const deleteIconElement = document.createElement('img');
+        deleteIconElement.src = 'icons/delete.svg';
+        deleteIconElement.alt = '';
+        deleteIconElement.setAttribute('aria-hidden', 'true');
+
+        deleteButtonElement.appendChild(deleteIconElement);
+
+        rowElement.appendChild(taskPillElement);
+        rowElement.appendChild(deleteButtonElement);
+
+        listItemElement.appendChild(rowElement);
         taskPageElements.dueTodayList.appendChild(listItemElement);
     });
 
@@ -313,12 +333,34 @@ export function renderTaskGroups() {
                 subgroupTaskTitleElement.className = 'subgroup-task-title';
                 subgroupTaskTitleElement.textContent = task.title;
 
+                const subgroupTaskRightElement = document.createElement('div');
+                subgroupTaskRightElement.className = 'subgroup-task-right';
+
                 const subgroupTaskDateElement = document.createElement('span');
                 subgroupTaskDateElement.className = 'subgroup-task-date';
                 subgroupTaskDateElement.textContent = formatTaskDueDateForDisplay(task.dueDate);
 
+                const deleteButtonElement = document.createElement('button');
+                deleteButtonElement.type = 'button';
+                deleteButtonElement.className = 'task-delete-btn';
+                deleteButtonElement.setAttribute('data-action', 'delete-task');
+                deleteButtonElement.setAttribute('data-task-id', task.id);
+                deleteButtonElement.setAttribute('data-group-id', group.id);
+                deleteButtonElement.setAttribute('data-subgroup-id', subgroup.id);
+                deleteButtonElement.setAttribute('aria-label', 'Delete task');
+
+                const deleteIconElement = document.createElement('img');
+                deleteIconElement.src = 'icons/delete.svg';
+                deleteIconElement.alt = '';
+                deleteIconElement.setAttribute('aria-hidden', 'true');
+
+                deleteButtonElement.appendChild(deleteIconElement);
+
+                subgroupTaskRightElement.appendChild(subgroupTaskDateElement);
+                subgroupTaskRightElement.appendChild(deleteButtonElement);
+
                 subgroupTaskItemElement.appendChild(subgroupTaskTitleElement);
-                subgroupTaskItemElement.appendChild(subgroupTaskDateElement);
+                subgroupTaskItemElement.appendChild(subgroupTaskRightElement);
                 subgroupTasksListElement.appendChild(subgroupTaskItemElement);
             });
 

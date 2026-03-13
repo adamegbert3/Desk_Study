@@ -45,6 +45,18 @@
     flex: 1 1 auto;
 }
 
+.due-today-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.due-today-item .task-pill {
+    flex: 1;
+    width: auto;
+}
+
 .due-today-list:empty::after {
     content: "No tasks due today";
     color: var(--text-color);
@@ -298,6 +310,36 @@
     overflow-wrap: break-word;
 }
 
+.task-delete-btn {
+    border: none;
+    border-radius: 10px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #d64545;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.task-delete-btn:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.task-delete-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.task-delete-btn img {
+    width: 18px;
+    height: 18px;
+}
+
 /* ----- Subgroup pill + tasks ----- */
 .subgroup {
     display: flex;
@@ -394,8 +436,15 @@
     font-size: 0.85rem;
     color: var(--primary-color);
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     gap: 8px;
+}
+
+.subgroup-task-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .subgroup-task-item:last-child {

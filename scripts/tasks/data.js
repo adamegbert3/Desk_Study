@@ -156,3 +156,27 @@ export function formatTaskDueDateForDisplay(isoDateStr) {
     return month + '/' + (day.length === 1 ? '0' + day : day) + '/' + year;
 }
 
+export function deleteTaskById(taskId) {
+    if (!taskId) return false;
+
+    for (const group of taskGroupsState) {
+        if (!group || !Array.isArray(group.subgroups)) continue;
+
+        for (const subgroup of group.subgroups) {
+            if (!subgroup || !Array.isArray(subgroup.tasks)) continue;
+
+            const taskIndex = subgroup.tasks.findIndex(function (task) {
+                return task && task.id === taskId;
+            });
+
+            if (taskIndex !== -1) {
+                subgroup.tasks.splice(taskIndex, 1);
+                saveTasksState();
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
