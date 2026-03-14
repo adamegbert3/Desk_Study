@@ -199,7 +199,7 @@ export function renderTasksDueTodayPanel() {
         deleteButtonElement.setAttribute('aria-label', 'Delete task');
 
         const deleteIconElement = document.createElement('img');
-        deleteIconElement.src = 'icons/delete.svg';
+        deleteIconElement.src = 'styles/images/icons/delete.svg';
         deleteIconElement.alt = '';
         deleteIconElement.setAttribute('aria-hidden', 'true');
 
@@ -259,7 +259,7 @@ export function renderTaskGroups() {
         const groupToggleIconElement = document.createElement('img');
         groupToggleIconElement.className = 'group-toggle-icon';
         groupToggleIconElement.setAttribute('data-group-toggle-icon-for', group.id);
-        groupToggleIconElement.src = 'icons/collapse content.svg';
+        groupToggleIconElement.src = 'styles/images/icons/collapse content.svg';
         groupToggleIconElement.alt = '';
 
         groupToggleButtonElement.appendChild(groupToggleIconElement);
@@ -350,7 +350,7 @@ export function renderTaskGroups() {
                 deleteButtonElement.setAttribute('aria-label', 'Delete task');
 
                 const deleteIconElement = document.createElement('img');
-                deleteIconElement.src = 'icons/delete.svg';
+                deleteIconElement.src = 'styles/images/icons/delete.svg';
                 deleteIconElement.alt = '';
                 deleteIconElement.setAttribute('aria-hidden', 'true');
 

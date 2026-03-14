@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log in - Study Desk</title>
+    <title>Sign up - Study Desk</title>
     <link rel="stylesheet" href="styles/variables.css">
     <link rel="stylesheet" href="styles/shared.css">
     <link rel="stylesheet" href="styles/style.css">
@@ -13,19 +13,19 @@
         <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
         <div class="nav-links">
             <a href="index.html">
-                <img src="icons/home.svg" alt="Home icon">
+                <img src="styles/images/icons/home.svg" alt="Home icon">
                 <span class="nav-label">Home</span>
             </a>
             <a href="tasks.html">
-                <img src="icons/menu.svg" alt="Tasks icon">
+                <img src="styles/images/icons/menu.svg" alt="Tasks icon">
                 <span class="nav-label">Tasks</span>
             </a>
             <a href="timer.html">
-                <img src="icons/timer.svg" alt="Timer icon">
+                <img src="styles/images/icons/timer.svg" alt="Timer icon">
                 <span class="nav-label">Timer</span>
             </a>
             <a href="tunes.html">
-                <img src="icons/musicNote.svg" alt="Tunes icon">
+                <img src="styles/images/icons/musicNote.svg" alt="Tunes icon">
                 <span class="nav-label">Tunes</span>
             </a>
         </div>
@@ -34,23 +34,26 @@
 
     <main class="page-content auth-page">
         <section class="auth-card">
-            <h1 class="auth-title">Log in</h1>
-            <form class="auth-form" id="loginForm" novalidate>
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="email" required autocomplete="email" placeholder="you@example.com">
+            <h1 class="auth-title">Sign up</h1>
+            <form class="auth-form" id="signupForm" novalidate>
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" name="email" required autocomplete="email" placeholder="you@example.com">
 
-                <label for="loginPassword">Password</label>
+                <label for="signupName">Name</label>
+                <input type="text" id="signupName" name="name" required autocomplete="name" placeholder="Your name" maxlength="80">
+
+                <label for="signupPassword">Password</label>
                 <div class="auth-password-wrap">
-                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="••••••••">
-                    <button type="button" class="auth-toggle-password" id="loginShowPassword" aria-label="Show password">Show</button>
+                    <input type="password" id="signupPassword" name="password" required autocomplete="new-password" placeholder="••••••••">
+                    <button type="button" class="auth-toggle-password" id="signupShowPassword" aria-label="Show password">Show</button>
                 </div>
 
-                <p class="auth-error" id="loginError" aria-live="polite"></p>
+                <p class="auth-error" id="signupError" aria-live="polite"></p>
 
-                <button type="submit" class="auth-submit-btn">Sign in</button>
+                <button type="submit" class="auth-submit-btn">Sign up</button>
             </form>
             <p class="auth-switch">
-                Don't have an account? <a href="sign-up.html">Sign up</a>
+                Already have an account? <a href="login.html">Log in</a>
             </p>
         </section>
     </main>
