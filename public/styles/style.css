@@ -197,6 +197,11 @@ main {
     color: #532a00;
 }
 
+.start-btn.is-expired {
+    background-color: #d64545;
+    color: #ffffff;
+}
+
 .start-btn.is-running:hover {
     box-shadow: 0 6px 16px rgba(83, 42, 0, 0.35);
 }
