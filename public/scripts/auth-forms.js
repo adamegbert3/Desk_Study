@@ -124,26 +124,23 @@ function initSignupForm() {
             const auth = await getFirebaseAuthIfConfigured();
             if (auth) {
                 try {
-                    const {
-                        createUserWithEmailAndPassword,
-                        updateProfile
-                    } = await import(
+                    const { signInWithEmailAndPassword } = await import(
                         `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
                     );
-                    const cred = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(cred.user, { displayName: name });
+                    const cred = await signInWithEmailAndPassword(auth, email, password);
+                    const user = cred.user;
                     window.localStorage.setItem(
                         AUTH_STORAGE_KEY,
                         JSON.stringify({
                             status: 'user',
-                            uid: cred.user.uid,
-                            email: cred.user.email || email,
-                            displayName: name
+                            uid: user.uid,
+                            email: user.email || email,
+                            displayName: user.displayName || email.split('@')[0] || ''
                         })
                     );
                 } catch (err) {
-                    console.error('Sign up failed', err);
-                    showSignupError('Sign up failed. Try a different email or password.');
+                    console.error('Login failed', err);
+                    showLoginError('Login failed. Check your email and password.');
                     return;
                 }
             } else {
@@ -152,7 +149,7 @@ function initSignupForm() {
                     status: 'user',
                     uid: '',
                     email,
-                    displayName: name
+                    displayName: email.split('@')[0] || ''
                 }));
             }
 
