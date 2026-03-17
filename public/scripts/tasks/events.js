@@ -21,8 +21,8 @@ import {
     renderTasksPage
 } from './render.js';
 
-const COLLAPSE_ICON_SRC = 'icons/collapse content.svg';
-const EXPAND_ICON_SRC = 'icons/expand_content.svg';
+const COLLAPSE_ICON_SRC = 'styles/images/icons/collapse content.svg';
+const EXPAND_ICON_SRC = 'styles/images/icons/expand_content.svg';
 const collapsedGroupIds = new Set();
 
 function setDueTodayCollapsed(isCollapsed) {

@@ -123,16 +123,29 @@ function initSignupForm() {
 
             const auth = await getFirebaseAuthIfConfigured();
             if (auth) {
-                // TODO: Install Firebase SDK and replace with:
-                // import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-                // const cred = await createUserWithEmailAndPassword(auth, email, password);
-                // await updateProfile(cred.user, { displayName: name });
-                // window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
-                //     status: "user",
-                //     uid: cred.user.uid,
-                //     email: cred.user.email || email,
-                //     displayName: name
-                // }));
+                try {
+                    const {
+                        createUserWithEmailAndPassword,
+                        updateProfile
+                    } = await import(
+                        `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                    );
+                    const cred = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(cred.user, { displayName: name });
+                    window.localStorage.setItem(
+                        AUTH_STORAGE_KEY,
+                        JSON.stringify({
+                            status: 'user',
+                            uid: cred.user.uid,
+                            email: cred.user.email || email,
+                            displayName: name
+                        })
+                    );
+                } catch (err) {
+                    console.error('Sign up failed', err);
+                    showSignupError('Sign up failed. Try a different email or password.');
+                    return;
+                }
             } else {
                 // Local-only fallback until Firebase is configured.
                 window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({

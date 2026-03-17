@@ -5,6 +5,11 @@
 # Firebase / service accounts (never commit)
 serviceAccountKey.json
 firebase-adminsdk-*.json
+.firebase
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
 
 # OS/editor noise
 .DS_Store

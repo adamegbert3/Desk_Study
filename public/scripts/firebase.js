@@ -8,14 +8,20 @@
 // Then: Project settings → General → "Your apps" → add Web app
 // Paste the config object below (firebaseConfig).
 
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    // apiKey: "…",
-    // authDomain: "…",
-    // projectId: "…",
-    // appId: "…",
-    // storageBucket: "…",
-    // messagingSenderId: "…"
+  apiKey: "AIzaSyBFnSQczzmiN7_Wk3H2sgJavk41abACDTc",
+  authDomain: "deskstudy.firebaseapp.com",
+  projectId: "deskstudy",
+  storageBucket: "deskstudy.firebasestorage.app",
+  messagingSenderId: "570097388193",
+  appId: "1:570097388193:web:653a8e2c88101389e4bee0"
 };
+
 
 // TODO: Pick a Firebase version and pin it.
 const FIREBASE_VERSION = '10.12.5';
