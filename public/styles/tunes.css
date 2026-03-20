@@ -189,6 +189,84 @@ animation-play-state: running;
 opacity: 1;
 }
 
+.app-container {
+    display: grid;
+    grid-template-columns: minmax(320px, 1.5fr) minmax(240px, 1fr);
+    grid-template-areas: "options player";
+    gap: 24px;
+    padding: 24px;
+    align-items: stretch;
+    min-height: 73vh;
+}
+
+.app-container .tunes-options {
+    grid-area: options;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 0;
+}
+
+.tunes-right.now-playing-panel {
+    grid-area: player;
+    background-color: var(--surface-color);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+#quickTracks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 900px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "player"
+            "options";
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .tunes-right.now-playing-panel,
+    .app-container .tunes-options {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .player-card {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .player-controls {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #spotify-container iframe {
+        height: 260px;
+    }
+
+    .sound-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 @keyframes nowPlayingWave {
 0%, 100% {
 transform: scaleY(0.45);
