@@ -208,6 +208,114 @@ body {
     text-decoration: underline;
 }
 
+/* ===== Guest data merge modal (login / sign-up) ===== */
+.guest-merge-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(30, 80, 107, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.guest-merge-modal {
+    width: min(520px, 100%);
+    max-height: min(90vh, 560px);
+    overflow: auto;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(198, 234, 240, 0.25);
+}
+
+.guest-merge-title {
+    margin: 0 0 12px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.25;
+}
+
+.guest-merge-body {
+    margin: 0 0 22px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--accent-color);
+}
+
+.guest-merge-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.guest-merge-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.guest-merge-btn:hover {
+    transform: translateY(-1px);
+}
+
+.guest-merge-btn--merge {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.guest-merge-btn--merge:hover {
+    background-color: var(--accent-soft);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.guest-merge-btn--keep {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.guest-merge-btn--keep:hover {
+    background-color: var(--accent-soft);
+}
+
+.guest-merge-btn--cancel {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 2px solid rgba(216, 242, 255, 0.45);
+}
+
+.guest-merge-btn--cancel:hover {
+    background-color: rgba(151, 202, 226, 0.2);
+    border-color: var(--secondary-color);
+}
+
+@media (max-width: 480px) {
+    .guest-merge-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .guest-merge-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 /* ===== Site footer ===== */
 .site-footer {
     margin-top: auto;

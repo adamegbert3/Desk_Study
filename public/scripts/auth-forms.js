@@ -46,50 +46,42 @@ function getLocalDataPresence() {
 function promptLocalDataMergeChoice() {
     return new Promise(function (resolve) {
         const overlay = document.createElement('div');
-        overlay.style.position = 'fixed';
-        overlay.style.inset = '0';
-        overlay.style.background = 'rgba(0, 0, 0, 0.55)';
-        overlay.style.display = 'flex';
-        overlay.style.alignItems = 'center';
-        overlay.style.justifyContent = 'center';
-        overlay.style.padding = '16px';
-        overlay.style.zIndex = '9999';
+        overlay.className = 'guest-merge-overlay';
+        overlay.setAttribute('role', 'presentation');
 
         const modal = document.createElement('div');
-        modal.style.background = '#ffffff';
-        modal.style.color = '#222222';
-        modal.style.width = 'min(520px, 100%)';
-        modal.style.borderRadius = '14px';
-        modal.style.padding = '18px';
-        modal.style.boxShadow = '0 20px 45px rgba(0,0,0,.22)';
+        modal.className = 'guest-merge-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'guest-merge-title');
 
         const title = document.createElement('h2');
+        title.id = 'guest-merge-title';
+        title.className = 'guest-merge-title';
         title.textContent = 'Save existing data to this account?';
-        title.style.margin = '0 0 10px 0';
-        title.style.fontSize = '1.1rem';
 
         const body = document.createElement('p');
-        body.textContent = 'We found existing task and timer data on this device. To keep your data, you can merge it with this account.';
-        body.style.margin = '0 0 16px 0';
-        body.style.lineHeight = '1.4';
+        body.className = 'guest-merge-body';
+        body.textContent =
+            'We found existing task and timer data on this device. To keep your data, you can merge it with this account.';
 
         const actions = document.createElement('div');
-        actions.style.display = 'flex';
-        actions.style.gap = '8px';
-        actions.style.justifyContent = 'flex-end';
-        actions.style.flexWrap = 'wrap';
+        actions.className = 'guest-merge-actions';
 
         const cancelBtn = document.createElement('button');
         cancelBtn.type = 'button';
+        cancelBtn.className = 'guest-merge-btn guest-merge-btn--cancel';
         cancelBtn.textContent = 'Cancel';
 
         const keepBtn = document.createElement('button');
         keepBtn.type = 'button';
-        keepBtn.textContent = "Don't merge local data";
+        keepBtn.className = 'guest-merge-btn guest-merge-btn--keep';
+        keepBtn.textContent = "Don't merge";
 
         const mergeBtn = document.createElement('button');
         mergeBtn.type = 'button';
-        mergeBtn.textContent = 'Merge local data to new account';
+        mergeBtn.className = 'guest-merge-btn guest-merge-btn--merge';
+        mergeBtn.textContent = 'Merge data to account';
 
         function finish(choice) {
             overlay.remove();
@@ -108,6 +100,7 @@ function promptLocalDataMergeChoice() {
         modal.append(title, body, actions);
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
+        mergeBtn.focus();
     });
 }
 
