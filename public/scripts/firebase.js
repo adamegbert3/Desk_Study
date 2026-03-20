@@ -1,8 +1,6 @@
 // ===== Firebase bootstrap (Auth + Firestore) =====
 //
 // TODO: Create a Firebase project and enable:
-// - Authentication → Email/Password
-// - Firestore Database
 // - Firestore Rules: restrict users to their own uid subtree
 //
 // Then: Project settings → General → "Your apps" → add Web app
@@ -23,7 +21,6 @@ const firebaseConfig = {
 };
 
 
-// TODO: Pick a Firebase version and pin it.
 const FIREBASE_VERSION = '10.12.5';
 
 let firebaseApp = null;

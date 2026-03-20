@@ -124,26 +124,26 @@ function initSignupForm() {
             const auth = await getFirebaseAuthIfConfigured();
             if (auth) {
                 try {
-                    const {
-                        createUserWithEmailAndPassword,
-                        updateProfile
-                    } = await import(
+                    const { createUserWithEmailAndPassword, updateProfile } = await import(
                         `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
                     );
                     const cred = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(cred.user, { displayName: name });
+                    const user = cred.user;
+                    if (name) {
+                        await updateProfile(user, { displayName: name });
+                    }
                     window.localStorage.setItem(
                         AUTH_STORAGE_KEY,
                         JSON.stringify({
                             status: 'user',
-                            uid: cred.user.uid,
-                            email: cred.user.email || email,
-                            displayName: name
+                            uid: user.uid,
+                            email: user.email || email,
+                            displayName: name || user.displayName || email.split('@')[0] || ''
                         })
                     );
                 } catch (err) {
-                    console.error('Sign up failed', err);
-                    showSignupError('Sign up failed. Try a different email or password.');
+                    console.error('Sign-up failed', err);
+                    showSignupError('Sign-up failed. Check your details and try again.');
                     return;
                 }
             } else {
@@ -152,7 +152,7 @@ function initSignupForm() {
                     status: 'user',
                     uid: '',
                     email,
-                    displayName: name
+                    displayName: email.split('@')[0] || ''
                 }));
             }
 

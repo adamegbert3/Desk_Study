@@ -67,9 +67,28 @@ function renderNavAuth(authState) {
                     if (mod && typeof mod.getFirebaseAuth === 'function') {
                         const auth = await mod.getFirebaseAuth();
                         if (auth) {
-                            // TODO: Install Firebase SDK and replace with:
-                            // import { signOut } from "firebase/auth";
-                            // await signOut(auth);
+                            logoutBtn.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                void (async function () {
+                                    try {
+                                        const mod = await import('./firebase.js');
+                                        if (mod && typeof mod.getFirebaseAuth === 'function') {
+                                            const auth = await mod.getFirebaseAuth();
+                                            if (auth) {
+                                                const { signOut } = await import(
+                                                    `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                                                );
+                                                await signOut(auth);
+                                            }
+                                        }
+                                    } catch {
+                                        // Ignore; local fallback will be used.
+                                    }
+                            
+                                    writeAuthState({ status: null, uid: '', email: '', displayName: '' });
+                                    renderNavAuth(readAuthState());
+                                })();
+                            });
                         }
                     }
                 } catch {
