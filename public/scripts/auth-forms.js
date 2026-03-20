@@ -25,6 +25,92 @@ async function getFirebaseAuthIfConfigured() {
     return null;
 }
 
+async function configureRemoteAdapterIfAvailable() {
+    try {
+        const mod = await import('./firebase.js');
+        if (mod && typeof mod.configureDataStoreRemoteAdapter === 'function') {
+            await mod.configureDataStoreRemoteAdapter();
+        }
+    } catch {
+        // Ignore; local fallback will be used.
+    }
+}
+
+function getLocalDataPresence() {
+    if (!window.dataStore || typeof window.dataStore.hasGuestData !== 'function') {
+        return false;
+    }
+    return Boolean(window.dataStore.hasGuestData());
+}
+
+function promptLocalDataMergeChoice() {
+    return new Promise(function (resolve) {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '0';
+        overlay.style.background = 'rgba(0, 0, 0, 0.55)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.padding = '16px';
+        overlay.style.zIndex = '9999';
+
+        const modal = document.createElement('div');
+        modal.style.background = '#ffffff';
+        modal.style.color = '#222222';
+        modal.style.width = 'min(520px, 100%)';
+        modal.style.borderRadius = '14px';
+        modal.style.padding = '18px';
+        modal.style.boxShadow = '0 20px 45px rgba(0,0,0,.22)';
+
+        const title = document.createElement('h2');
+        title.textContent = 'Save existing data to this account?';
+        title.style.margin = '0 0 10px 0';
+        title.style.fontSize = '1.1rem';
+
+        const body = document.createElement('p');
+        body.textContent = 'We found existing task and timer data on this device. To keep your data, you can merge it with this account.';
+        body.style.margin = '0 0 16px 0';
+        body.style.lineHeight = '1.4';
+
+        const actions = document.createElement('div');
+        actions.style.display = 'flex';
+        actions.style.gap = '8px';
+        actions.style.justifyContent = 'flex-end';
+        actions.style.flexWrap = 'wrap';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.textContent = 'Cancel';
+
+        const keepBtn = document.createElement('button');
+        keepBtn.type = 'button';
+        keepBtn.textContent = "Don't merge local data";
+
+        const mergeBtn = document.createElement('button');
+        mergeBtn.type = 'button';
+        mergeBtn.textContent = 'Merge local data to new account';
+
+        function finish(choice) {
+            overlay.remove();
+            resolve(choice);
+        }
+
+        cancelBtn.addEventListener('click', function () { finish('cancel'); });
+        keepBtn.addEventListener('click', function () { finish('keep'); });
+        mergeBtn.addEventListener('click', function () { finish('merge'); });
+
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) finish('cancel');
+        });
+
+        actions.append(cancelBtn, keepBtn, mergeBtn);
+        modal.append(title, body, actions);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+    });
+}
+
 /* ===== Login form ===== */
 function initLoginForm() {
     bindPasswordToggle('loginShowPassword', 'loginPassword');
@@ -57,16 +143,40 @@ function initLoginForm() {
 
             const auth = await getFirebaseAuthIfConfigured();
             if (auth) {
-                // TODO: Install Firebase SDK and replace with:
-                // import { signInWithEmailAndPassword } from "firebase/auth";
-                // const cred = await signInWithEmailAndPassword(auth, email, password);
-                // const user = cred.user;
-                // window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
-                //     status: "user",
-                //     uid: user.uid,
-                //     email: user.email || email,
-                //     displayName: user.displayName || ""
-                // }));
+                try {
+                    const { signInWithEmailAndPassword } = await import(
+                        `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                    );
+                    const cred = await signInWithEmailAndPassword(auth, email, password);
+                    const user = cred.user;
+                    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+                        status: 'user',
+                        uid: user.uid,
+                        email: user.email || email,
+                        displayName: user.displayName || email.split('@')[0] || ''
+                    }));
+
+                    if (getLocalDataPresence()) {
+                        const choice = await promptLocalDataMergeChoice();
+                        if (choice === 'merge') {
+                            await configureRemoteAdapterIfAvailable();
+                            if (window.dataStore && typeof window.dataStore.migrateGuestDataToUser === 'function') {
+                                await window.dataStore.migrateGuestDataToUser();
+                            }
+                        } else if (choice === 'cancel') {
+                            const { signOut } = await import(
+                                `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                            );
+                            await signOut(auth);
+                            window.localStorage.removeItem(AUTH_STORAGE_KEY);
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Login failed', err);
+                    showLoginError('Login failed. Check your email and password.');
+                    return;
+                }
             } else {
                 // Local-only fallback until Firebase is configured.
                 window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
@@ -77,9 +187,6 @@ function initLoginForm() {
                 }));
             }
 
-            if (window.dataStore && typeof window.dataStore.migrateGuestDataToUser === 'function') {
-                window.dataStore.migrateGuestDataToUser();
-            }
             window.location.href = 'index.html';
         })();
     });
@@ -156,8 +263,22 @@ function initSignupForm() {
                 }));
             }
 
-            if (window.dataStore && typeof window.dataStore.migrateGuestDataToUser === 'function') {
-                window.dataStore.migrateGuestDataToUser();
+            // New account flow: move guest local data into the authenticated user's remote store.
+            if (getLocalDataPresence()) {
+                const choice = await promptLocalDataMergeChoice();
+                if (choice === 'merge') {
+                    await configureRemoteAdapterIfAvailable();
+                    if (window.dataStore && typeof window.dataStore.migrateGuestDataToUser === 'function') {
+                        await window.dataStore.migrateGuestDataToUser();
+                    }
+                } else if (choice === 'cancel') {
+                    const { signOut } = await import(
+                        `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                    );
+                    await signOut(auth);
+                    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+                    return;
+                }
             }
             window.location.href = 'index.html';
         })();

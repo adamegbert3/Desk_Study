@@ -225,6 +225,21 @@ const dataStore = {
         } catch {}
 
         return true;
+    },
+
+    hasGuestData() {
+        const guestTimer = dsSafeParse(window.localStorage.getItem(DS_TIMER_LOCAL_KEY));
+        const guestTasks = dsSafeParse(window.localStorage.getItem(DS_TASKS_LOCAL_KEY)) || [];
+        const guestTunes = dsSafeParse(window.localStorage.getItem(DS_TUNES_LOCAL_KEY));
+        const guestSoundRaw = window.localStorage.getItem(DS_TIMER_SOUND_LOCAL_KEY);
+        const guestHasSoundPref = guestSoundRaw === 'true' || guestSoundRaw === 'false';
+
+        return Boolean(
+            guestTimer ||
+            (Array.isArray(guestTasks) && guestTasks.length > 0) ||
+            guestTunes ||
+            guestHasSoundPref
+        );
     }
 };
 

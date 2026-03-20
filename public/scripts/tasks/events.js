@@ -20,6 +20,7 @@ import {
     closeTasksModal,
     renderTasksPage
 } from './render.js';
+import { configureDataStoreRemoteAdapter } from '../firebase.js';
 
 const COLLAPSE_ICON_SRC = 'styles/images/icons/collapse content.svg';
 const EXPAND_ICON_SRC = 'styles/images/icons/expand_content.svg';
@@ -305,10 +306,14 @@ function setupTaskPageEventListeners() {
     });
 }
 
-function initializeTasksPage() {
-    void loadTasksState().then(function () {
-        renderTasksPage();
-    });
+async function initializeTasksPage() {
+    try {
+        await configureDataStoreRemoteAdapter();
+    } catch {
+        // Keep local guest mode if Firebase is unavailable.
+    }
+
+    await loadTasksState();
     cachetaskPageElements();
     setupTaskPageEventListeners();
     renderTasksPage();
