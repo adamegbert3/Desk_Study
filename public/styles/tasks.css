@@ -1,15 +1,24 @@
 /* ===== Tasks page only ===== */
 
+/* Keep task page layout from pushing horizontal overflow */
+body {
+    overflow-x: hidden;
+}
 
+/* Tasks page only: slightly reduce top gap above nav */
+.main-nav {
+    margin-top: 8px;
+}
 
 .tasks-page {
     display: grid;
-    grid-template-columns: minmax(200px, 280px) 1fr;
+    grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
     gap: 24px;
     padding: 24px;
     align-items: stretch;
     min-height: 73vh;
     margin-bottom: 24px;
+    max-width: 100%;
 }
 
 /* ----- Left panel: Due Today ----- */

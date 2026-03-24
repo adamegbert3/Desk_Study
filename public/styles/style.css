@@ -25,44 +25,7 @@ main {
     padding: 40px;
 }
 
-.main-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--primary-color);
-    padding: 10px 20px;
-    border-radius: 0 0 10px 10px;
-}
-
-.main-nav .logo img {
-    height: 32px;
-}
-
-.nav-links {
-    display: flex;
-    gap: 10px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: var(--primary-color);
-    padding: 6px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: var(--secondary-color);
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.nav-links a:hover {
-    background-color: var(--accent-soft);
-    transform: translateY(-1px);
-}
-
-.nav-links a.active {
-    background-color: var(--accent-soft);
-    color: var(--surface-color);
-    font-weight: 600;
-}
+/* Navigation: single source of truth is shared.css (pill bar). Do not redefine here. */
 
 .timer-layout {
     display: grid;
@@ -371,11 +334,6 @@ main {
 
     .timer-card {
         min-height: 420px;
-    }
-
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: flex-end;
     }
 
     .task-input-row {
