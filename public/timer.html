@@ -66,6 +66,13 @@
         <button id="presetLightStartBtn" class="preset-btn" onclick="applyPreset('lightStart')" type="button">Light Start</button>
         <button id="quickTest10sBtn" class="preset-btn" onclick="setQuickTestDuration()" type="button">10s Test</button>
         <button id="timerSoundToggleBtn" type="button">Sound: On</button>
+
+        <div class="mode-control">
+            <label for="completionSoundSelect">Alarm sound</label>
+            <select id="completionSoundSelect" aria-label="Alarm sound"></select>
+            <button id="previewCompletionSoundBtn" type="button">Preview alarm</button>
+        </div>
+
         <button id="timerHelpBtn" type="button">Help</button>
     </aside>
 
@@ -140,7 +147,9 @@
 
 <script src="scripts/data-store.js"></script>
 <script type="module" src="scripts/login.js"></script>
+<script src="scripts/timer-audio.js"></script>
 <script src="scripts/timer-notifier.js"></script>
+<script src="scripts/timer-title.js" defer></script>
 <script src="scripts/timer.js"></script>
 </body>
 </html>

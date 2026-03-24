@@ -1,6 +1,7 @@
 (() => {
     const STORAGE_KEY = "deskStudyTimerStateV1";
     const COMPLETION_KEY = "deskStudyTimerLastCompletionEndsAtV1";
+    const IS_TIMER_PAGE = Boolean(document.getElementById("timerToggleBtn"));
     const MODE_LABELS = {
         focus: "Focus",
         short: "Break",
@@ -95,6 +96,10 @@
     }
 
     function checkTimer() {
+        if (IS_TIMER_PAGE) {
+            return;
+        }
+
         const state = parseState();
         if (!state || !state.isRunning || !Number.isFinite(state.endsAt)) {
             return;
