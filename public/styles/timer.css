@@ -2,8 +2,8 @@
 
 .timer-layout {
     display: grid;
-    grid-template-columns: minmax(200px, 280px) 1fr;
-    gap: 24px;
+    grid-template-columns: minmax(220px, 300px) 1fr;
+    gap: 28px;
     padding: 24px;
     align-items: stretch;
     min-height: 73vh;
@@ -13,14 +13,220 @@
 .controls {
     position: relative;
     background-color: var(--surface-color);
-    border-radius: 14px;
-    padding: 20px;
+    border-radius: 22px;
+    padding: 22px 18px 20px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 32%, transparent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 22px;
     transition: opacity 0.25s ease;
-} 
+}
+
+.timer-section-title {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-color);
+}
+
+.timer-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.timer-section-header .timer-section-title {
+    margin: 0;
+}
+
+.presets-gear-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--secondary-color) 35%, transparent);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.presets-gear-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+}
+
+.presets-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-times-section .timer-section-title {
+    margin-bottom: 10px;
+}
+
+.custom-times-box {
+    --custom-times-inline-inset: 14px;
+    border: 1px solid color-mix(in srgb, var(--text-color) 28%, transparent);
+    border-radius: 16px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--primary-color) 22%, var(--surface-color));
+}
+
+.custom-time-row {
+    position: relative;
+    padding: 14px var(--custom-times-inline-inset) 12px;
+    border-bottom: none;
+}
+
+.custom-time-row:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: var(--custom-times-inline-inset);
+    right: var(--custom-times-inline-inset);
+    bottom: 0;
+    height: 1px;
+    background: color-mix(in srgb, var(--text-color) 14%, transparent);
+}
+
+.custom-time-static-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text-color) 72%, transparent);
+}
+
+.controls .custom-time-mode {
+    display: block;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 0;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text-color) 72%, transparent);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.controls .custom-time-mode.active-mode {
+    color: var(--accent-soft);
+}
+
+.custom-time-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--surface-color);
+    background-color: var(--secondary-color);
+    font-family: inherit;
+}
+
+.custom-time-input:focus {
+    outline: none;
+}
+
+.custom-time-input:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--text-color) 45%, transparent);
+    outline-offset: 2px;
+}
+
+.controls .preset-btn,
+.controls .interval-action-btn {
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.controls .preset-btn:hover,
+.controls .interval-action-btn:hover {
+    background-color: color-mix(in srgb, var(--accent-soft) 55%, var(--secondary-color));
+    color: var(--surface-color);
+}
+
+.controls .preset-btn.preset-btn--active {
+    background-color: var(--accent-soft);
+    color: var(--surface-color);
+}
+
+.utility-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.controls .utility-btn {
+    width: 100%;
+    margin: 0;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid color-mix(in srgb, var(--text-color) 25%, transparent);
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+    color: var(--text-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.controls .utility-btn:hover {
+    background-color: color-mix(in srgb, var(--secondary-color) 40%, var(--primary-color));
+    border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
+
+.utility-btn__label {
+    flex: 1;
+    text-align: left;
+}
+
+.utility-btn__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: color-mix(in srgb, var(--text-color) 90%, transparent);
+}
+
+.utility-btn__icon svg {
+    display: block;
+}
 
 .settings-close-btn {
     position: absolute;
@@ -83,32 +289,12 @@
     pointer-events: none;
 }
 
-.controls button {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    border: none;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: .8rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.controls button:hover {
-    background-color: var(--accent-soft);
-    color: var(--surface-color);
-}
-
-.preset-btn {
-    font-size: 0.78rem;
-    letter-spacing: 0.01em;
-}
-
 .timer-card {
     position: relative;
     background-color: var(--surface-color);
-    border-radius: 14px;
+    border-radius: 22px;
     padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 22%, transparent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
@@ -252,6 +438,13 @@
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .timer-layout:not(.sidebar-collapsed) {
+        grid-template-columns: minmax(200px, 1fr) 1fr;
+        gap: 20px;
+    }
 }
 
 @media (max-width: 768px) {

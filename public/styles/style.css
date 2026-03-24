@@ -26,120 +26,13 @@ main {
 }
 
 /* Navigation: single source of truth is shared.css (pill bar). Do not redefine here. */
+/* Timer page layout and controls: timer.css (loaded after this file on timer.html). */
 
-.timer-layout {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 32px;
-}
-
-.controls {
-    background-color: var(--surface-color);
-    border-radius: 14px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.mode-control {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.mode-control label {
-    font-size: 0.8rem;
-    color: var(--text-color);
-}
-
-.mode-control input {
-    background-color: var(--secondary-color);
-    color: var(--surface-color);
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 0.9rem;
-}
-
-.mode-control select {
-    background-color: var(--secondary-color);
-    color: var(--surface-color);
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 0.9rem;
-}
-
-.controls button {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-    border: none;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.controls button:hover {
-    background-color: var(--primary-color);
-    transform: translateY(-1px);
-}
-
-.controls button.active-mode {
-    background-color: var(--accent-soft);
-    color: var(--surface-color);
-    font-weight: 600;
-}
-
-.timer-card,
 .player-card,
 .task-panel {
     background-color: var(--surface-color);
     border-radius: 20px;
     padding: 32px;
-}
-
-.timer-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 480px;
-}
-
-.timer-text {
-    position: absolute;
-    text-align: center;
-}
-
-.timer-text p {
-    margin: 0;
-    font-size: 0.85rem;
-    opacity: 0.8;
-    color: var(--accent-soft);
-}
-
-.timer-text h1 {
-    margin: 6px 0 0;
-    font-size: 2.6rem;
-    font-weight: 600;
-}
-
-.progress-ring {
-    margin-bottom: 20px;
-}
-
-.progress-ring__circle {
-    stroke: var(--accent-color);
-    stroke-width: 12;
-    fill: transparent;
-    stroke-dasharray: 691;
-    stroke-dashoffset: 0;
-    stroke-linecap: round;
-    transform: rotate(-90deg);
-    transform-origin: 50% 50%;
 }
 
 .start-btn,
@@ -336,13 +229,8 @@ main {
         padding: 20px;
     }
 
-    .timer-layout,
     .tunes-layout {
         grid-template-columns: 1fr;
-    }
-
-    .timer-card {
-        min-height: 420px;
     }
 
     .task-input-row {

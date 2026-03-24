@@ -60,6 +60,7 @@ const intervalStatus = document.getElementById("intervalStatus");
 const timerLayout = document.getElementById("timerLayout");
 const timerControls = document.getElementById("timerControls");
 const settingsToggleBtn = document.getElementById("settingsToggleBtn");
+const presetsGearBtn = document.getElementById("presetsGearBtn");
 const settingsCloseBtn = document.getElementById("settingsCloseBtn");
 const controlsBackdrop = document.getElementById("controlsBackdrop");
 const mobileSidebarMediaQuery = window.matchMedia("(max-width: 768px)");
@@ -70,7 +71,13 @@ const presets = {
     deepWork: { focus: 50, short: 10, long: 20 },
     lightStart: { focus: 15, short: 3, long: 10 }
 };
-const completionSound = new Audio();
+
+const PRESET_BUTTON_IDS = {
+    classic: "presetClassicBtn",
+    deepWork: "presetDeepWorkBtn",
+    lightStart: "presetLightStartBtn"
+};
+const completionSound = new Audio("tunes_files/om.mp3");
 
 circle.style.strokeDasharray = circumference;
 completionSound.preload = "auto";
@@ -472,6 +479,34 @@ function toggleInterval() {
     }
 }
 
+function clearPresetHighlight() {
+    document.querySelectorAll(".preset-btn--active").forEach((btn) => btn.classList.remove("preset-btn--active"));
+}
+
+function highlightPresetButton(buttonId) {
+    clearPresetHighlight();
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+        btn.classList.add("preset-btn--active");
+    }
+}
+
+function syncPresetHighlightFromDurations() {
+    const match = Object.keys(presets).find((name) => {
+        const preset = presets[name];
+        return (
+            modeDurations.focus === preset.focus &&
+            modeDurations.short === preset.short &&
+            modeDurations.long === preset.long
+        );
+    });
+    if (match && PRESET_BUTTON_IDS[match]) {
+        highlightPresetButton(PRESET_BUTTON_IDS[match]);
+    } else {
+        clearPresetHighlight();
+    }
+}
+
 function applyPreset(presetName) {
     const preset = presets[presetName];
     if (!preset) {
@@ -536,7 +571,13 @@ function updateSoundToggleUI() {
         return;
     }
 
-    timerSoundToggleBtn.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
+    const label = timerSoundToggleBtn.querySelector(".utility-btn__label");
+    const text = soundEnabled ? "Sound: On" : "Sound: Off";
+    if (label) {
+        label.textContent = text;
+    } else {
+        timerSoundToggleBtn.textContent = text;
+    }
 }
 
 function toggleSound() {
@@ -662,9 +703,7 @@ function toggleTimer() {
 }
 
 function updateModeUI() {
-    Object.keys(modeDurations).forEach((mode) => {
-        modeButtons[mode].textContent = modeLabels[mode];
-    });
+    syncPresetHighlightFromDurations();
 }
 
 function updateActiveModeUI() {
@@ -982,6 +1021,10 @@ if (intervalBtn) {
 
 if (settingsToggleBtn) {
     settingsToggleBtn.addEventListener("click", toggleSidebar);
+}
+
+if (presetsGearBtn) {
+    presetsGearBtn.addEventListener("click", toggleSidebar);
 }
 
 if (settingsCloseBtn) {
