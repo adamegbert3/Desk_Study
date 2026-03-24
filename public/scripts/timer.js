@@ -1,7 +1,10 @@
 const STORAGE_KEY = "deskStudyTimerStateV1";
 const SOUND_PREF_KEY = "deskStudyTimerSoundEnabledV1";
 const TIMER_INTRO_SEEN_KEY = "deskStudyTimerIntroSeenV1";
+const COMPLETION_SOUND_PREF_KEY = "deskStudyTimerCompletionSoundV1";
+const TUNES_STORAGE_KEY = "deskStudyTunesStateV1";
 const QUICK_TEST_DURATION_MS = 10 * 1000;
+const DEFAULT_COMPLETION_SOUND_FILE = "tunes_files/om.mp3";
 
 let timer = null;
 let currentMode = "focus";
@@ -17,6 +20,7 @@ let intervalRemainingCycles = 0;
 let awaitingStop = false;
 let pendingTransition = null;
 let alarmPlaying = false;
+let previewPlaying = false;
 
 const modeDurations = {
     focus: 25,
@@ -32,6 +36,7 @@ const modeLabels = {
 
 const timeDisplay = document.getElementById("time");
 const timerToggleBtn = document.getElementById("timerToggleBtn");
+const baseDocumentTitle = window.__deskStudyBaseTitle || document.title;
 const circle = document.querySelector(".progress-ring__circle");
 const circumference = 2 * Math.PI * 110;
 const modeInputs = {
@@ -58,16 +63,226 @@ const settingsToggleBtn = document.getElementById("settingsToggleBtn");
 const settingsCloseBtn = document.getElementById("settingsCloseBtn");
 const controlsBackdrop = document.getElementById("controlsBackdrop");
 const mobileSidebarMediaQuery = window.matchMedia("(max-width: 768px)");
+const completionSoundSelect = document.getElementById("completionSoundSelect");
+const previewCompletionSoundBtn = document.getElementById("previewCompletionSoundBtn");
 const presets = {
     classic: { focus: 25, short: 5, long: 15 },
     deepWork: { focus: 50, short: 10, long: 20 },
     lightStart: { focus: 15, short: 3, long: 10 }
 };
-const completionSound = new Audio("tunes_files/om.mp3");
+const completionSound = new Audio();
 
 circle.style.strokeDasharray = circumference;
 completionSound.preload = "auto";
 completionSound.volume = 0.85;
+completionSound.src = loadCompletionSoundPreference();
+
+completionSound.addEventListener("ended", () => {
+    if (!alarmPlaying && previewPlaying) {
+        previewPlaying = false;
+        updatePreviewCompletionSoundUI();
+    }
+});
+
+function normalizeFile(file) {
+    try {
+        return new URL(file, window.location.href).href;
+    } catch {
+        return String(file || "");
+    }
+}
+
+function loadCompletionSoundPreference() {
+    const direct = localStorage.getItem(COMPLETION_SOUND_PREF_KEY);
+    if (direct) {
+        return direct;
+    }
+
+    try {
+        const tunesState = JSON.parse(localStorage.getItem(TUNES_STORAGE_KEY) || "null");
+        if (tunesState && tunesState.trackFile) {
+            return tunesState.trackFile;
+        }
+    } catch {
+        // Ignore parse failures.
+    }
+
+    return DEFAULT_COMPLETION_SOUND_FILE;
+}
+
+function saveCompletionSoundPreference(file) {
+    try {
+        localStorage.setItem(COMPLETION_SOUND_PREF_KEY, `${file}`);
+    } catch {
+        // Best effort only.
+    }
+}
+
+async function loadTunesManifestForTimer() {
+    const fallback = {
+        quickTracks: [
+            { name: "Rain", file: "tunes_files/rain.mp3" },
+            { name: "Forest", file: "tunes_files/forest.mp3" },
+            { name: "Wind", file: "tunes_files/wind.mp3" },
+            { name: "Om", file: "tunes_files/om.mp3" }
+        ]
+    };
+
+    try {
+        const res = await fetch("tunes-manifest.json", { cache: "no-store" });
+        if (!res.ok) {
+            return fallback;
+        }
+        const data = await res.json();
+        if (!data || typeof data !== "object") {
+            return fallback;
+        }
+        return data;
+    } catch {
+        return fallback;
+    }
+}
+
+function updatePreviewCompletionSoundUI() {
+    if (!previewCompletionSoundBtn) {
+        return;
+    }
+
+    previewCompletionSoundBtn.textContent = previewPlaying ? "Stop preview" : "Preview alarm";
+}
+
+function stopPreviewCompletionSound() {
+    if (!previewPlaying) {
+        return;
+    }
+
+    previewPlaying = false;
+    completionSound.loop = false;
+    completionSound.pause();
+    completionSound.currentTime = 0;
+    updatePreviewCompletionSoundUI();
+}
+
+function togglePreviewCompletionSound() {
+    if (!soundEnabled) {
+        alert("Sound is Off. Turn Sound On to preview the alarm.");
+        return;
+    }
+
+    if (alarmPlaying) {
+        stopAlarm();
+        return;
+    }
+
+    if (previewPlaying) {
+        stopPreviewCompletionSound();
+        return;
+    }
+
+    previewPlaying = true;
+    updatePreviewCompletionSoundUI();
+
+    completionSound.loop = false;
+    completionSound.currentTime = 0;
+    const playAttempt = completionSound.play();
+    if (playAttempt && typeof playAttempt.catch === "function") {
+        playAttempt.catch(() => {
+            previewPlaying = false;
+            updatePreviewCompletionSoundUI();
+        });
+    }
+}
+
+async function initializeCompletionSoundControls() {
+    if (!completionSoundSelect) {
+        return;
+    }
+
+    completionSoundSelect.disabled = true;
+    completionSoundSelect.innerHTML = "";
+
+    const manifest = await loadTunesManifestForTimer();
+    const selectedFileAbs = normalizeFile(completionSound.src || loadCompletionSoundPreference());
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select alarm sound...";
+    completionSoundSelect.appendChild(placeholder);
+
+    const emittedFiles = new Set();
+
+    function friendlyNameFromFile(file) {
+        const normalized = String(file || "");
+        const lastSlash = Math.max(normalized.lastIndexOf("/"), normalized.lastIndexOf("\\"));
+        const baseName = lastSlash >= 0 ? normalized.slice(lastSlash + 1) : normalized;
+        return baseName.replace(/\.mp3$/i, "") || normalized || "Track";
+    }
+
+    function appendTrackGroup(label, tracks) {
+        if (!Array.isArray(tracks) || tracks.length === 0) {
+            return;
+        }
+
+        const group = document.createElement("optgroup");
+        group.label = label;
+
+        tracks.forEach((track) => {
+            if (!track || !track.file) {
+                return;
+            }
+            const name = track.name || friendlyNameFromFile(track.file);
+            const file = track.file;
+            const fileKey = normalizeFile(file);
+
+            if (emittedFiles.has(fileKey)) {
+                return;
+            }
+            emittedFiles.add(fileKey);
+
+            const option = document.createElement("option");
+            option.value = file;
+            option.textContent = name;
+            if (fileKey === selectedFileAbs) {
+                option.selected = true;
+                placeholder.selected = false;
+            }
+            group.appendChild(option);
+        });
+
+        if (group.children.length > 0) {
+            completionSoundSelect.appendChild(group);
+        }
+    }
+
+    const manifestEntries = Object.entries(manifest || {}).filter(([, value]) => Array.isArray(value));
+    manifestEntries.sort(([a], [b]) => {
+        if (a === "quickTracks") return -1;
+        if (b === "quickTracks") return 1;
+        return a.localeCompare(b);
+    });
+
+    manifestEntries.forEach(([key, tracks]) => {
+        const label = key === "quickTracks" ? "Quick tracks" : key;
+        appendTrackGroup(label, tracks);
+    });
+
+    completionSoundSelect.disabled = false;
+
+    completionSoundSelect.addEventListener("change", () => {
+        const nextFile = completionSoundSelect.value;
+        if (!nextFile) {
+            return;
+        }
+
+        stopPreviewCompletionSound();
+        stopAlarm();
+
+        soundPrimed = false;
+        completionSound.src = nextFile;
+        saveCompletionSoundPreference(nextFile);
+        primeCompletionSound();
+    });
+}
 
 function getModeDurationMs(mode) {
     return modeDurations[mode] * 60 * 1000;
@@ -365,6 +580,7 @@ function playCompletionSound() {
 
 function startAlarm() {
     if (alarmPlaying) return;
+    stopPreviewCompletionSound();
     alarmPlaying = true;
     completionSound.loop = true;
     playCompletionSound();
@@ -389,6 +605,7 @@ function startTimer() {
         remainingMs = durationMs;
     }
 
+    stopPreviewCompletionSound();
     primeCompletionSound();
     endsAt = Date.now() + remainingMs;
     isRunning = true;
@@ -485,10 +702,29 @@ Object.keys(modeInputs).forEach((mode) => {
 });
 
 function updateDisplayFromMs() {
-    const totalSeconds = Math.ceil(remainingMs / 1000);
+    timeDisplay.textContent = formatRemainingTime(remainingMs);
+}
+
+function formatRemainingTime(valueMs) {
+    const totalSeconds = Math.max(0, Math.ceil(valueMs / 1000));
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function updateDocumentTitle() {
+    if (!baseDocumentTitle) {
+        return;
+    }
+
+    if (!isRunning) {
+        document.title = baseDocumentTitle;
+        return;
+    }
+
+    const timeLabel = formatRemainingTime(remainingMs);
+    const modeLabel = modeLabels[currentMode] || "Timer";
+    document.title = `${timeLabel} • ${modeLabel} | ${baseDocumentTitle}`;
 }
 
 function updateRingFromMs() {
@@ -531,6 +767,7 @@ function render() {
     updateToggleButton();
     updateActiveModeUI();
     updateIntervalStatusUI();
+    updateDocumentTitle();
 }
 
 function tick() {
@@ -598,6 +835,8 @@ async function initialize() {
     syncIntervalInputs();
     soundEnabled = await loadSoundPreferenceAsync();
     updateSoundToggleUI();
+    updatePreviewCompletionSoundUI();
+    await initializeCompletionSoundControls();
     render();
 
     if (isRunning) {
@@ -731,6 +970,10 @@ if (timerHelpBtn) {
 
 if (timerSoundToggleBtn) {
     timerSoundToggleBtn.addEventListener("click", toggleSound);
+}
+
+if (previewCompletionSoundBtn) {
+    previewCompletionSoundBtn.addEventListener("click", togglePreviewCompletionSound);
 }
 
 if (intervalBtn) {

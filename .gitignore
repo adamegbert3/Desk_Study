@@ -10,6 +10,9 @@ firebase-debug.log
 firestore-debug.log
 ui-debug.log
 
+# Local CLI config (never commit)
+.config/
+
 
 # OS/editor noise
 .DS_Store

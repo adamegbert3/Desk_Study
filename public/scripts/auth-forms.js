@@ -137,8 +137,9 @@ function initLoginForm() {
             const auth = await getFirebaseAuthIfConfigured();
             if (auth) {
                 try {
+                    const { FIREBASE_VERSION } = await import('./firebase-version.js');
                     const { signInWithEmailAndPassword } = await import(
-                        `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                        `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`
                     );
                     const cred = await signInWithEmailAndPassword(auth, email, password);
                     const user = cred.user;
@@ -158,7 +159,7 @@ function initLoginForm() {
                             }
                         } else if (choice === 'cancel') {
                             const { signOut } = await import(
-                                `https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js`
+                                `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`
                             );
                             await signOut(auth);
                             window.localStorage.removeItem(AUTH_STORAGE_KEY);

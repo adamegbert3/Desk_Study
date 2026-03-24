@@ -62,6 +62,15 @@ main {
     font-size: 0.9rem;
 }
 
+.mode-control select {
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
 .controls button {
     background-color: var(--secondary-color);
     color: var(--text-color);
