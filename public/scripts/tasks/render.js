@@ -29,7 +29,8 @@ export const taskPageElements = {
 export const tasksModalContext = {
     activeEntityType: null,
     parentGroupId: null,
-    parentSubgroupId: null
+    parentSubgroupId: null,
+    renameTaskId: null
 };
 
 export function cachetaskPageElements() {
@@ -57,6 +58,7 @@ export function openGroupModal() {
     tasksModalContext.activeEntityType = 'group';
     tasksModalContext.parentGroupId = null;
     tasksModalContext.parentSubgroupId = null;
+    tasksModalContext.renameTaskId = null;
 
     if (
         !taskPageElements.entityModal ||
@@ -90,6 +92,7 @@ export function openSubgroupModal(parentGroupId, parentGroupName) {
     tasksModalContext.activeEntityType = 'subgroup';
     tasksModalContext.parentGroupId = parentGroupId;
     tasksModalContext.parentSubgroupId = null;
+    tasksModalContext.renameTaskId = null;
 
     if (
         !taskPageElements.entityModal ||
@@ -123,6 +126,7 @@ export function openTaskModal(parentGroupId, parentSubgroupId, parentSubgroupNam
     tasksModalContext.activeEntityType = 'task';
     tasksModalContext.parentGroupId = parentGroupId;
     tasksModalContext.parentSubgroupId = parentSubgroupId;
+    tasksModalContext.renameTaskId = null;
 
     if (
         !taskPageElements.entityModal ||
@@ -156,6 +160,49 @@ export function openTaskModal(parentGroupId, parentSubgroupId, parentSubgroupNam
     document.body.style.overflow = 'hidden';
 }
 
+export function openRenameTaskModal(taskId, taskTitle, taskDueDate) {
+    tasksModalContext.activeEntityType = 'rename-task';
+    tasksModalContext.renameTaskId = taskId;
+    tasksModalContext.parentGroupId = null;
+    tasksModalContext.parentSubgroupId = null;
+
+    if (
+        !taskPageElements.entityModal ||
+        !taskPageElements.modalFieldsContainer ||
+        !taskPageElements.modalTitle ||
+        !taskPageElements.modalDescription ||
+        !taskPageElements.modalSubmitButton
+    ) return;
+
+    taskPageElements.modalTitle.textContent = 'Rename task';
+    taskPageElements.modalDescription.textContent = 'Update the name and due date for this task.';
+    taskPageElements.modalSubmitButton.textContent = 'Save';
+
+    taskPageElements.modalFieldsContainer.innerHTML =
+        '<label for="taskTitle">Task name</label>' +
+        '<input type="text" id="taskTitle" name="taskTitle" required ' +
+        'placeholder="Task title" autocomplete="off" maxlength="200">' +
+        '<label for="taskDueDate">Due date</label>' +
+        '<input type="date" id="taskDueDate" name="taskDueDate" required>';
+
+    const taskTitleInputAfter = document.getElementById('taskTitle');
+    const taskDueDateInputAfter = document.getElementById('taskDueDate');
+    if (taskTitleInputAfter) taskTitleInputAfter.value = taskTitle || '';
+    if (taskDueDateInputAfter) taskDueDateInputAfter.value = taskDueDate || '';
+
+    taskPageElements.entityModal.hidden = false;
+    if (taskPageElements.addGroupButton) {
+        taskPageElements.addGroupButton.setAttribute('aria-expanded', 'true');
+    }
+
+    if (taskTitleInputAfter) {
+        taskTitleInputAfter.focus();
+        taskTitleInputAfter.select();
+    }
+
+    document.body.style.overflow = 'hidden';
+}
+
 export function closeTasksModal() {
     if (!taskPageElements.entityModal) return;
 
@@ -163,6 +210,7 @@ export function closeTasksModal() {
     tasksModalContext.activeEntityType = null;
     tasksModalContext.parentGroupId = null;
     tasksModalContext.parentSubgroupId = null;
+    tasksModalContext.renameTaskId = null;
 
     if (taskPageElements.addGroupButton) {
         taskPageElements.addGroupButton.setAttribute('aria-expanded', 'false');
@@ -172,6 +220,79 @@ export function closeTasksModal() {
     }
 
     document.body.style.overflow = '';
+}
+
+function createTaskCompleteButton(taskId) {
+    const completeButtonElement = document.createElement('button');
+    completeButtonElement.type = 'button';
+    completeButtonElement.className = 'task-complete-btn';
+    completeButtonElement.setAttribute('data-action', 'complete-task');
+    completeButtonElement.setAttribute('data-task-id', taskId);
+    completeButtonElement.setAttribute('aria-label', 'Mark task complete');
+
+    const visualWrapElement = document.createElement('span');
+    visualWrapElement.className = 'task-complete-visual';
+    visualWrapElement.setAttribute('aria-hidden', 'true');
+
+    const boxElement = document.createElement('span');
+    boxElement.className = 'task-complete-box';
+
+    const checkIconElement = document.createElement('img');
+    checkIconElement.className = 'task-complete-check';
+    checkIconElement.src = 'styles/images/icons/checkMark.svg';
+    checkIconElement.alt = '';
+
+    visualWrapElement.appendChild(boxElement);
+    visualWrapElement.appendChild(checkIconElement);
+    completeButtonElement.appendChild(visualWrapElement);
+    return completeButtonElement;
+}
+
+function createTaskMenuWrap(task) {
+    const menuWrapElement = document.createElement('div');
+    menuWrapElement.className = 'task-row-menu-wrap';
+
+    const menuToggleButtonElement = document.createElement('button');
+    menuToggleButtonElement.type = 'button';
+    menuToggleButtonElement.className = 'task-menu-btn';
+    menuToggleButtonElement.setAttribute('data-action', 'task-menu-toggle');
+    menuToggleButtonElement.setAttribute('data-task-id', task.id);
+    menuToggleButtonElement.setAttribute('aria-label', 'Task options');
+    menuToggleButtonElement.setAttribute('aria-expanded', 'false');
+    menuToggleButtonElement.setAttribute('aria-haspopup', 'true');
+
+    const menuIconElement = document.createElement('img');
+    menuIconElement.src = 'styles/images/icons/menu.svg';
+    menuIconElement.alt = '';
+    menuIconElement.setAttribute('aria-hidden', 'true');
+    menuToggleButtonElement.appendChild(menuIconElement);
+
+    const menuDropdownElement = document.createElement('div');
+    menuDropdownElement.className = 'task-action-menu';
+    menuDropdownElement.hidden = true;
+    menuDropdownElement.setAttribute('role', 'menu');
+
+    const renameMenuItemElement = document.createElement('button');
+    renameMenuItemElement.type = 'button';
+    renameMenuItemElement.className = 'task-action-menu-item';
+    renameMenuItemElement.setAttribute('data-action', 'rename-task');
+    renameMenuItemElement.setAttribute('data-task-id', task.id);
+    renameMenuItemElement.setAttribute('role', 'menuitem');
+    renameMenuItemElement.textContent = 'Rename';
+
+    const deleteMenuItemElement = document.createElement('button');
+    deleteMenuItemElement.type = 'button';
+    deleteMenuItemElement.className = 'task-action-menu-item task-action-menu-item--danger';
+    deleteMenuItemElement.setAttribute('data-action', 'delete-task');
+    deleteMenuItemElement.setAttribute('data-task-id', task.id);
+    deleteMenuItemElement.setAttribute('role', 'menuitem');
+    deleteMenuItemElement.textContent = 'Delete';
+
+    menuDropdownElement.appendChild(renameMenuItemElement);
+    menuDropdownElement.appendChild(deleteMenuItemElement);
+    menuWrapElement.appendChild(menuToggleButtonElement);
+    menuWrapElement.appendChild(menuDropdownElement);
+    return menuWrapElement;
 }
 
 export function renderTasksDueTodayPanel() {
@@ -185,28 +306,14 @@ export function renderTasksDueTodayPanel() {
         const rowElement = document.createElement('div');
         rowElement.className = 'due-today-item';
 
-        const taskPillElement = document.createElement('span');
+        rowElement.appendChild(createTaskCompleteButton(task.id));
 
-        taskPillElement.className = 'task-pill task-pill--due-today';
-        taskPillElement.textContent = task.title;
-        taskPillElement.setAttribute('data-task-id', task.id);
+        const titleElement = document.createElement('span');
+        titleElement.className = 'task-row-title';
+        titleElement.textContent = task.title;
 
-        const deleteButtonElement = document.createElement('button');
-        deleteButtonElement.type = 'button';
-        deleteButtonElement.className = 'task-delete-btn';
-        deleteButtonElement.setAttribute('data-action', 'delete-task');
-        deleteButtonElement.setAttribute('data-task-id', task.id);
-        deleteButtonElement.setAttribute('aria-label', 'Delete task');
-
-        const deleteIconElement = document.createElement('img');
-        deleteIconElement.src = 'styles/images/icons/delete.svg';
-        deleteIconElement.alt = '';
-        deleteIconElement.setAttribute('aria-hidden', 'true');
-
-        deleteButtonElement.appendChild(deleteIconElement);
-
-        rowElement.appendChild(taskPillElement);
-        rowElement.appendChild(deleteButtonElement);
+        rowElement.appendChild(titleElement);
+        rowElement.appendChild(createTaskMenuWrap(task));
 
         listItemElement.appendChild(rowElement);
         taskPageElements.dueTodayList.appendChild(listItemElement);
@@ -329,6 +436,8 @@ export function renderTaskGroups() {
                 subgroupTaskItemElement.className = 'subgroup-task-item';
                 subgroupTaskItemElement.setAttribute('data-task-id', task.id);
 
+                subgroupTaskItemElement.appendChild(createTaskCompleteButton(task.id));
+
                 const subgroupTaskTitleElement = document.createElement('span');
                 subgroupTaskTitleElement.className = 'subgroup-task-title';
                 subgroupTaskTitleElement.textContent = task.title;
@@ -340,24 +449,8 @@ export function renderTaskGroups() {
                 subgroupTaskDateElement.className = 'subgroup-task-date';
                 subgroupTaskDateElement.textContent = formatTaskDueDateForDisplay(task.dueDate);
 
-                const deleteButtonElement = document.createElement('button');
-                deleteButtonElement.type = 'button';
-                deleteButtonElement.className = 'task-delete-btn';
-                deleteButtonElement.setAttribute('data-action', 'delete-task');
-                deleteButtonElement.setAttribute('data-task-id', task.id);
-                deleteButtonElement.setAttribute('data-group-id', group.id);
-                deleteButtonElement.setAttribute('data-subgroup-id', subgroup.id);
-                deleteButtonElement.setAttribute('aria-label', 'Delete task');
-
-                const deleteIconElement = document.createElement('img');
-                deleteIconElement.src = 'styles/images/icons/delete.svg';
-                deleteIconElement.alt = '';
-                deleteIconElement.setAttribute('aria-hidden', 'true');
-
-                deleteButtonElement.appendChild(deleteIconElement);
-
                 subgroupTaskRightElement.appendChild(subgroupTaskDateElement);
-                subgroupTaskRightElement.appendChild(deleteButtonElement);
+                subgroupTaskRightElement.appendChild(createTaskMenuWrap(task));
 
                 subgroupTaskItemElement.appendChild(subgroupTaskTitleElement);
                 subgroupTaskItemElement.appendChild(subgroupTaskRightElement);

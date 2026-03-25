@@ -51,27 +51,20 @@
             <section class="tunes-right now-playing-panel">
                 <p class="tunes-header">Now Playing: &nbsp;<span id="track-name">Rain</span></p>
                 <main>
-                    <div class="player-card">
-                        <div class="player-controls">
-                            
-                            <!-- <button class="control-btn">≡</button> 
-                            
-                            <button class="control-btn">⏮</button> -->
-                            
-                            <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
-                                ▶
-                            </button>
-
-                            <p class="tunes-header"> <span class="now-playing-wave" id="nowPlayingWave" aria-hidden="true"> <span></span><span></span><span></span> </span> </p>
-                            
-                            <!-- <button class="control-btn">⏭</button>
-                            
-                            <button class="control-btn">♥</button> -->
-                        </div>
-                        
+                    <div class="player-controls">
+                        <!-- <button class="control-btn">≡</button>
+                        <button class="control-btn">⏮</button> -->
+                        <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
+                            ▶
+                        </button>
+                        <p class="tunes-header">
+                            <span class="now-playing-wave" id="nowPlayingWave" aria-hidden="true">
+                                <span></span><span></span><span></span>
+                            </span>
+                        </p>
+                        <!-- <button class="control-btn">⏭</button>
+                        <button class="control-btn">♥</button> -->
                     </div>
-                    
-                    
                     <audio id="audio-player" loop></audio>
                 </main>
                 

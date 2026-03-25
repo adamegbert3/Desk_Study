@@ -156,6 +156,32 @@ export function formatTaskDueDateForDisplay(isoDateStr) {
     return month + '/' + (day.length === 1 ? '0' + day : day) + '/' + year;
 }
 
+export function findTaskByIdInState(taskId) {
+    if (!taskId) return null;
+    for (const group of taskGroupsState) {
+        if (!group || !Array.isArray(group.subgroups)) continue;
+        for (const subgroup of group.subgroups) {
+            if (!subgroup || !Array.isArray(subgroup.tasks)) continue;
+            const task = subgroup.tasks.find(function (t) {
+                return t && t.id === taskId;
+            });
+            if (task) return task;
+        }
+    }
+    return null;
+}
+
+export function updateTaskById(taskId, taskTitle, taskDueDate) {
+    const task = findTaskByIdInState(taskId);
+    if (!task) return false;
+    const trimmed = (taskTitle || '').trim();
+    if (!trimmed || !taskDueDate) return false;
+    task.title = trimmed;
+    task.dueDate = taskDueDate;
+    saveTasksState();
+    return true;
+}
+
 export function deleteTaskById(taskId) {
     if (!taskId) return false;
 

@@ -3,6 +3,8 @@ import {
     addSubgroupToGroup,
     addTaskToSubgroupInGroup,
     deleteTaskById,
+    updateTaskById,
+    findTaskByIdInState,
     getGroupLimitForCurrentTier,
     getSubgroupPerGroupLimitForCurrentTier,
     findGroupByIdInState,
@@ -17,6 +19,7 @@ import {
     openGroupModal,
     openSubgroupModal,
     openTaskModal,
+    openRenameTaskModal,
     closeTasksModal,
     renderTasksPage
 } from './render.js';
@@ -25,6 +28,46 @@ import { configureDataStoreRemoteAdapter } from '../firebase.js';
 const COLLAPSE_ICON_SRC = 'styles/images/icons/collapse content.svg';
 const EXPAND_ICON_SRC = 'styles/images/icons/expand_content.svg';
 const collapsedGroupIds = new Set();
+const TASK_COMPLETE_REMOVE_DELAY_MS = 420;
+
+function closeAllTaskMenus() {
+    document.querySelectorAll('.task-action-menu').forEach(function (menuElement) {
+        menuElement.hidden = true;
+    });
+    document.querySelectorAll('.task-menu-btn').forEach(function (toggleButtonElement) {
+        toggleButtonElement.setAttribute('aria-expanded', 'false');
+    });
+}
+
+function scheduleTaskCompletion(completeButtonElement, taskId) {
+    if (!completeButtonElement || !taskId) return;
+    if (completeButtonElement.getAttribute('data-completing') === 'true') return;
+
+    completeButtonElement.setAttribute('data-completing', 'true');
+    completeButtonElement.classList.add('is-checked');
+    completeButtonElement.setAttribute('aria-label', 'Task completed');
+    completeButtonElement.setAttribute('aria-busy', 'true');
+
+    window.setTimeout(function () {
+        deleteTaskById(taskId);
+        closeAllTaskMenus();
+        renderTasksPage();
+        syncGroupCollapseStateAfterRender();
+    }, TASK_COMPLETE_REMOVE_DELAY_MS);
+}
+
+function toggleTaskActionMenu(actionElement, menuDropdownElement) {
+    const isOpen = Boolean(menuDropdownElement && !menuDropdownElement.hidden);
+    if (isOpen) {
+        menuDropdownElement.hidden = true;
+        actionElement.setAttribute('aria-expanded', 'false');
+        return;
+    }
+
+    closeAllTaskMenus();
+    menuDropdownElement.hidden = false;
+    actionElement.setAttribute('aria-expanded', 'true');
+}
 
 function setDueTodayCollapsed(isCollapsed) {
     if (!taskPageElements.dueTodayPanel) return;
@@ -170,6 +213,24 @@ function handleEntityFormSubmit(event) {
         closeTasksModal();
         renderTasksPage();
         syncGroupCollapseStateAfterRender();
+        return;
+    }
+
+    if (tasksModalContext.activeEntityType === 'rename-task') {
+        const taskTitleInputElement = document.getElementById('taskTitle');
+        const taskDueDateInputElement = document.getElementById('taskDueDate');
+        const taskTitleValue = taskTitleInputElement && taskTitleInputElement.value;
+        const taskDueDateValue = taskDueDateInputElement && taskDueDateInputElement.value;
+
+        if (!taskTitleValue || !taskDueDateValue || !tasksModalContext.renameTaskId) return;
+
+        const updated = updateTaskById(tasksModalContext.renameTaskId, taskTitleValue, taskDueDateValue);
+        if (!updated) return;
+
+        closeTasksModal();
+        renderTasksPage();
+        syncGroupCollapseStateAfterRender();
+        return;
     }
 }
 
@@ -213,16 +274,54 @@ function setupTaskPageEventListeners() {
             if (!actionElement) return;
 
             const actionType = actionElement.getAttribute('data-action');
-            if (actionType !== 'delete-task') return;
 
-            const taskId = actionElement.getAttribute('data-task-id');
-            if (!taskId) return;
+            if (actionType === 'complete-task') {
+                event.stopPropagation();
+                const taskId = actionElement.getAttribute('data-task-id');
+                if (!taskId) return;
+                scheduleTaskCompletion(actionElement, taskId);
+                return;
+            }
 
-            deleteTaskById(taskId);
-            renderTasksPage();
-            syncGroupCollapseStateAfterRender();
+            if (actionType === 'task-menu-toggle') {
+                event.stopPropagation();
+                const menuWrapElement = actionElement.closest('.task-row-menu-wrap');
+                const menuDropdownElement =
+                    menuWrapElement && menuWrapElement.querySelector('.task-action-menu');
+                if (!menuDropdownElement) return;
+                toggleTaskActionMenu(actionElement, menuDropdownElement);
+                return;
+            }
+
+            if (actionType === 'rename-task') {
+                event.stopPropagation();
+                const taskId = actionElement.getAttribute('data-task-id');
+                if (!taskId) return;
+                const taskRecord = findTaskByIdInState(taskId);
+                if (!taskRecord) return;
+                closeAllTaskMenus();
+                openRenameTaskModal(taskId, taskRecord.title, taskRecord.dueDate);
+                return;
+            }
+
+            if (actionType === 'delete-task') {
+                event.stopPropagation();
+                const taskId = actionElement.getAttribute('data-task-id');
+                if (!taskId) return;
+                closeAllTaskMenus();
+                deleteTaskById(taskId);
+                renderTasksPage();
+                syncGroupCollapseStateAfterRender();
+            }
         });
     }
+
+    document.addEventListener('click', function (event) {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest('.task-row-menu-wrap')) return;
+        closeAllTaskMenus();
+    });
 
     if (taskPageElements.groupCardsContainer) {
         taskPageElements.groupCardsContainer.addEventListener('click', function (event) {
@@ -235,10 +334,40 @@ function setupTaskPageEventListeners() {
             const actionType = actionElement.getAttribute('data-action');
             if (!actionType) return;
 
-            if (actionType === 'delete-task') {
+            if (actionType === 'complete-task') {
+                event.stopPropagation();
                 const taskId = actionElement.getAttribute('data-task-id');
                 if (!taskId) return;
+                scheduleTaskCompletion(actionElement, taskId);
+                return;
+            }
 
+            if (actionType === 'task-menu-toggle') {
+                event.stopPropagation();
+                const menuWrapElement = actionElement.closest('.task-row-menu-wrap');
+                const menuDropdownElement =
+                    menuWrapElement && menuWrapElement.querySelector('.task-action-menu');
+                if (!menuDropdownElement) return;
+                toggleTaskActionMenu(actionElement, menuDropdownElement);
+                return;
+            }
+
+            if (actionType === 'rename-task') {
+                event.stopPropagation();
+                const taskId = actionElement.getAttribute('data-task-id');
+                if (!taskId) return;
+                const taskRecord = findTaskByIdInState(taskId);
+                if (!taskRecord) return;
+                closeAllTaskMenus();
+                openRenameTaskModal(taskId, taskRecord.title, taskRecord.dueDate);
+                return;
+            }
+
+            if (actionType === 'delete-task') {
+                event.stopPropagation();
+                const taskId = actionElement.getAttribute('data-task-id');
+                if (!taskId) return;
+                closeAllTaskMenus();
                 deleteTaskById(taskId);
                 renderTasksPage();
                 syncGroupCollapseStateAfterRender();
@@ -300,9 +429,12 @@ function setupTaskPageEventListeners() {
     }
 
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && taskPageElements.entityModal && !taskPageElements.entityModal.hidden) {
+        if (event.key !== 'Escape') return;
+        if (taskPageElements.entityModal && !taskPageElements.entityModal.hidden) {
             closeTasksModal();
+            return;
         }
+        closeAllTaskMenus();
     });
 }
 

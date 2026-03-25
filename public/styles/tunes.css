@@ -68,16 +68,6 @@
     color: var(--surface-color);
 }
 
-.player-card {
-    background-color: var(--surface-panel-bg);
-    backdrop-filter: var(--surface-panel-blur);
-    -webkit-backdrop-filter: var(--surface-panel-blur);
-    border: var(--surface-panel-border);
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: var(--surface-panel-shadow);
-}
-
 .player-controls {
     display: flex;
     gap: 12px;
@@ -266,11 +256,6 @@ opacity: 1;
 }
 
 @media (max-width: 600px) {
-    .player-card {
-        padding: 20px;
-        width: 100%;
-    }
-
     .player-controls {
         width: 100%;
         justify-content: center;
