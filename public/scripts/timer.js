@@ -5,6 +5,8 @@ const COMPLETION_SOUND_PREF_KEY = "deskStudyTimerCompletionSoundV1";
 const TUNES_STORAGE_KEY = "deskStudyTunesStateV1";
 const QUICK_TEST_DURATION_MS = 10 * 1000;
 const DEFAULT_COMPLETION_SOUND_FILE = "tunes_files/om.mp3";
+const COLLAPSE_ICON_SRC = "styles/images/icons/collapse content.svg";
+const EXPAND_ICON_SRC = "styles/images/icons/expand_content.svg";
 
 let timer = null;
 let currentMode = "focus";
@@ -59,9 +61,11 @@ const intervalCyclesInput = document.getElementById("intervalCycles");
 const intervalStatus = document.getElementById("intervalStatus");
 const timerLayout = document.getElementById("timerLayout");
 const timerControls = document.getElementById("timerControls");
+const timerCard = document.getElementById("timerCard");
 const settingsToggleBtn = document.getElementById("settingsToggleBtn");
-const presetsGearBtn = document.getElementById("presetsGearBtn");
-const settingsCloseBtn = document.getElementById("settingsCloseBtn");
+const timerDisplayToggleIcon = document.getElementById("timerDisplayToggleIcon");
+const timerControlsToggleIcon = document.getElementById("timerControlsToggleIcon");
+const timerControlsCollapseBtn = document.getElementById("timerControlsCollapseBtn");
 const controlsBackdrop = document.getElementById("controlsBackdrop");
 const mobileSidebarMediaQuery = window.matchMedia("(max-width: 768px)");
 const completionSoundSelect = document.getElementById("completionSoundSelect");
@@ -541,7 +545,6 @@ function setQuickTestDuration() {
 }
 
 function loadSoundPreference() {
-    // Async version is used during initialize().
     return true;
 }
 
@@ -600,7 +603,7 @@ function primeCompletionSound() {
                 soundPrimed = true;
             })
             .catch(() => {
-                // Ignore autoplay restrictions; we'll try again on completion.
+
             });
     }
 }
@@ -614,7 +617,7 @@ function playCompletionSound() {
     const playAttempt = completionSound.play();
     if (playAttempt && typeof playAttempt.catch === "function") {
         playAttempt.catch(() => {
-            // Best effort only; notifications/alerts still communicate completion.
+            
         });
     }
 }
@@ -908,12 +911,54 @@ function isMobileSidebarLayout() {
     return mobileSidebarMediaQuery.matches;
 }
 
-function updateSidebarButtonUI(isOpen) {
-    if (!settingsToggleBtn) {
-        return;
+function refreshTimerPanelUI() {
+    const mobile = isMobileSidebarLayout();
+
+    if (timerControlsCollapseBtn && timerControlsToggleIcon) {
+        if (mobile) {
+            timerControlsToggleIcon.src = COLLAPSE_ICON_SRC;
+            timerControlsCollapseBtn.setAttribute("aria-label", "Close settings");
+        } else {
+            const settingsExpanded = Boolean(timerControls && !timerControls.classList.contains("is-collapsed"));
+            timerControlsToggleIcon.src = settingsExpanded ? COLLAPSE_ICON_SRC : EXPAND_ICON_SRC;
+            timerControlsCollapseBtn.setAttribute(
+                "aria-label",
+                settingsExpanded ? "Hide settings" : "Show settings"
+            );
+        }
     }
 
-    settingsToggleBtn.setAttribute("aria-expanded", `${isOpen}`);
+    if (settingsToggleBtn && timerDisplayToggleIcon) {
+        if (mobile) {
+            const overlayOpen = Boolean(timerLayout && timerLayout.classList.contains("sidebar-open"));
+            timerDisplayToggleIcon.src = overlayOpen ? COLLAPSE_ICON_SRC : EXPAND_ICON_SRC;
+            settingsToggleBtn.setAttribute("aria-label", overlayOpen ? "Close settings" : "Open settings");
+            settingsToggleBtn.setAttribute("aria-expanded", `${overlayOpen}`);
+            settingsToggleBtn.setAttribute("aria-controls", "timerControls");
+        } else {
+            const timerExpanded = Boolean(timerCard && !timerCard.classList.contains("is-collapsed"));
+            timerDisplayToggleIcon.src = timerExpanded ? COLLAPSE_ICON_SRC : EXPAND_ICON_SRC;
+            settingsToggleBtn.setAttribute("aria-label", timerExpanded ? "Hide timer" : "Show timer");
+            settingsToggleBtn.setAttribute("aria-expanded", `${timerExpanded}`);
+            settingsToggleBtn.setAttribute("aria-controls", "timerCardBody");
+        }
+    }
+}
+
+function toggleSettingsPanelCollapsed() {
+    if (!timerControls || isMobileSidebarLayout()) {
+        return;
+    }
+    timerControls.classList.toggle("is-collapsed");
+    refreshTimerPanelUI();
+}
+
+function toggleTimerCardCollapsed() {
+    if (!timerCard || isMobileSidebarLayout()) {
+        return;
+    }
+    timerCard.classList.toggle("is-collapsed");
+    refreshTimerPanelUI();
 }
 
 function syncSidebarBackdrop(isOpen) {
@@ -925,15 +970,10 @@ function syncSidebarBackdrop(isOpen) {
 }
 
 function isSidebarOpen() {
-    if (!timerLayout) {
+    if (!timerLayout || !isMobileSidebarLayout()) {
         return false;
     }
-
-    if (isMobileSidebarLayout()) {
-        return timerLayout.classList.contains("sidebar-open");
-    }
-
-    return !timerLayout.classList.contains("sidebar-collapsed");
+    return timerLayout.classList.contains("sidebar-open");
 }
 
 function setSidebarOpenState(isOpen) {
@@ -943,18 +983,18 @@ function setSidebarOpenState(isOpen) {
 
     if (isMobileSidebarLayout()) {
         timerLayout.classList.toggle("sidebar-open", isOpen);
-        timerLayout.classList.remove("sidebar-collapsed");
+        if (timerControls) {
+            timerControls.classList.remove("is-collapsed");
+        }
+        if (timerCard) {
+            timerCard.classList.remove("is-collapsed");
+        }
     } else {
-        timerLayout.classList.toggle("sidebar-collapsed", !isOpen);
         timerLayout.classList.remove("sidebar-open");
     }
 
-    updateSidebarButtonUI(isOpen);
+    refreshTimerPanelUI();
     syncSidebarBackdrop(isOpen);
-}
-
-function toggleSidebar() {
-    setSidebarOpenState(!isSidebarOpen());
 }
 
 function handleViewportSidebarState() {
@@ -1020,15 +1060,23 @@ if (intervalBtn) {
 }
 
 if (settingsToggleBtn) {
-    settingsToggleBtn.addEventListener("click", toggleSidebar);
+    settingsToggleBtn.addEventListener("click", () => {
+        if (isMobileSidebarLayout()) {
+            setSidebarOpenState(!isSidebarOpen());
+        } else {
+            toggleTimerCardCollapsed();
+        }
+    });
 }
 
-if (presetsGearBtn) {
-    presetsGearBtn.addEventListener("click", toggleSidebar);
-}
-
-if (settingsCloseBtn) {
-    settingsCloseBtn.addEventListener("click", () => setSidebarOpenState(false));
+if (timerControlsCollapseBtn) {
+    timerControlsCollapseBtn.addEventListener("click", () => {
+        if (isMobileSidebarLayout()) {
+            setSidebarOpenState(false);
+        } else {
+            toggleSettingsPanelCollapsed();
+        }
+    });
 }
 
 if (controlsBackdrop) {

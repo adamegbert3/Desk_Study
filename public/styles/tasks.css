@@ -1,11 +1,10 @@
 /* ===== Tasks page only ===== */
 
-/* Keep task page layout from pushing horizontal overflow */
+
 body {
     overflow-x: hidden;
 }
 
-/* Tasks page only: slightly reduce top gap above nav */
 .main-nav {
     margin-top: 8px;
 }
@@ -23,10 +22,13 @@ body {
 
 /* ----- Left panel: Due Today ----- */
 .tasks-due-today {
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     border-radius: 14px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--surface-panel-shadow);
     min-height: 0;
     max-height: 100%;
     display: flex;
@@ -86,10 +88,13 @@ body {
 
 /* ----- Right panel: Add task + groups ----- */
 .tasks-main {
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     border-radius: 14px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--surface-panel-shadow);
     min-height: 0;
     max-height: 100%;
     display: flex;
@@ -168,27 +173,6 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.panel-toggle-btn,
-.panel-icon-btn {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--secondary-color);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.panel-toggle-btn img,
-.panel-icon-btn img {
-    width: 18px;
-    height: 18px;
-    display: block;
 }
 
 .add-group-wrap {
@@ -518,13 +502,16 @@ body {
 
 .modal-content {
     position: relative;
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     color: var(--text-color);
     border-radius: 14px;
     padding: 24px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
 }
 
 .modal-title {

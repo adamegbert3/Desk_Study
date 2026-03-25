@@ -1,4 +1,4 @@
-/* ===== Timer page only ===== */
+/* ===== Timer page ===== */
 
 .timer-layout {
     display: grid;
@@ -12,15 +12,53 @@
 
 .controls {
     position: relative;
-    background-color: var(--surface-color);
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
     border-radius: 22px;
     padding: 22px 18px 20px;
-    border: 1px solid color-mix(in srgb, var(--accent-color) 32%, transparent);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: var(--surface-panel-border);
+    box-shadow: var(--surface-panel-shadow);
     display: flex;
     flex-direction: column;
     gap: 22px;
-    transition: opacity 0.25s ease;
+    min-height: 0;
+}
+
+.timer-controls-body {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.controls.is-collapsed .timer-controls-body {
+    display: none;
+}
+
+.controls:not(.is-collapsed) {
+    height: 100%;
+}
+
+.controls.is-collapsed {
+    padding: 10px 12px;
+    border-radius: 10px;
+    align-self: start;
+    justify-self: stretch;
+    width: 100%;
+    gap: 0;
+}
+
+.controls.is-collapsed .timer-controls-header {
+    margin-bottom: 0;
+}
+
+.controls.is-collapsed .timer-controls-title {
+    font-size: 1.05rem;
 }
 
 .timer-section-title {
@@ -32,37 +70,24 @@
     color: var(--text-color);
 }
 
-.timer-section-header {
+.timer-controls-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 12px;
-}
-
-.timer-section-header .timer-section-title {
-    margin: 0;
-}
-
-.presets-gear-btn {
+    margin: 0 0 14px;
     flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border: none;
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--secondary-color) 35%, transparent);
-    color: var(--text-color);
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.presets-gear-btn:hover {
-    background-color: var(--secondary-color);
-    color: var(--surface-color);
+.timer-controls-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.presets-section .timer-section-title {
+    margin: 0 0 10px;
 }
 
 .presets-stack {
@@ -143,6 +168,23 @@
     color: var(--surface-color);
     background-color: var(--secondary-color);
     font-family: inherit;
+    appearance: auto;
+    -moz-appearance: number-input;
+}
+
+
+.controls .custom-time-input[type="number"]::-webkit-inner-spin-button,
+.controls .custom-time-input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    cursor: pointer;
+    margin: 0;
+}
+
+.controls .custom-time-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    display: block;
+    height: auto;
+    min-height: 1.5em;
 }
 
 .custom-time-input:focus {
@@ -228,79 +270,76 @@
     display: block;
 }
 
-.settings-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 8px;
-    background-color: transparent;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.settings-close-btn img {
-    width: 18px;
-    height: 18px;
-    display: block;
-}
-
-.settings-toggle-btn {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    width: 44px;
-    height: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--secondary-color);
-    cursor: pointer;
-    z-index: 2;
-}
-
-.settings-toggle-btn img {
-    width: 22px;
-    height: 22px;
-    display: block;
-}
-
 .controls-backdrop {
     display: none;
 }
 
-.timer-layout.sidebar-collapsed {
-    grid-template-columns: 0 1fr;
-}
-
-.timer-layout.sidebar-collapsed .controls {
-    padding: 0;
-    gap: 0;
-    border: 0;
-    box-shadow: none;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-}
-
 .timer-card {
     position: relative;
-    background-color: var(--surface-color);
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
     border-radius: 22px;
-    padding: 24px;
-    border: 1px solid color-mix(in srgb, var(--accent-color) 22%, transparent);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 22px 18px 24px;
+    border: var(--surface-panel-border);
+    box-shadow: var(--surface-panel-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 0;
+}
+
+.timer-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 14px;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.timer-card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.timer-card-body {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 0;
+}
+
+.timer-card.is-collapsed .timer-card-body {
+    display: none;
+}
+
+.timer-card:not(.is-collapsed) {
+    height: 100%;
+}
+
+.timer-card.is-collapsed {
+    padding: 10px 12px;
+    border-radius: 10px;
+    align-self: start;
+    width: 100%;
+}
+
+.timer-card.is-collapsed .timer-card-header {
+    margin-bottom: 0;
+}
+
+.timer-card.is-collapsed .timer-card-title {
+    font-size: 1.05rem;
 }
 
 .timer-ring {
@@ -402,11 +441,14 @@
     position: relative;
     z-index: 1;
     width: min(620px, 100%);
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     color: var(--text-color);
     border-radius: 14px;
     padding: 24px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
 }
 
 .timer-modal-content h2 {
@@ -441,7 +483,7 @@
 }
 
 @media (max-width: 900px) {
-    .timer-layout:not(.sidebar-collapsed) {
+    .timer-layout {
         grid-template-columns: minmax(200px, 1fr) 1fr;
         gap: 20px;
     }
@@ -469,10 +511,6 @@
         transform: translateY(calc(-100% - 18px));
         opacity: 0;
         pointer-events: none;
-    }
-
-    .settings-close-btn {
-        display: inline-flex;
     }
 
     .controls-backdrop {

@@ -1,16 +1,26 @@
 :root {
 
   --text-padding: 15px;
-  --header-bg: #CBE4E9; /* Light blue from mockup */
-  --sidebar-bg: #B0C4D1; /* Muted blue-grey */
-  --main-bg: #4A6572;    /* Dark slate */
-  --button-bg: #E0E0E0;  /* Light grey */
-  --primary-color: #28556E;      /* Main blue (nav + cards) */
-  --secondary-color: #97CAE2;    /* Darker blue (tabs) */
-  --accent-color: #C6EAF0;       /* Green highlight / active */
-  --accent-soft: #86E891;        /* Soft green background */
-  --background-color: #D7FFCC;   /* App background (dark) */
+  --header-bg: #CBE4E9; 
+  --sidebar-bg: #B0C4D1; 
+  --main-bg: #4A6572;    
+  --button-bg: #E0E0E0;  
+  --primary-color: #28556E;      
+  --secondary-color: #97CAE2;    
+  --accent-color: #C6EAF0;       
+  --accent-soft: #86E891;        
+  --background-color: #D7FFCC;  
+  --background-gradient-end: #a1f8b1;
+  --page-background: linear-gradient(180deg, var(--background-color) 0%, var(--background-gradient-end) 100%);
   --surface-color: #1E506B;      /* Panels / containers */
+  /* Glass-style panels (nav + large blue cards) */
+  --surface-panel-bg: color-mix(in srgb, var(--surface-color) 90%, transparent);
+  --surface-panel-border: 1px solid color-mix(in srgb, var(--accent-color) 42%, rgba(255, 255, 255, 0.06));
+  --surface-panel-shadow: 0 5px 22px rgba(0, 35, 50, 0.14);
+  --surface-panel-blur: blur(12px);
+  --nav-bar-bg: color-mix(in srgb, rgb(30, 80, 107) 90%, transparent);
+  --nav-bar-border: 1px solid color-mix(in srgb, var(--accent-color) 48%, rgba(30, 80, 107, 0.35));
+  --nav-bar-shadow: 0 8px 26px rgba(0, 28, 45, 0.16);
   --text-color: #D8F2FF;  
   --tasks-panel-max-h: clamp(420px, 74vh, 780px);
   --task-group-max-h: clamp(260px, 42vh, 520px);

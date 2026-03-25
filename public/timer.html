@@ -35,30 +35,26 @@
 
     <!-- Left Controls -->
     <aside class="controls" id="timerControls">
-        <button
-            id="settingsCloseBtn"
-            class="settings-close-btn"
-            type="button"
-            aria-label="Close timer settings"
-        >
-            <img src="styles/images/icons/close.svg" alt="">
-        </button>
-
-        <div class="presets-section">
-            <div class="timer-section-header">
-                <h2 class="timer-section-title">Presets</h2>
-                <button
-                    type="button"
-                    id="presetsGearBtn"
-                    class="presets-gear-btn"
-                    aria-label="Toggle timer settings panel"
+        <div class="timer-controls-header">
+            <h2 class="timer-controls-title">Settings</h2>
+            <button
+                type="button"
+                id="timerControlsCollapseBtn"
+                class="panel-toggle-btn"
+                aria-label="Hide timer settings"
+            >
+                <img
+                    id="timerControlsToggleIcon"
+                    src="styles/images/icons/collapse content.svg"
+                    alt=""
+                    aria-hidden="true"
                 >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                    </svg>
-                </button>
-            </div>
+            </button>
+        </div>
+
+        <div class="timer-controls-body" id="timerControlsBody">
+        <div class="presets-section">
+            <h2 class="timer-section-title">Presets</h2>
             <div class="presets-stack">
                 <button id="presetClassicBtn" class="preset-btn" onclick="applyPreset('classic')" type="button">Classic</button>
                 <button id="presetDeepWorkBtn" class="preset-btn" onclick="applyPreset('deepWork')" type="button">Deep Work</button>
@@ -111,40 +107,52 @@
                 </span>
             </button>
         </div>
+        </div>
     </aside>
 
     <!-- Timer Display -->
-    <section class="timer-card">
-        <button
-            id="settingsToggleBtn"
-            class="settings-toggle-btn"
-            type="button"
-            aria-label="Toggle timer settings"
-            aria-expanded="true"
-            aria-controls="timerControls"
-        >
-            <img src="styles/images/icons/menu.svg" alt="Menu">
-        </button>
-        <div class="timer-ring">
-            <svg class="progress-ring" width="260" height="260">
-                <circle
-                    class="progress-ring__circle"
-                    stroke-width="12"
-                    fill="transparent"
-                    r="110"
-                    cx="130"
-                    cy="130"
-                />
-            </svg>
-
-            <div class="timer-text">
-                <p>Time Remaining</p>
-                <h1 id="time">25:00</h1>
-                <p id="intervalStatus" class="timer-interval-status" aria-live="polite"></p>
-            </div>
+    <section class="timer-card" id="timerCard">
+        <div class="timer-card-header">
+            <h2 class="timer-card-title">Timer</h2>
+            <button
+                id="settingsToggleBtn"
+                class="panel-toggle-btn"
+                type="button"
+                aria-label="Hide timer"
+                aria-expanded="true"
+                aria-controls="timerCardBody"
+            >
+                <img
+                    id="timerDisplayToggleIcon"
+                    src="styles/images/icons/collapse content.svg"
+                    alt=""
+                    aria-hidden="true"
+                >
+            </button>
         </div>
 
-        <button id="timerToggleBtn" class="start-btn" onclick="toggleTimer()">Start</button>
+        <div class="timer-card-body" id="timerCardBody">
+            <div class="timer-ring">
+                <svg class="progress-ring" width="260" height="260">
+                    <circle
+                        class="progress-ring__circle"
+                        stroke-width="12"
+                        fill="transparent"
+                        r="110"
+                        cx="130"
+                        cy="130"
+                    />
+                </svg>
+
+                <div class="timer-text">
+                    <p>Time Remaining</p>
+                    <h1 id="time">25:00</h1>
+                    <p id="intervalStatus" class="timer-interval-status" aria-live="polite"></p>
+                </div>
+            </div>
+
+            <button id="timerToggleBtn" class="start-btn" onclick="toggleTimer()">Start</button>
+        </div>
     </section>
 
 </main>

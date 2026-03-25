@@ -16,7 +16,7 @@ body,
 .body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(180deg, #d7ffcc 0%, #c8f5da 100%);
+    background: var(--page-background);
     color: var(--text-color);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -25,14 +25,15 @@ main {
     padding: 40px;
 }
 
-/* Navigation: single source of truth is shared.css (pill bar). Do not redefine here. */
-/* Timer page layout and controls: timer.css (loaded after this file on timer.html). */
-
 .player-card,
 .task-panel {
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     border-radius: 20px;
     padding: 32px;
+    box-shadow: var(--surface-panel-shadow);
 }
 
 .start-btn,
@@ -78,12 +79,16 @@ main {
 }
 
 .sound-panel {
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     border-radius: 14px;
     padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    box-shadow: var(--surface-panel-shadow);
 }
 
 .sound-panel h2 {
@@ -181,12 +186,16 @@ main {
 }
 
 .home-panel {
-    background-color: var(--surface-color);
+    background-color: var(--surface-panel-bg);
+    backdrop-filter: var(--surface-panel-blur);
+    -webkit-backdrop-filter: var(--surface-panel-blur);
+    border: var(--surface-panel-border);
     border-radius: 20px;
     padding: 40px;
     height: 100%;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--surface-panel-shadow);
 }
 
 .home-kicker {
