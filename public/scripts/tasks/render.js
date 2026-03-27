@@ -2,13 +2,15 @@ import {
     taskGroupsState,
     getTodayDateString,
     getTasksDueTodayFromState,
-    formatTaskDueDateForDisplay
+    formatTaskDueDateTimeForDisplay,
+    getTaskDueStatusLabel
 } from './data.js';
 
 export const taskPageElements = {
     addGroupButton: null,
     toggleDueTodayButton: null,
     toggleGroupsButton: null,
+    tasksPageContainer: null,
     dueTodayPanel: null,
     groupsPanel: null,
     dueTodayToggleIcon: null,
@@ -37,6 +39,7 @@ export function cachetaskPageElements() {
     taskPageElements.addGroupButton = document.getElementById('addGroupBtn');
     taskPageElements.toggleDueTodayButton = document.getElementById('toggleDueTodayBtn');
     taskPageElements.toggleGroupsButton = document.getElementById('toggleGroupsBtn');
+    taskPageElements.tasksPageContainer = document.querySelector('.tasks-page');
     taskPageElements.dueTodayPanel = document.querySelector('.tasks-due-today');
     taskPageElements.groupsPanel = document.querySelector('.tasks-main');
     taskPageElements.dueTodayToggleIcon = document.getElementById('dueTodayToggleIcon');
@@ -147,7 +150,9 @@ export function openTaskModal(parentGroupId, parentSubgroupId, parentSubgroupNam
         '<input type="text" id="taskTitle" name="taskTitle" required ' +
         'placeholder="Task title" autocomplete="off" maxlength="200">' +
         '<label for="taskDueDate">Due date</label>' +
-        '<input type="date" id="taskDueDate" name="taskDueDate" required value="' + todayDateString + '">';
+        '<input type="date" id="taskDueDate" name="taskDueDate" required value="' + todayDateString + '">' +
+        '<label for="taskDueTime">Due time</label>' +
+        '<input type="time" id="taskDueTime" name="taskDueTime">';
 
     taskPageElements.entityModal.hidden = false;
     if (taskPageElements.addGroupButton) {
@@ -160,7 +165,7 @@ export function openTaskModal(parentGroupId, parentSubgroupId, parentSubgroupNam
     document.body.style.overflow = 'hidden';
 }
 
-export function openRenameTaskModal(taskId, taskTitle, taskDueDate) {
+export function openRenameTaskModal(taskId, taskTitle, taskDueDate, taskDueTime) {
     tasksModalContext.activeEntityType = 'rename-task';
     tasksModalContext.renameTaskId = taskId;
     tasksModalContext.parentGroupId = null;
@@ -183,12 +188,16 @@ export function openRenameTaskModal(taskId, taskTitle, taskDueDate) {
         '<input type="text" id="taskTitle" name="taskTitle" required ' +
         'placeholder="Task title" autocomplete="off" maxlength="200">' +
         '<label for="taskDueDate">Due date</label>' +
-        '<input type="date" id="taskDueDate" name="taskDueDate" required>';
+        '<input type="date" id="taskDueDate" name="taskDueDate" required>' +
+        '<label for="taskDueTime">Due time</label>' +
+        '<input type="time" id="taskDueTime" name="taskDueTime">';
 
     const taskTitleInputAfter = document.getElementById('taskTitle');
     const taskDueDateInputAfter = document.getElementById('taskDueDate');
+    const taskDueTimeInputAfter = document.getElementById('taskDueTime');
     if (taskTitleInputAfter) taskTitleInputAfter.value = taskTitle || '';
     if (taskDueDateInputAfter) taskDueDateInputAfter.value = taskDueDate || '';
+    if (taskDueTimeInputAfter) taskDueTimeInputAfter.value = taskDueTime || '';
 
     taskPageElements.entityModal.hidden = false;
     if (taskPageElements.addGroupButton) {
@@ -313,6 +322,19 @@ export function renderTasksDueTodayPanel() {
         titleElement.textContent = task.title;
 
         rowElement.appendChild(titleElement);
+
+        const dueTimeElement = document.createElement('span');
+        dueTimeElement.className = 'task-due-time';
+        dueTimeElement.textContent = task.dueTime ? formatTaskDueDateTimeForDisplay('', task.dueTime) : '';
+        rowElement.appendChild(dueTimeElement);
+
+        const dueRemainingElement = document.createElement('span');
+        dueRemainingElement.className = 'task-due-remaining';
+        dueRemainingElement.setAttribute('data-due-date', task.dueDate || '');
+        dueRemainingElement.setAttribute('data-due-time', task.dueTime || '');
+        dueRemainingElement.textContent = getTaskDueStatusLabel(task.dueDate, task.dueTime);
+        rowElement.appendChild(dueRemainingElement);
+
         rowElement.appendChild(createTaskMenuWrap(task));
 
         listItemElement.appendChild(rowElement);
@@ -445,10 +467,17 @@ export function renderTaskGroups() {
                 const subgroupTaskRightElement = document.createElement('div');
                 subgroupTaskRightElement.className = 'subgroup-task-right';
 
+                const subgroupTaskDueRemainingElement = document.createElement('span');
+                subgroupTaskDueRemainingElement.className = 'subgroup-task-due-remaining';
+                subgroupTaskDueRemainingElement.setAttribute('data-due-date', task.dueDate || '');
+                subgroupTaskDueRemainingElement.setAttribute('data-due-time', task.dueTime || '');
+                subgroupTaskDueRemainingElement.textContent = getTaskDueStatusLabel(task.dueDate, task.dueTime);
+
                 const subgroupTaskDateElement = document.createElement('span');
                 subgroupTaskDateElement.className = 'subgroup-task-date';
-                subgroupTaskDateElement.textContent = formatTaskDueDateForDisplay(task.dueDate);
+                subgroupTaskDateElement.textContent = formatTaskDueDateTimeForDisplay(task.dueDate, task.dueTime);
 
+                subgroupTaskRightElement.appendChild(subgroupTaskDueRemainingElement);
                 subgroupTaskRightElement.appendChild(subgroupTaskDateElement);
                 subgroupTaskRightElement.appendChild(createTaskMenuWrap(task));
 

@@ -1,96 +1,352 @@
 /* ===== Tunes page ===== */
 
-.app-container {
+.tunes-layout {
     display: grid;
-    grid-template-columns: minmax(200px, 280px) 1fr;
-    gap: 24px;
+    grid-template-columns: minmax(220px, 300px) 1fr;
+    grid-template-areas: "controls player";
+    gap: 28px;
     padding: 24px;
     align-items: stretch;
     min-height: 73vh;
 }
 
-/* Left panel: song list */
-.app-container aside {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 20px;
+.tunes-controls,
+.tunes-player-card {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     background-color: var(--surface-panel-bg);
     backdrop-filter: var(--surface-panel-blur);
     -webkit-backdrop-filter: var(--surface-panel-blur);
+    border-radius: 22px;
     border: var(--surface-panel-border);
-    border-radius: 14px;
     box-shadow: var(--surface-panel-shadow);
-}
-
-/* Right panel: Now playing + player – */
-.tunes-right {
-    background-color: var(--surface-panel-bg);
-    backdrop-filter: var(--surface-panel-blur);
-    -webkit-backdrop-filter: var(--surface-panel-blur);
-    border: var(--surface-panel-border);
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: var(--surface-panel-shadow);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     min-height: 0;
 }
 
-.tunes-right .tunes-header {
-    margin: 0 0 20px;
-    font-size: 1rem;
+/* ----- Left panel: Library ----- */
+.tunes-controls {
+    grid-area: controls;
+    padding: 22px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.tunes-controls-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 14px;
+    flex-shrink: 0;
+}
+
+.tunes-controls-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
     color: var(--text-color);
 }
 
-.tunes-right main {
-    padding: 0;
+.tunes-controls-body {
+    min-height: 0;
+    flex: 1 1 auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 22px;
 }
 
-.sound-btn {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    border: none;
-    padding: 12px 20px;
+.tunes-controls.is-collapsed .tunes-controls-body {
+    display: none;
+}
+
+.tunes-controls.is-collapsed {
+    padding: 10px 12px;
     border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    align-self: start;
+    gap: 0;
 }
 
-.sound-btn:hover,
-.sound-btn.active {
+.tunes-controls.is-collapsed .tunes-controls-header {
+    margin-bottom: 0;
+}
+
+.tunes-controls.is-collapsed .tunes-controls-title {
+    font-size: 1.05rem;
+}
+
+.tunes-section-title {
+    margin: 0 0 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-color);
+}
+
+.tunes-track-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tunes-track-btn,
+.tunes-action-btn {
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    color: var(--surface-color);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-align: left;
+}
+
+.tunes-track-btn:hover,
+.tunes-action-btn:hover {
+    background-color: color-mix(in srgb, var(--accent-soft) 55%, var(--secondary-color));
+    transform: translateY(-1px);
+}
+
+.tunes-track-btn.is-active {
     background-color: var(--accent-soft);
     color: var(--surface-color);
 }
 
-.player-controls {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.control-btn {
-    background-color: var(--accent-color);
-    color: var(--primary-color);
+.tunes-select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
     border: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    font-size: 1.2rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--surface-color);
+    background-color: var(--secondary-color);
+    font-family: inherit;
+}
+
+.tunes-select:focus-visible,
+.tunes-track-btn:focus-visible,
+.tunes-action-btn:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--text-color) 45%, transparent);
+    outline-offset: 2px;
+}
+
+.tunes-spotify[hidden] {
+    display: none;
+}
+
+.tunes-spotify {
+    margin-top: 12px;
+    width: 100%;
+    max-width: 520px;
+}
+
+.tunes-utility-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tunes-utility-btn {
+    width: 100%;
+    margin: 0;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid color-mix(in srgb, var(--text-color) 25%, transparent);
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    background-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+    color: var(--text-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.control-btn:hover {
-    transform: scale(1.05);
+.tunes-utility-btn:hover {
+    background-color: color-mix(in srgb, var(--secondary-color) 40%, var(--primary-color));
+    border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
-/* Tunes intro modal */
+.tunes-utility-btn__label {
+    flex: 1;
+    text-align: left;
+}
+
+.tunes-utility-btn__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: color-mix(in srgb, var(--text-color) 90%, transparent);
+}
+
+.tunes-utility-btn__icon svg {
+    display: block;
+}
+
+/* ----- Right panel: Player ----- */
+.tunes-player-card {
+    grid-area: player;
+    padding: 22px 18px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.tunes-player-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 14px;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.tunes-player-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.tunes-player-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    min-height: 0;
+}
+
+.tunes-player-card.is-spotify-open .tunes-now-playing,
+.tunes-player-card.is-spotify-open .tunes-player-controls {
+    display: none;
+}
+
+.tunes-player-card.is-spotify-open .tunes-spotify {
+    margin-top: 0;
+    max-width: 640px;
+}
+
+.tunes-player-card.is-collapsed .tunes-player-body {
+    display: none;
+}
+
+.tunes-player-card.is-collapsed {
+    padding: 10px 12px;
+    border-radius: 10px;
+    align-self: start;
+    width: 100%;
+}
+
+.tunes-player-card.is-collapsed .tunes-player-header {
+    margin-bottom: 0;
+}
+
+.tunes-player-card.is-collapsed .tunes-player-title {
+    font-size: 1.05rem;
+}
+
+.tunes-now-playing {
+    display: grid;
+    gap: 10px;
+    place-items: center;
+    text-align: center;
+}
+
+.tunes-track-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    letter-spacing: 0.01em;
+}
+
+.tunes-player-controls {
+    display: grid;
+    gap: 10px;
+    width: min(320px, 100%);
+}
+
+.tunes-secondary-btn {
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    border: 1px solid color-mix(in srgb, var(--text-color) 25%, transparent);
+    border-radius: 14px;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.tunes-secondary-btn:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
+    transform: translateY(-1px);
+}
+
+.tunes-secondary-btn:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--text-color) 45%, transparent);
+    outline-offset: 2px;
+}
+
+/* Now playing wave */
+.now-playing-wave {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 16px;
+}
+
+.now-playing-wave span {
+    width: 4px;
+    height: 5px;
+    border-radius: 999px;
+    background-color: var(--accent-color);
+    opacity: 0.45;
+    transform-origin: bottom;
+    animation: nowPlayingWave 0.9s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+.now-playing-wave span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.now-playing-wave span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.now-playing-wave.is-playing span {
+    animation-play-state: running;
+    opacity: 1;
+}
+
+@keyframes nowPlayingWave {
+    0% { transform: scaleY(0.4); }
+    40% { transform: scaleY(1); }
+    100% { transform: scaleY(0.5); }
+}
+
+/* ----- Modal (help) ----- */
 .tunes-modal {
     position: fixed;
     inset: 0;
@@ -108,7 +364,7 @@
 .tunes-modal-backdrop {
     position: absolute;
     inset: 0;
-    /* background: rgba(0, 0, 0, 0.5); */
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .tunes-modal-content {
@@ -122,7 +378,7 @@
     color: var(--text-color);
     border-radius: 14px;
     padding: 24px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
 }
 
 .tunes-modal-content h2 {
@@ -147,7 +403,7 @@
 .tunes-modal-close-btn {
     margin-top: 18px;
     background-color: var(--accent-color);
-    color: var(--primary-color);
+    color: #1e3a2f;
     border: none;
     padding: 10px 18px;
     border-radius: 10px;
@@ -155,133 +411,22 @@
     font-weight: 600;
     cursor: pointer;
 }
-.tunes-header {
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.now-playing-wave {
-display: inline-flex;
-align-items: flex-end;
-gap: 4px;
-height: 16px;
-}
-
-.now-playing-wave span {
-width: 4px;
-height: 5px;
-border-radius: 999px;
-background-color: var(--accent-color);
-opacity: 0.45;
-transform-origin: bottom;
-animation: nowPlayingWave 0.9s ease-in-out infinite;
-animation-play-state: paused;
-}
-
-.now-playing-wave span:nth-child(2) {
-animation-delay: 0.15s;
-}
-
-.now-playing-wave span:nth-child(3) {
-animation-delay: 0.3s;
-}
-
-.now-playing-wave.is-playing span {
-animation-play-state: running;
-opacity: 1;
-}
-
-.app-container {
-    display: grid;
-    grid-template-columns: minmax(320px, 1.5fr) minmax(240px, 1fr);
-    grid-template-areas: "options player";
-    gap: 24px;
-    padding: 24px;
-    align-items: stretch;
-    min-height: 73vh;
-}
-
-.app-container .tunes-options {
-    grid-area: options;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    background-color: var(--surface-panel-bg);
-    backdrop-filter: var(--surface-panel-blur);
-    -webkit-backdrop-filter: var(--surface-panel-blur);
-    border: var(--surface-panel-border);
-    border-radius: 14px;
-    box-shadow: var(--surface-panel-shadow);
-    min-width: 0;
-}
-
-.tunes-right.now-playing-panel {
-    grid-area: player;
-    background-color: var(--surface-panel-bg);
-    backdrop-filter: var(--surface-panel-blur);
-    -webkit-backdrop-filter: var(--surface-panel-blur);
-    border: var(--surface-panel-border);
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: var(--surface-panel-shadow);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-}
-
-#quickTracks {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-}
 
 @media (max-width: 900px) {
-    .app-container {
+    .tunes-layout {
+        grid-template-columns: minmax(200px, 1fr) 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 720px) {
+    .tunes-layout {
         grid-template-columns: 1fr;
         grid-template-areas:
             "player"
-            "options";
+            "controls";
         gap: 16px;
         padding: 16px;
+        min-height: 0;
     }
-
-    .tunes-right.now-playing-panel,
-    .app-container .tunes-options {
-        padding: 16px;
-    }
-}
-
-@media (max-width: 600px) {
-    .player-controls {
-        width: 100%;
-        justify-content: center;
-    }
-
-    #spotify-container iframe {
-        height: 260px;
-    }
-
-    .sound-btn {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-@keyframes nowPlayingWave {
-0%, 100% {
-transform: scaleY(0.45);
-}
-50% {
-transform: scaleY(1.35);
-}
-}
-
-@media (prefers-reduced-motion: reduce) {
-.now-playing-wave span {
-animation: none;
-}
 }

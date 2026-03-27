@@ -6,88 +6,162 @@
     <title>Study App - White Noise</title>
     <link rel="stylesheet" href="styles/variables.css">
     <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/tunes.css">
     <script src="scripts/tunes.js" defer></script>
 </head>
 <body>
     <nav class="main-nav">
-        <a href="index.html" class="logo"><img src="styles/images/sdlogo.svg" alt="Site Logo"></a>
+        <a href="index.html" class="logo">
+            <img src="styles/images/sdlogo.svg" alt="Site Logo">
+        </a>
         <div class="nav-links">
             <a href="index.html" aria-label="Home">
-                <img src="styles/images/icons/home.svg" alt="" aria-hidden="true"><span class="nav-label">Home</span>
+                <img src="styles/images/icons/home.svg" alt="" aria-hidden="true">
+                <span class="nav-label">Home</span>
             </a>
             <a href="tasks.html" aria-label="Tasks">
-                <img src="styles/images/icons/checkMark.svg" alt="" aria-hidden="true"><span class="nav-label">Tasks</span>
+                <img src="styles/images/icons/checkMark.svg" alt="" aria-hidden="true">
+                <span class="nav-label">Tasks</span>
             </a>
             <a href="timer.html" aria-label="Timer">
-                <img src="styles/images/icons/timer.svg" alt="" aria-hidden="true"><span class="nav-label">Timer</span>
+                <img src="styles/images/icons/timer.svg" alt="" aria-hidden="true">
+                <span class="nav-label">Timer</span>
             </a>
             <a href="tunes.html" class="active" aria-label="Tunes">
-                <img src="styles/images/icons/musicNote.svg" alt="" aria-hidden="true"><span class="nav-label">Tunes</span>
+                <img src="styles/images/icons/musicNote.svg" alt="" aria-hidden="true">
+                <span class="nav-label">Tunes</span>
             </a>
         </div>
         <div class="nav-auth" id="navAuth"></div>
     </nav>
 
-    <div class="page-content">
-        <div class="app-container">
-            <!-- Left: music content -->
-            <aside class="tunes-options">
-    <div id="quickTracks"></div>
+    <main class="page-content tunes-layout" id="tunesLayout">
+        <!-- Left controls -->
+        <aside class="tunes-controls" id="tunesControls">
+            <div class="tunes-controls-header">
+                <h2 class="tunes-controls-title">Library</h2>
+                <button
+                    type="button"
+                    id="tunesControlsCollapseBtn"
+                    class="panel-toggle-btn"
+                    aria-label="Collapse library"
+                >
+                    <img
+                        id="tunesControlsToggleIcon"
+                        src="styles/images/icons/collapse content.svg"
+                        alt=""
+                        aria-hidden="true"
+                    >
+                </button>
+            </div>
 
-<select id="hymnSelect" class="sound-btn dropdown-select">
-  <option value="" selected>LDS Hymns...</option>
-</select>
+            <div class="tunes-controls-body" id="tunesControlsBody">
+                <section class="tunes-section">
+                    <h3 class="tunes-section-title">Quick tracks</h3>
+                    <div class="tunes-track-stack" id="quickTracks"></div>
+                </section>
 
-    <button class="sound-btn" onclick="toggleSpotify()">
-        Spotify Player
-    </button>
-    <div id="spotify-container" style="display: none; margin-top: 15px;">
-        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/1GRl6sRyLg9ToOohIE2wW5?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-    </div>
-</aside>
+                <section class="tunes-section">
+                    <h3 class="tunes-section-title">Hymns</h3>
+                    <select id="hymnSelect" class="tunes-select" aria-label="LDS Hymns">
+                        <option value="" selected>LDS Hymns...</option>
+                    </select>
+                </section>
 
-            <!-- Right: Now playing + play button -->
-            <section class="tunes-right now-playing-panel">
-                <p class="tunes-header">Now Playing: &nbsp;<span id="track-name">Rain</span></p>
-                <main>
-                    <div class="player-controls">
-                        <!-- <button class="control-btn">≡</button>
-                        <button class="control-btn">⏮</button> -->
-                        <button class="control-btn play-pause-btn" id="playBtn" onclick="togglePlay()">
-                            ▶
-                        </button>
-                        <p class="tunes-header">
-                            <span class="now-playing-wave" id="nowPlayingWave" aria-hidden="true">
-                                <span></span><span></span><span></span>
-                            </span>
-                        </p>
-                        <!-- <button class="control-btn">⏭</button>
-                        <button class="control-btn">♥</button> -->
+                <section class="tunes-section">
+                    <h3 class="tunes-section-title">Spotify</h3>
+                    <button id="tunesSpotifyToggleBtn" class="tunes-action-btn" type="button">Spotify player</button>
+                </section>
+
+                <div class="tunes-utility-actions">
+                    <button id="tunesHelpBtn" class="tunes-utility-btn" type="button">
+                        <span class="tunes-utility-btn__label">Help</span>
+                        <span class="tunes-utility-btn__icon" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right: player -->
+        <section class="tunes-player-card" id="tunesPlayerCard">
+            <div class="tunes-player-header">
+                <h2 class="tunes-player-title">Now Playing</h2>
+                <button
+                    id="tunesPlayerCollapseBtn"
+                    class="panel-toggle-btn"
+                    type="button"
+                    aria-label="Collapse player"
+                    aria-expanded="true"
+                    aria-controls="tunesPlayerBody"
+                >
+                    <img
+                        id="tunesPlayerToggleIcon"
+                        src="styles/images/icons/collapse content.svg"
+                        alt=""
+                        aria-hidden="true"
+                    >
+                </button>
+            </div>
+
+            <div class="tunes-player-body" id="tunesPlayerBody">
+                <div class="tunes-now-playing">
+                    <div class="tunes-track-name" id="track-name">Rain</div>
+                    <div class="tunes-wave" aria-hidden="true">
+                        <span class="now-playing-wave" id="nowPlayingWave">
+                            <span></span><span></span><span></span>
+                        </span>
                     </div>
-                    <audio id="audio-player" loop></audio>
-                </main>
-                
-            </section>
-        </div>
-        
+                </div>
+
+                <div class="tunes-player-controls">
+                    <button class="start-btn" id="playBtn" type="button" aria-label="Play">Play</button>
+                    <button class="tunes-secondary-btn" id="restartTrackBtn" type="button">Restart</button>
+                </div>
+
+                <div id="spotify-container" class="tunes-spotify" hidden>
+                    <iframe
+                        data-testid="embed-iframe"
+                        style="border-radius:12px"
+                        src="https://open.spotify.com/embed/artist/1GRl6sRyLg9ToOohIE2wW5?utm_source=generator"
+                        width="100%"
+                        height="352"
+                        frameBorder="0"
+                        allowfullscreen=""
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                        title="Spotify embed"
+                    ></iframe>
+                </div>
+
+                <audio id="audio-player" loop></audio>
+            </div>
+        </section>
+    </main>
+
+    <div class="tunes-modal" id="tunesIntroModal" role="dialog" aria-modal="true" aria-labelledby="tunesIntroTitle" hidden>
+        <div class="tunes-modal-backdrop" id="tunesIntroBackdrop"></div>
+        <section class="tunes-modal-content">
+            <h2 id="tunesIntroTitle">How the Tunes page works</h2>
+            <p>
+                The page has two panels: <strong>Now Playing</strong> (player) and <strong>Library</strong> (tracks).
+                On mobile, the Now Playing panel shows first and the Library stacks below it.
+            </p>
+            <h3>Tips</h3>
+            <ul>
+                <li>Pick a track under <strong>Quick tracks</strong> or choose a hymn to load a song.</li>
+                <li><strong>Play/Pause</strong> controls the built-in audio player; <strong>Restart</strong> jumps back to the beginning.</li>
+                <li><strong>Spotify player</strong> swaps into the Now Playing panel and replaces the built-in controls until you close it.</li>
+                <li>Use the collapse icon in each panel header to hide/show that panel’s contents.</li>
+            </ul>
+            <button id="closeTunesIntroBtn" class="tunes-modal-close-btn" type="button">Got it</button>
+        </section>
     </div>
-    <!-- <div class="tunes-modal" id="tunesIntroModal" role="dialog" aria-modal="true" aria-labelledby="tunesIntroTitle">
-    <div class="tunes-modal-backdrop" id="tunesIntroBackdrop"></div>
-    <section class="tunes-modal-content">
-        <h2 id="tunesIntroTitle">How the Tunes page works!</h2>
-        <p>
-            While studying, you can use calming music provided by our website to help you study.
-        </p>
-        <h3>How to use:</h3>
-        <ul>
-            <li>Using the left menu, select a tune you would like to play.</li>
-            <li>Click the play and pause buttons located in the middle of the Right screen.</li>
-            <li>Music will play!</li>
-        </ul>
-        <button id="closeTunesIntroBtn" class="tunes-modal-close-btn" type="button">Got it</button>
-    </section>
-</div> -->
 
     <footer class="site-footer">
         Study Desk &copy; 2026
@@ -99,5 +173,3 @@
     <script src="scripts/timer-title.js" defer></script>
 </body>
 </html>
-
-

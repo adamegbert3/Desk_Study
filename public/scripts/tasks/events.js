@@ -9,6 +9,7 @@ import {
     getSubgroupPerGroupLimitForCurrentTier,
     findGroupByIdInState,
     findSubgroupByIdInGroup,
+    getTaskDueStatusLabel,
     loadTasksState
 } from './data.js';
 
@@ -29,6 +30,7 @@ const COLLAPSE_ICON_SRC = 'styles/images/icons/collapse content.svg';
 const EXPAND_ICON_SRC = 'styles/images/icons/expand_content.svg';
 const collapsedGroupIds = new Set();
 const TASK_COMPLETE_REMOVE_DELAY_MS = 420;
+let dueLabelIntervalId = null;
 
 function closeAllTaskMenus() {
     document.querySelectorAll('.task-action-menu').forEach(function (menuElement) {
@@ -69,6 +71,24 @@ function toggleTaskActionMenu(actionElement, menuDropdownElement) {
     actionElement.setAttribute('aria-expanded', 'true');
 }
 
+function syncTasksPageCollapsedUI() {
+    if (!taskPageElements.tasksPageContainer) return;
+    const dueCollapsed = Boolean(taskPageElements.dueTodayPanel && taskPageElements.dueTodayPanel.classList.contains('is-collapsed'));
+    const groupsCollapsed = Boolean(taskPageElements.groupsPanel && taskPageElements.groupsPanel.classList.contains('is-collapsed'));
+
+    taskPageElements.tasksPageContainer.classList.toggle('has-collapsed-panel', dueCollapsed || groupsCollapsed);
+    taskPageElements.tasksPageContainer.classList.toggle('both-panels-collapsed', dueCollapsed && groupsCollapsed);
+}
+
+function updateDueLabelsInDom() {
+    document.querySelectorAll('[data-due-date].task-due-remaining,[data-due-date].subgroup-task-due-remaining').forEach(function (el) {
+        const dueDate = el.getAttribute('data-due-date');
+        if (!dueDate) return;
+        const dueTime = el.getAttribute('data-due-time') || '';
+        el.textContent = getTaskDueStatusLabel(dueDate, dueTime);
+    });
+}
+
 function setDueTodayCollapsed(isCollapsed) {
     if (!taskPageElements.dueTodayPanel) return;
 
@@ -82,6 +102,7 @@ function setDueTodayCollapsed(isCollapsed) {
     if (taskPageElements.dueTodayToggleIcon) {
         taskPageElements.dueTodayToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
     }
+    syncTasksPageCollapsedUI();
 }
 
 function setGroupsCollapsed(isCollapsed) {
@@ -98,6 +119,7 @@ function setGroupsCollapsed(isCollapsed) {
     if (taskPageElements.groupsToggleIcon) {
         taskPageElements.groupsToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
     }
+    syncTasksPageCollapsedUI();
 }
 
 function setSingleGroupCollapsed(groupCardElement, isCollapsed) {
@@ -195,8 +217,10 @@ function handleEntityFormSubmit(event) {
     if (tasksModalContext.activeEntityType === 'task') {
         const taskTitleInputElement = document.getElementById('taskTitle');
         const taskDueDateInputElement = document.getElementById('taskDueDate');
+        const taskDueTimeInputElement = document.getElementById('taskDueTime');
         const taskTitleValue = taskTitleInputElement && taskTitleInputElement.value;
         const taskDueDateValue = taskDueDateInputElement && taskDueDateInputElement.value;
+        const taskDueTimeValue = taskDueTimeInputElement && taskDueTimeInputElement.value;
 
         if (!taskTitleValue || !taskDueDateValue || !tasksModalContext.parentGroupId || !tasksModalContext.parentSubgroupId) {
             return;
@@ -206,7 +230,8 @@ function handleEntityFormSubmit(event) {
             tasksModalContext.parentGroupId,
             tasksModalContext.parentSubgroupId,
             taskTitleValue,
-            taskDueDateValue
+            taskDueDateValue,
+            taskDueTimeValue
         );
         if (!createdTask) return;
 
@@ -219,12 +244,14 @@ function handleEntityFormSubmit(event) {
     if (tasksModalContext.activeEntityType === 'rename-task') {
         const taskTitleInputElement = document.getElementById('taskTitle');
         const taskDueDateInputElement = document.getElementById('taskDueDate');
+        const taskDueTimeInputElement = document.getElementById('taskDueTime');
         const taskTitleValue = taskTitleInputElement && taskTitleInputElement.value;
         const taskDueDateValue = taskDueDateInputElement && taskDueDateInputElement.value;
+        const taskDueTimeValue = taskDueTimeInputElement && taskDueTimeInputElement.value;
 
         if (!taskTitleValue || !taskDueDateValue || !tasksModalContext.renameTaskId) return;
 
-        const updated = updateTaskById(tasksModalContext.renameTaskId, taskTitleValue, taskDueDateValue);
+        const updated = updateTaskById(tasksModalContext.renameTaskId, taskTitleValue, taskDueDateValue, taskDueTimeValue);
         if (!updated) return;
 
         closeTasksModal();
@@ -300,7 +327,7 @@ function setupTaskPageEventListeners() {
                 const taskRecord = findTaskByIdInState(taskId);
                 if (!taskRecord) return;
                 closeAllTaskMenus();
-                openRenameTaskModal(taskId, taskRecord.title, taskRecord.dueDate);
+                openRenameTaskModal(taskId, taskRecord.title, taskRecord.dueDate, taskRecord.dueTime);
                 return;
             }
 
@@ -359,7 +386,7 @@ function setupTaskPageEventListeners() {
                 const taskRecord = findTaskByIdInState(taskId);
                 if (!taskRecord) return;
                 closeAllTaskMenus();
-                openRenameTaskModal(taskId, taskRecord.title, taskRecord.dueDate);
+                openRenameTaskModal(taskId, taskRecord.title, taskRecord.dueDate, taskRecord.dueTime);
                 return;
             }
 
@@ -452,6 +479,10 @@ async function initializeTasksPage() {
     syncGroupCollapseStateAfterRender();
     setDueTodayCollapsed(false);
     setGroupsCollapsed(false);
+
+    updateDueLabelsInDom();
+    if (dueLabelIntervalId) window.clearInterval(dueLabelIntervalId);
+    dueLabelIntervalId = window.setInterval(updateDueLabelsInDom, 60 * 1000);
 }
 
 if (document.readyState === 'loading') {

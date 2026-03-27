@@ -2,8 +2,29 @@ const nowPlayingWave = document.getElementById("nowPlayingWave");
 const audioPlayer = document.getElementById("audio-player");
 const trackNameDisplay = document.getElementById("track-name");
 const playBtn = document.getElementById("playBtn");
+const restartTrackBtn = document.getElementById("restartTrackBtn");
+
 const quickTracksContainer = document.getElementById("quickTracks");
 const hymnSelect = document.getElementById("hymnSelect");
+const spotifyContainer = document.getElementById("spotify-container");
+const spotifyToggleBtn = document.getElementById("tunesSpotifyToggleBtn");
+
+const tunesControls = document.getElementById("tunesControls");
+const tunesControlsCollapseBtn = document.getElementById("tunesControlsCollapseBtn");
+const tunesControlsToggleIcon = document.getElementById("tunesControlsToggleIcon");
+
+const tunesPlayerCard = document.getElementById("tunesPlayerCard");
+const tunesPlayerCollapseBtn = document.getElementById("tunesPlayerCollapseBtn");
+const tunesPlayerToggleIcon = document.getElementById("tunesPlayerToggleIcon");
+
+const tunesIntroModal = document.getElementById("tunesIntroModal");
+const tunesIntroBackdrop = document.getElementById("tunesIntroBackdrop");
+const closeTunesIntroBtn = document.getElementById("closeTunesIntroBtn");
+const tunesHelpBtn = document.getElementById("tunesHelpBtn");
+
+const COLLAPSE_ICON_SRC = "styles/images/icons/collapse content.svg";
+const EXPAND_ICON_SRC = "styles/images/icons/expand_content.svg";
+const TUNES_INTRO_SEEN_KEY = "deskStudyTunesIntroSeenV1";
 
 const TUNES_DEFAULT_STATE = {
     trackName: "Rain",
@@ -11,7 +32,6 @@ const TUNES_DEFAULT_STATE = {
     isPlaying: false
 };
 
-// Fallback list if manifest is missing
 const FALLBACK_MANIFEST = {
     quickTracks: [
         { name: "Rain", file: "tunes_files/rain.mp3" },
@@ -22,12 +42,6 @@ const FALLBACK_MANIFEST = {
     hymnsOld: [],
     hymnsNew: []
 };
-
-// Modal elements
-const tunesIntroModal = document.getElementById("tunesIntroModal");
-const tunesIntroBackdrop = document.getElementById("tunesIntroBackdrop");
-const closeTunesIntroBtn = document.getElementById("closeTunesIntroBtn");
-const tunesHelpBtn = document.getElementById("tunesHelpBtn");
 
 function normalizeFile(file) {
     try {
@@ -74,18 +88,30 @@ async function loadTunesManifest() {
 }
 
 function clearActiveButtons() {
-    document.querySelectorAll(".sound-btn").forEach((button) => {
-        button.classList.remove("active");
+    document.querySelectorAll(".tunes-track-btn").forEach((button) => {
+        button.classList.remove("is-active");
     });
 }
 
+function setPlayingUi(isPlaying) {
+    if (playBtn) {
+        playBtn.textContent = isPlaying ? "Pause" : "Play";
+        playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+    }
+    if (nowPlayingWave) {
+        nowPlayingWave.classList.toggle("is-playing", isPlaying);
+    }
+}
+
 function loadTrack(name, file, controlElement) {
+    if (!audioPlayer || !trackNameDisplay) return;
+
     const resolved = normalizeFile(file);
     trackNameDisplay.innerText = name;
 
     clearActiveButtons();
     if (controlElement && controlElement.tagName === "BUTTON") {
-        controlElement.classList.add("active");
+        controlElement.classList.add("is-active");
     }
 
     audioPlayer.src = resolved;
@@ -107,12 +133,12 @@ function renderQuickTracks(tracks, initialState) {
 
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "sound-btn";
-        btn.textContent = track.name.toLowerCase();
+        btn.className = "tunes-track-btn";
+        btn.textContent = track.name;
         btn.addEventListener("click", () => loadTrack(track.name, track.file, btn));
 
         if (normalizeFile(track.file) === initialFileAbs) {
-            btn.classList.add("active");
+            btn.classList.add("is-active");
         }
 
         quickTracksContainer.appendChild(btn);
@@ -152,39 +178,59 @@ function renderHymnSelect(hymnsOld, hymnsNew, initialState) {
     hymnSelect.addEventListener("change", () => {
         const selectedOption = hymnSelect.options[hymnSelect.selectedIndex];
         if (!hymnSelect.value) return;
-        loadTrack(selectedOption.text, hymnSelect.value, hymnSelect);
+        loadTrack(selectedOption.text, hymnSelect.value, null);
     });
 }
 
-void (async function initTunes() {
-    const [savedState, manifest] = await Promise.all([loadTunesState(), loadTunesManifest()]);
-    const initialTunesState = { ...TUNES_DEFAULT_STATE, ...(savedState || {}) };
-
-    audioPlayer.src = normalizeFile(initialTunesState.trackFile || TUNES_DEFAULT_STATE.trackFile);
-    trackNameDisplay.innerText = initialTunesState.trackName || TUNES_DEFAULT_STATE.trackName;
-    setPlayingUi(false);
-
-    renderQuickTracks(manifest.quickTracks, initialTunesState);
-    renderHymnSelect(manifest.hymnsOld, manifest.hymnsNew, initialTunesState);
-})();
-
 function togglePlay() {
+    if (!audioPlayer) return;
+
     if (audioPlayer.paused) {
         void audioPlayer.play();
         setPlayingUi(true);
         saveTunesState({
-            trackName: trackNameDisplay.innerText,
+            trackName: trackNameDisplay ? trackNameDisplay.innerText : "",
             trackFile: audioPlayer.currentSrc || audioPlayer.src,
             isPlaying: true
         });
-    } else {
-        audioPlayer.pause();
-        setPlayingUi(false);
-        saveTunesState({
-            trackName: trackNameDisplay.innerText,
-            trackFile: audioPlayer.currentSrc || audioPlayer.src,
-            isPlaying: false
-        });
+        return;
+    }
+
+    audioPlayer.pause();
+    setPlayingUi(false);
+    saveTunesState({
+        trackName: trackNameDisplay ? trackNameDisplay.innerText : "",
+        trackFile: audioPlayer.currentSrc || audioPlayer.src,
+        isPlaying: false
+    });
+}
+
+function restartTrack() {
+    if (!audioPlayer) return;
+    audioPlayer.currentTime = 0;
+    if (!audioPlayer.paused) {
+        void audioPlayer.play();
+    }
+}
+
+function toggleSpotify() {
+    if (!spotifyContainer) return;
+    const willOpen = Boolean(spotifyContainer.hidden);
+    spotifyContainer.hidden = !willOpen;
+
+    if (tunesPlayerCard) {
+        tunesPlayerCard.classList.toggle("is-spotify-open", willOpen);
+    }
+    if (spotifyToggleBtn) {
+        spotifyToggleBtn.setAttribute("aria-expanded", `${willOpen}`);
+    }
+
+    if (willOpen) {
+        setPlayerCollapsed(false);
+        if (audioPlayer) {
+            audioPlayer.pause();
+            setPlayingUi(false);
+        }
     }
 }
 
@@ -198,42 +244,92 @@ function closeTunesIntro() {
     tunesIntroModal.hidden = true;
 }
 
+function setControlsCollapsed(isCollapsed) {
+    if (!tunesControls) return;
+    tunesControls.classList.toggle("is-collapsed", isCollapsed);
+
+    if (tunesControlsToggleIcon) {
+        tunesControlsToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
+    }
+    if (tunesControlsCollapseBtn) {
+        tunesControlsCollapseBtn.setAttribute("aria-label", isCollapsed ? "Expand library" : "Collapse library");
+    }
+}
+
+function setPlayerCollapsed(isCollapsed) {
+    if (!tunesPlayerCard) return;
+    tunesPlayerCard.classList.toggle("is-collapsed", isCollapsed);
+
+    if (tunesPlayerToggleIcon) {
+        tunesPlayerToggleIcon.src = isCollapsed ? EXPAND_ICON_SRC : COLLAPSE_ICON_SRC;
+    }
+    if (tunesPlayerCollapseBtn) {
+        tunesPlayerCollapseBtn.setAttribute("aria-label", isCollapsed ? "Expand player" : "Collapse player");
+        tunesPlayerCollapseBtn.setAttribute("aria-expanded", `${!isCollapsed}`);
+    }
+}
+
+void (async function initTunes() {
+    const [savedState, manifest] = await Promise.all([loadTunesState(), loadTunesManifest()]);
+    const initialTunesState = { ...TUNES_DEFAULT_STATE, ...(savedState || {}) };
+
+    if (audioPlayer) {
+        audioPlayer.src = normalizeFile(initialTunesState.trackFile || TUNES_DEFAULT_STATE.trackFile);
+    }
+    if (trackNameDisplay) {
+        trackNameDisplay.innerText = initialTunesState.trackName || TUNES_DEFAULT_STATE.trackName;
+    }
+    setPlayingUi(false);
+
+    renderQuickTracks(manifest.quickTracks, initialTunesState);
+    renderHymnSelect(manifest.hymnsOld, manifest.hymnsNew, initialTunesState);
+
+    if (spotifyContainer) {
+        spotifyContainer.hidden = true;
+    }
+    if (tunesPlayerCard) {
+        tunesPlayerCard.classList.remove("is-spotify-open");
+    }
+    if (spotifyToggleBtn) {
+        spotifyToggleBtn.setAttribute("aria-expanded", "false");
+    }
+
+    if (localStorage.getItem(TUNES_INTRO_SEEN_KEY) !== "true") {
+        openTunesIntro();
+        localStorage.setItem(TUNES_INTRO_SEEN_KEY, "true");
+    }
+})();
+
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && tunesIntroModal && !tunesIntroModal.hidden) {
         closeTunesIntro();
     }
 });
 
-if (closeTunesIntroBtn) {
-    closeTunesIntroBtn.addEventListener("click", closeTunesIntro);
+if (playBtn) playBtn.addEventListener("click", togglePlay);
+if (restartTrackBtn) restartTrackBtn.addEventListener("click", restartTrack);
+if (spotifyToggleBtn) spotifyToggleBtn.addEventListener("click", toggleSpotify);
+
+if (tunesControlsCollapseBtn) {
+    tunesControlsCollapseBtn.addEventListener("click", () => {
+        if (!tunesControls) return;
+        setControlsCollapsed(!tunesControls.classList.contains("is-collapsed"));
+    });
 }
 
-if (tunesIntroBackdrop) {
-    tunesIntroBackdrop.addEventListener("click", closeTunesIntro);
+if (tunesPlayerCollapseBtn) {
+    tunesPlayerCollapseBtn.addEventListener("click", () => {
+        if (!tunesPlayerCard) return;
+        setPlayerCollapsed(!tunesPlayerCard.classList.contains("is-collapsed"));
+    });
 }
 
-if (tunesHelpBtn) {
-    tunesHelpBtn.addEventListener("click", openTunesIntro);
+if (closeTunesIntroBtn) closeTunesIntroBtn.addEventListener("click", closeTunesIntro);
+if (tunesIntroBackdrop) tunesIntroBackdrop.addEventListener("click", closeTunesIntro);
+if (tunesHelpBtn) tunesHelpBtn.addEventListener("click", openTunesIntro);
+
+if (audioPlayer) {
+    audioPlayer.addEventListener("play", () => setPlayingUi(true));
+    audioPlayer.addEventListener("pause", () => setPlayingUi(false));
+    audioPlayer.addEventListener("ended", () => setPlayingUi(false));
 }
-
-function toggleSpotify() {
-    const spotifyContainer = document.getElementById("spotify-container");
-    if (!spotifyContainer) return;
-    spotifyContainer.style.display = spotifyContainer.style.display === "none" ? "block" : "none";
-}
-function setPlayingUi(isPlaying) {
-    playBtn.textContent = isPlaying ? "⏸" : "▶";
-    if (nowPlayingWave) {
-        nowPlayingWave.classList.toggle("is-playing", isPlaying);
-    }
-}
-
-// Needed because your HTML still uses onclick="toggleSpotify()"
-window.toggleSpotify = toggleSpotify;
-
-audioPlayer.addEventListener("play", () => setPlayingUi(true));
-audioPlayer.addEventListener("pause", () => setPlayingUi(false));
-audioPlayer.addEventListener("ended", () => setPlayingUi(false));
-
-// Show on page load
-openTunesIntro();

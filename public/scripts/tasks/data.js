@@ -106,7 +106,7 @@ export function addSubgroupToGroup(groupId, subgroupName) {
     return subgroup;
 }
 
-export function addTaskToSubgroupInGroup(groupId, subgroupId, taskTitle, taskDueDate) {
+export function addTaskToSubgroupInGroup(groupId, subgroupId, taskTitle, taskDueDate, taskDueTime = '') {
     const parentGroup = findGroupByIdInState(groupId);
     const parentSubgroup = findSubgroupByIdInGroup(parentGroup, subgroupId);
     if (!parentGroup || !parentSubgroup) return null;
@@ -114,10 +114,12 @@ export function addTaskToSubgroupInGroup(groupId, subgroupId, taskTitle, taskDue
     const trimmedTaskTitle = taskTitle.trim();
     if (!trimmedTaskTitle) return null;
 
+    const dueTime = (taskDueTime || '').trim();
     const task = {
         id: 'task-' + generateEntityId(),
         title: trimmedTaskTitle,
         dueDate: taskDueDate,
+        dueTime: dueTime,
         subgroupId: parentSubgroup.id,
         groupId: parentGroup.id
     };
@@ -156,6 +158,90 @@ export function formatTaskDueDateForDisplay(isoDateStr) {
     return month + '/' + (day.length === 1 ? '0' + day : day) + '/' + year;
 }
 
+export function formatTaskDueTimeForDisplay(isoTimeStr) {
+    if (!isoTimeStr) return '';
+    const parts = isoTimeStr.split(':');
+    if (parts.length < 2) return isoTimeStr;
+
+    const hour24 = parseInt(parts[0], 10);
+    const minute = parseInt(parts[1], 10);
+    if (!Number.isFinite(hour24) || !Number.isFinite(minute)) return isoTimeStr;
+
+    const hour12Raw = hour24 % 12;
+    const hour12 = hour12Raw === 0 ? 12 : hour12Raw;
+    const suffix = hour24 >= 12 ? 'PM' : 'AM';
+    return hour12 + ':' + String(minute).padStart(2, '0') + ' ' + suffix;
+}
+
+export function formatTaskDueDateTimeForDisplay(isoDateStr, isoTimeStr) {
+    const datePart = formatTaskDueDateForDisplay(isoDateStr);
+    const timePart = formatTaskDueTimeForDisplay(isoTimeStr);
+    if (!timePart) return datePart;
+    if (!datePart) return timePart;
+    return datePart + ' \u00b7 ' + timePart;
+}
+
+function parseIsoDateParts(isoDateStr) {
+    if (!isoDateStr) return null;
+    const parts = isoDateStr.split('-');
+    if (parts.length !== 3) return null;
+
+    const year = parseInt(parts[0], 10);
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+
+    if (!Number.isFinite(year) || !Number.isFinite(monthIndex) || !Number.isFinite(day)) return null;
+    return { year, monthIndex, day };
+}
+
+function startOfDay(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function getTaskDueStatusLabel(isoDateStr, isoTimeStr = '', now = new Date()) {
+    if (isoTimeStr instanceof Date) {
+        now = isoTimeStr;
+        isoTimeStr = '';
+    }
+
+    const dateParts = parseIsoDateParts(isoDateStr);
+    if (!dateParts) return '';
+
+    const todayStart = startOfDay(now);
+    const dueStart = new Date(dateParts.year, dateParts.monthIndex, dateParts.day);
+    const dayDiff = Math.round((dueStart.getTime() - todayStart.getTime()) / (24 * 60 * 60 * 1000));
+
+    if (dayDiff < 0) return 'Overdue';
+    if (dayDiff === 0) {
+        let dueMoment = new Date(dateParts.year, dateParts.monthIndex, dateParts.day, 23, 59, 59, 999);
+        if (isoTimeStr) {
+            const timeParts = isoTimeStr.split(':');
+            if (timeParts.length >= 2) {
+                const hour = parseInt(timeParts[0], 10);
+                const minute = parseInt(timeParts[1], 10);
+                if (Number.isFinite(hour) && Number.isFinite(minute)) {
+                    dueMoment = new Date(dateParts.year, dateParts.monthIndex, dateParts.day, hour, minute, 0, 0);
+                }
+            }
+        }
+
+        const msRemaining = dueMoment.getTime() - now.getTime();
+        if (msRemaining <= 0) return 'Overdue';
+
+        const minutesRemaining = Math.ceil(msRemaining / (60 * 1000));
+        const hours = Math.floor(minutesRemaining / 60);
+        const minutes = minutesRemaining % 60;
+
+        if (hours >= 1) {
+            return 'Due in ' + hours + 'h' + (minutes ? ' ' + minutes + 'm' : '');
+        }
+        return 'Due in ' + minutesRemaining + 'm';
+    }
+
+    if (dayDiff === 1) return 'Due tomorrow';
+    return 'Due in ' + dayDiff + 'd';
+}
+
 export function findTaskByIdInState(taskId) {
     if (!taskId) return null;
     for (const group of taskGroupsState) {
@@ -172,12 +258,14 @@ export function findTaskByIdInState(taskId) {
 }
 
 export function updateTaskById(taskId, taskTitle, taskDueDate) {
+    const taskDueTime = arguments.length >= 4 ? arguments[3] : '';
     const task = findTaskByIdInState(taskId);
     if (!task) return false;
     const trimmed = (taskTitle || '').trim();
     if (!trimmed || !taskDueDate) return false;
     task.title = trimmed;
     task.dueDate = taskDueDate;
+    task.dueTime = (taskDueTime || '').trim();
     saveTasksState();
     return true;
 }
